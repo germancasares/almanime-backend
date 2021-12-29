@@ -1,12 +1,13 @@
-﻿using Almanime.Kitsu;
+﻿using Almanime.Kitsu.Anime;
 using Almanime.Models;
+using Almanime.Models.DTO;
 using Almanime.Models.Enums;
 using Almanime.Repositories;
+using Almanime.Repositories.Queries;
 using Almanime.Services.Interfaces;
-using API.Models.DTOs;
-using API.Utils.Mappers;
+using Almanime.Utils.Mappers;
 
-namespace API.Services;
+namespace Almanime.Services;
 
 public class AnimeService : IAnimeService
 {
@@ -17,16 +18,16 @@ public class AnimeService : IAnimeService
         _context = context;
     }
 
-    public Anime? GetByKitsuID(int kitsuID) => _context.Animes.SingleOrDefault(anime => anime.KitsuID == kitsuID);
+    public Anime? GetBySlug(string slug) => _context.Animes.GetBySlug(slug);
 
     public IQueryable<Anime> GetSeason(int year, ESeason season)
     {
-        if (season == ESeason.Winter) return _context.Animes.Where(anime => anime.StartDate >= new DateTime(year, 12, 1) && anime.StartDate < new DateTime(year+1, 3, 1));
+        if (season == ESeason.Winter) return _context.Animes.Where(anime => anime.StartDate >= new DateTime(year, 12, 1) && anime.StartDate < new DateTime(year + 1, 3, 1));
 
         return _context.Animes.Where(anime => anime.StartDate.Year == year && anime.Season == season);
     }
 
-    public Anime Create(AnimeDTO animeDTO)
+    private Anime Create(AnimeDTO animeDTO)
     {
         var anime = _context.Animes.Add(animeDTO.MapToModel());
 
@@ -35,9 +36,9 @@ public class AnimeService : IAnimeService
         return anime.Entity;
     }
 
-    public void Update(AnimeDTO animeDTO)
+    private void Update(AnimeDTO animeDTO)
     {
-        var anime = GetByKitsuID(animeDTO.KitsuID);
+        var anime = _context.Animes.GetByKitsuID(animeDTO.KitsuID);
 
         if (anime == null) return;
 
@@ -47,11 +48,11 @@ public class AnimeService : IAnimeService
 
     public async Task PopulateSeason(int year, ESeason season)
     {
-        var seasonAnimesDTO = await Kitsu.FetchSeason(year, season);
+        var seasonAnimesDTO = await KitsuAnime.FetchSeason(year, season);
 
         seasonAnimesDTO.ForEach(anime =>
         {
-            if (GetByKitsuID(anime.KitsuID) == null)
+            if (_context.Animes.GetByKitsuID(anime.KitsuID) == null)
             {
                 Create(anime);
             }

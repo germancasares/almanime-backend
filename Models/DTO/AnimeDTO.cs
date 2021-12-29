@@ -1,6 +1,7 @@
-﻿using Almanime.Models.Enums;
+﻿using Almanime.Models;
+using Almanime.Models.Enums;
 
-namespace API.Models.DTOs;
+namespace Almanime.Models.DTO;
 
 public record AnimeDTO
 {
@@ -13,6 +14,6 @@ public record AnimeDTO
 
     public DateTime? EndDate { get; set; }
     public string? Synopsis { get; set; }
-    public string? CoverImageUrl { get; set; }
-    public string? PosterImageUrl { get; set; }
+    public SizedImage? CoverImageUrl { get; set; }
+    public SizedImage? PosterImageUrl { get; set; }
 }

@@ -1,8 +1,8 @@
 ﻿using Almanime.Models;
+using Almanime.Models.DTO;
 using Almanime.Models.Views;
-using API.Models.DTOs;
 
-namespace API.Utils.Mappers;
+namespace Almanime.Utils.Mappers;
 
 public static class AnimeMapper
 {
@@ -17,8 +17,8 @@ public static class AnimeMapper
             startDate: anime.StartDate,
             endDate: anime.EndDate,
             synopsis: anime.Synopsis,
-            coverImageUrl: anime.CoverImageUrl,
-            posterImageUrl: anime.PosterImageUrl
+            coverImages: anime.CoverImageUrl,
+            posterImages: anime.PosterImageUrl
         );
     }
     public static Anime UpdateFromDTO(this Anime anime, AnimeDTO animeDTO)
@@ -31,8 +31,8 @@ public static class AnimeMapper
         anime.StartDate = animeDTO.StartDate;
         anime.EndDate = animeDTO.EndDate;
         anime.Synopsis = animeDTO.Synopsis;
-        anime.CoverImageUrl = animeDTO.CoverImageUrl;
-        anime.PosterImageUrl = animeDTO.PosterImageUrl;
+        anime.CoverImages = animeDTO.CoverImageUrl;
+        anime.PosterImages = animeDTO.PosterImageUrl;
 
         return anime;
     }
@@ -49,8 +49,8 @@ public static class AnimeMapper
             Status = anime.Status,
             Synopsis = anime.Synopsis,
             StartDate = anime.StartDate,
-            CoverImage = anime.CoverImageUrl,
-            PosterImage = anime.PosterImageUrl,
+            CoverImages = anime.CoverImages,
+            PosterImages = anime.PosterImages,
         };
     }
 }

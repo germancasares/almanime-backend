@@ -14,8 +14,23 @@ public class Anime : Base
         DateTime startDate,
         DateTime? endDate,
         string? synopsis,
-        string? coverImageUrl,
-        string? posterImageUrl
+        SizedImage? coverImages,
+        SizedImage? posterImages
+    ) : this(kitsuID, slug, name, season, status, startDate, endDate, synopsis)
+    {
+        CoverImages = coverImages;
+        PosterImages = posterImages;
+    }
+
+    private Anime(
+        int kitsuID,
+        string slug,
+        string name,
+        ESeason season,
+        EAnimeStatus status,
+        DateTime startDate,
+        DateTime? endDate,
+        string? synopsis
     )
     {
         KitsuID = kitsuID;
@@ -26,8 +41,6 @@ public class Anime : Base
         StartDate = startDate;
         EndDate = endDate;
         Synopsis = synopsis;
-        CoverImageUrl = coverImageUrl;
-        PosterImageUrl = posterImageUrl;
     }
 
     [Required]
@@ -46,6 +59,8 @@ public class Anime : Base
 
     public DateTime? EndDate { get; set; }
     public string? Synopsis { get; set; }
-    public string? CoverImageUrl { get; set; }
-    public string? PosterImageUrl { get; set; }
+    public SizedImage? CoverImages { get; set; }
+    public SizedImage? PosterImages { get; set; }
+
+    public virtual ICollection<Episode> Episodes { get; set; } = default!;
 }

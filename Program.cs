@@ -1,6 +1,6 @@
 using Almanime.Repositories;
+using Almanime.Services;
 using Almanime.Services.Interfaces;
-using API.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -13,6 +13,7 @@ builder.Services.AddDbContext<AlmanimeContext>(options =>
 
 // Add services to the container.
 builder.Services.AddScoped<IAnimeService, AnimeService>();
+builder.Services.AddScoped<IEpisodeService, EpisodeService>();
 
 
 builder.Services.AddCors();

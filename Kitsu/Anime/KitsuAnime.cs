@@ -1,13 +1,13 @@
-﻿using Almanime.Kitsu.Anime;
+﻿using Almanime.Models;
+using Almanime.Models.DTO;
 using Almanime.Models.Enums;
 using Almanime.Utils;
-using API.Models.DTOs;
 using System.Globalization;
 using System.Text.Json;
 
-namespace Almanime.Kitsu;
+namespace Almanime.Kitsu.Anime;
 
-public class Kitsu
+public class KitsuAnime
 {
     private const int MAX_PER_PAGE = 20;
     private const string KITSU_API = "https://kitsu.io/api/edge";
@@ -17,11 +17,11 @@ public class Kitsu
     {
         var rawAnimes = await GetRawAnimes(year, season);
 
-        var rawAnimesFiltered = rawAnimes.Where(model => model.Id is not null && IsProcessable(model.Attributes));
+        var rawAnimesFiltered = rawAnimes.Where(model => model.Id != null && IsProcessable(model.Attributes));
 
-        var animesDTO = rawAnimesFiltered.Select(model => MapAnime(model.Id, model.Attributes));
+        var animesDTO = rawAnimesFiltered.Select(model => MapToDTO(model.Id, model.Attributes));
 
-        var animesDTOFiltered = animesDTO.Where(a => a != null && a.Status != EAnimeStatus.Tba && a.Season == season);
+        var animesDTOFiltered = animesDTO.Where(a => a.Status != EAnimeStatus.Tba);
 
         return animesDTOFiltered.ToList();
     }
@@ -36,10 +36,7 @@ public class Kitsu
             var response = await Client.GetStringAsync(url);
             var animeCollection = JsonSerializer.Deserialize<AnimeCollection>(response, new JsonSerializerOptions { PropertyNameCaseInsensitive = true, });
 
-            var rawAnimes = animeCollection?.Data;
-            var filteredAnimes = rawAnimes?.Where(c => c.Attributes.Subtype == "TV").ToList();
-
-            animeDataModels.AddRange(filteredAnimes ?? new List<AnimeDataModel>());
+            animeDataModels.AddRange(animeCollection?.Data ?? new List<AnimeDataModel>());
             url = animeCollection?.Links.Next;
         }
 
@@ -50,6 +47,12 @@ public class Kitsu
     {
         // Anime
         if (anime is null)
+        {
+            return false;
+        }
+
+        // Subtype
+        if (anime.Subtype != "TV")
         {
             return false;
         }
@@ -68,7 +71,7 @@ public class Kitsu
         }
 
         // StartDate
-        if (!DateTime.TryParseExact(anime.StartDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
+        if (Utils.DateTimeOrDefault(anime.StartDate) == null)
         {
             return false;
         }
@@ -82,26 +85,35 @@ public class Kitsu
         return url[..(url.IndexOf(id) + id.Length + 1)];
     }
 
-    private static AnimeDTO MapAnime(string id, AnimeAttributesModel anime)
+    private static AnimeDTO MapToDTO(string? kitsuId, AnimeAttributesModel anime)
     {
         var status = EnumHelper.GetEnumFromString<EAnimeStatus>(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(anime.Status ?? ""));
         if (!status.HasValue) throw new Exception("The EAnimeStatus could not be parsed.");
 
-        DateTime.TryParseExact(anime.StartDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime startDate);
-        var endDateCorrect = DateTime.TryParseExact(anime.EndDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime endDate);
+        DateTime.TryParseExact(anime.StartDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var startDate);
 
         return new AnimeDTO
         {
-            KitsuID = int.Parse(id),
+            KitsuID = int.Parse(kitsuId ?? ""),
             Slug = anime.Slug,
             Name = anime.CanonicalTitle,
             Synopsis = anime.Synopsis,
             Status = status.Value,
             StartDate = startDate,
-            EndDate = endDateCorrect ? endDate : null,
+            EndDate = Utils.DateTimeOrDefault(anime.EndDate),
             Season = EnumHelper.GetSeason(startDate.Month),
-            CoverImageUrl = anime.CoverImage?.Tiny,
-            PosterImageUrl = anime.PosterImage?.Tiny,
+            CoverImageUrl = new SizedImage
+            (
+                tiny: Uri.TryCreate(anime.CoverImage?.Tiny, new UriCreationOptions(), out var coverTiny) ? coverTiny : null,
+                small: Uri.TryCreate(anime.CoverImage?.Small, new UriCreationOptions(), out var coverSmall) ? coverSmall : null,
+                original: Uri.TryCreate(anime.CoverImage?.Original, new UriCreationOptions(), out var coverOriginal) ? coverOriginal : null
+            ),
+            PosterImageUrl = new SizedImage
+            (
+                tiny: Uri.TryCreate(anime.PosterImage?.Tiny, new UriCreationOptions(), out var posterTiny) ? posterTiny : null,
+                small: Uri.TryCreate(anime.PosterImage?.Small, new UriCreationOptions(), out var posterSmall) ? posterSmall : null,
+                original: Uri.TryCreate(anime.PosterImage?.Original, new UriCreationOptions(), out var posterOriginal) ? posterOriginal : null
+            ),
         };
     }
 }

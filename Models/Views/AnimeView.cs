@@ -14,6 +14,6 @@ public record AnimeView
     public string? Synopsis { get; set; }
     public DateTime StartDate { get; set; }
 
-    public string? CoverImage { get; set; }
-    public string? PosterImage { get; set; }
+    public SizedImage? CoverImages { get; set; }
+    public SizedImage? PosterImages { get; set; }
 }

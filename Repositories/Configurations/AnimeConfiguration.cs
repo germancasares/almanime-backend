@@ -9,8 +9,8 @@ public class AnimeConfiguration : BaseModelConfiguration<Anime>
     {
         base.Configure(builder);
 
-        builder
-            .HasIndex(i => i.KitsuID)
-            .IsUnique();
+        builder.HasIndex(anime => anime.KitsuID).IsUnique();
+        builder.OwnsOne(anime => anime.CoverImages);
+        builder.OwnsOne(anime => anime.PosterImages);
     }
 }

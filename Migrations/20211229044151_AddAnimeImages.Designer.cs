@@ -4,6 +4,7 @@ using Almanime.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Almanime.Migrations
 {
     [DbContext(typeof(AlmanimeContext))]
-    partial class AlmanimeContextModelSnapshot : ModelSnapshot
+    [Migration("20211229044151_AddAnimeImages")]
+    partial class AddAnimeImages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,43 +72,6 @@ namespace Almanime.Migrations
                     b.ToTable("Animes");
                 });
 
-            modelBuilder.Entity("Almanime.Models.Episode", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("Aired")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("AnimeID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreationDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int?>("Duration")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ModificationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Number")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("AnimeID");
-
-                    b.ToTable("Episodes");
-                });
-
             modelBuilder.Entity("Almanime.Models.Anime", b =>
                 {
                     b.OwnsOne("Almanime.Models.SizedImage", "CoverImages", b1 =>
@@ -156,22 +121,6 @@ namespace Almanime.Migrations
                     b.Navigation("CoverImages");
 
                     b.Navigation("PosterImages");
-                });
-
-            modelBuilder.Entity("Almanime.Models.Episode", b =>
-                {
-                    b.HasOne("Almanime.Models.Anime", "Anime")
-                        .WithMany("Episodes")
-                        .HasForeignKey("AnimeID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Anime");
-                });
-
-            modelBuilder.Entity("Almanime.Models.Anime", b =>
-                {
-                    b.Navigation("Episodes");
                 });
 #pragma warning restore 612, 618
         }

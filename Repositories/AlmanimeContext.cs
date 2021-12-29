@@ -14,22 +14,12 @@ public partial class AlmanimeContext : DbContext
     {
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        //if (!optionsBuilder.IsConfigured)
-        //{
-        //    optionsBuilder.UseSqlServer("Name=ConnectionStrings:Almanime");
-        //}
-    }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        OnModelCreatingPartial(modelBuilder);
-
         modelBuilder.ApplyConfiguration(new AnimeConfiguration());
+        modelBuilder.ApplyConfiguration(new EpisodeConfiguration());
     }
 
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
-
     public DbSet<Anime> Animes => Set<Anime>();
+    public DbSet<Episode> Episodes => Set<Episode>();
 }

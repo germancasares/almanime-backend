@@ -1,11 +1,11 @@
 ﻿using Almanime.Models;
 using Almanime.Models.Enums;
 
-namespace Almanime.Services.Interfaces
+namespace Almanime.Services.Interfaces;
+
+public interface IAnimeService
 {
-    public interface IAnimeService
-    {
-        IQueryable<Anime> GetSeason(int year, ESeason season);
-        Task PopulateSeason(int year, ESeason season);
-    }
+    Anime? GetBySlug(string slug);
+    IQueryable<Anime> GetSeason(int year, ESeason season);
+    Task PopulateSeason(int year, ESeason season);
 }

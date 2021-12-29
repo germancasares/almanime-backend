@@ -4,7 +4,7 @@ using Almanime.Models.Views.Derived;
 using Almanime.Services.Interfaces;
 using Almanime.Utils;
 using Almanime.Utils.DataAnnotations;
-using API.Utils.Mappers;
+using Almanime.Utils.Mappers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Almanime.Controllers;
@@ -20,6 +20,16 @@ public class AnimeController : ControllerBase
         _animeService = animeService;
     }
 
+    [HttpGet("slug/{slug}")]
+    public IActionResult GetBySlug(string slug)
+    {
+        var anime = _animeService.GetBySlug(slug);
+
+        if (anime == null) return NotFound();
+
+        return Ok(anime.MapToView());
+    }
+
     [HttpGet("year/{year}/season/{season}")]
     public IActionResult GetSeason(
         int year,
@@ -32,7 +42,7 @@ public class AnimeController : ControllerBase
         var animeSeason = _animeService.GetSeason(year, season);
 
         var animeSeasonPage = animeSeason
-            .OrderBy(a => string.IsNullOrWhiteSpace(a.CoverImageUrl))
+            .OrderByDescending(anime => anime.CoverImages != null && anime.CoverImages.Tiny != null)
             .ThenBy(a => a.Name)
             .Page(page, size);
 

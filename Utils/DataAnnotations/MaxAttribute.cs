@@ -24,7 +24,7 @@ public sealed class MaxAttribute : DataTypeAttribute
     {
         if (value == null) return true;
 
-        var isDouble = double.TryParse(Convert.ToString(value), out double valueAsDouble);
+        var isDouble = double.TryParse(Convert.ToString(value), out var valueAsDouble);
 
         return isDouble && valueAsDouble <= Max;
     }

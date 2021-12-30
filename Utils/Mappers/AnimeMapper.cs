@@ -6,9 +6,7 @@ namespace Almanime.Utils.Mappers;
 
 public static class AnimeMapper
 {
-    public static Anime MapToModel(this AnimeDTO anime)
-    {
-        return new Anime(
+    public static Anime MapToModel(this AnimeDTO anime) => new(
             kitsuID: anime.KitsuID,
             slug: anime.Slug ?? throw new ArgumentNullException(nameof(anime), "The value of 'anime.Slug' should not be null"),
             name: anime.Name ?? throw new ArgumentNullException(nameof(anime), "The value of 'anime.Name' should not be null"),
@@ -20,7 +18,7 @@ public static class AnimeMapper
             coverImages: anime.CoverImageUrl,
             posterImages: anime.PosterImageUrl
         );
-    }
+
     public static Anime UpdateFromDTO(this Anime anime, AnimeDTO animeDTO)
     {
         anime.KitsuID = animeDTO.KitsuID;
@@ -37,20 +35,17 @@ public static class AnimeMapper
         return anime;
     }
 
-    public static AnimeView MapToView(this Anime anime)
+    public static AnimeView MapToView(this Anime anime) => new()
     {
-        return new AnimeView
-        {
-            ID = anime.ID,
-            KitsuID = anime.KitsuID,
-            Slug = anime.Slug,
-            Name = anime.Name,
-            Season = anime.Season,
-            Status = anime.Status,
-            Synopsis = anime.Synopsis,
-            StartDate = anime.StartDate,
-            CoverImages = anime.CoverImages,
-            PosterImages = anime.PosterImages,
-        };
-    }
+        ID = anime.ID,
+        KitsuID = anime.KitsuID,
+        Slug = anime.Slug,
+        Name = anime.Name,
+        Season = anime.Season,
+        Status = anime.Status,
+        Synopsis = anime.Synopsis,
+        StartDate = anime.StartDate,
+        CoverImages = anime.CoverImages,
+        PosterImages = anime.PosterImages,
+    };
 }

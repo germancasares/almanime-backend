@@ -4,7 +4,6 @@ using Almanime.Models.DTO;
 using Almanime.Repositories;
 using Almanime.Repositories.Queries;
 using Almanime.Services.Interfaces;
-using Almanime.Utils;
 using Almanime.Utils.Mappers;
 
 namespace Almanime.Services;
@@ -17,6 +16,8 @@ public class EpisodeService : IEpisodeService
     {
         _context = context;
     }
+
+    public IQueryable<Episode> GetByAnimeSlug(string animeSlug) => _context.Episodes.GetByAnimeSlug(animeSlug);
 
     private Episode? Create(EpisodeDTO episodeDTO, Guid animeId)
     {

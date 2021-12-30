@@ -1,4 +1,5 @@
 ﻿using Almanime.Services.Interfaces;
+using Almanime.Utils.Mappers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Almanime.Controllers;
@@ -12,6 +13,14 @@ public class EpisodeController : ControllerBase
     public EpisodeController(IEpisodeService episodeService)
     {
         _episodeService = episodeService;
+    }
+
+    [HttpGet("anime/{animeSlug}")]
+    public IActionResult GetByAnimeSlug(string animeSlug)
+    {
+        var episodes = _episodeService.GetByAnimeSlug(animeSlug);
+
+        return Ok(episodes.Select(episode => episode.MapToView()));
     }
 
     [HttpPost("populate/anime/{animeSlug}")]

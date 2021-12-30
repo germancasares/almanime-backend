@@ -37,11 +37,11 @@ public static class KitsuEpisodes
         return episodeDataModels;
     }
 
-    private static EpisodeDTO MapToDTO(EpisodeAttributesModel episode) => new
-    (
-        Aired: Utils.DateTimeOrDefault(episode.Airdate),
-        Duration: episode.Length,
-        Name: episode.CanonicalTitle,
-        Number: episode.Number ?? 0
-    );
+    private static EpisodeDTO MapToDTO(EpisodeAttributesModel episode) => new()
+    {
+        Aired = Utils.DateTimeOrDefault(episode.Airdate),
+        Duration = episode.Length,
+        Name = episode.CanonicalTitle,
+        Number = episode.Number ?? 0,
+    };
 }

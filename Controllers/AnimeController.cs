@@ -53,12 +53,14 @@ public class AnimeController : ControllerBase
 
         if (includeMeta)
         {
-            animeSeasonPageView.Meta = new PaginationMetaView
-            {
-                BaseUrl = Request.GetFullPath(),
-                Count = animeSeason.Count(),
-                CurrentPage = page,
-                PageSize = size,
+            animeSeasonPageView = animeSeasonPageView with { 
+                Meta = new()
+                {
+                    BaseUrl = Request.GetFullPath(),
+                    Count = animeSeason.Count(),
+                    CurrentPage = page,
+                    PageSize = size,
+                }
             };
         }
 

@@ -2,12 +2,12 @@
 
 public record EpisodeAttributesModel
 {
-    public string? CanonicalTitle { get; set; }
-    public int? SeasonNumber { get; set; }
-    public int? Number { get; set; }
-    public int? RelativeNumber { get; set; }
-    public string? Synopsis { get; set; }
-    public string? Airdate { get; set; }
-    public int? Length { get; set; }
-    public EpisodeThumbail Thumbnail { get; set; } = new();
+    public string? CanonicalTitle { get; init; }
+    public int? SeasonNumber { get; init; }
+    public int? Number { get; init; }
+    public int? RelativeNumber { get; init; }
+    public string? Synopsis { get; init; }
+    public string? Airdate { get; init; }
+    public int? Length { get; init; }
+    public EpisodeThumbail Thumbnail { get; init; } = new();
 }

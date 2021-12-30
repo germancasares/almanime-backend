@@ -1,6 +1,6 @@
 ﻿namespace Almanime.Kitsu;
 
-public class Meta
+public record Meta
 {
-    public int Count { get; set; }
+    public int Count { get; init; }
 }

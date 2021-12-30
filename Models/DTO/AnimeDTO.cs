@@ -1,19 +1,18 @@
-﻿using Almanime.Models;
-using Almanime.Models.Enums;
+﻿using Almanime.Models.Enums;
 
 namespace Almanime.Models.DTO;
 
 public record AnimeDTO
 {
-    public int KitsuID { get; set; }
-    public string? Slug { get; set; }
-    public string? Name { get; set; }
-    public ESeason Season { get; set; }
-    public EAnimeStatus Status { get; set; }
-    public DateTime StartDate { get; set; }
+    public int KitsuID { get; init; }
+    public string? Slug { get; init; }
+    public string? Name { get; init; }
+    public ESeason Season { get; init; }
+    public EAnimeStatus Status { get; init; }
+    public DateTime StartDate { get; init; }
 
-    public DateTime? EndDate { get; set; }
-    public string? Synopsis { get; set; }
-    public SizedImage? CoverImageUrl { get; set; }
-    public SizedImage? PosterImageUrl { get; set; }
+    public DateTime? EndDate { get; init; }
+    public string? Synopsis { get; init; }
+    public SizedImage? CoverImageUrl { get; init; }
+    public SizedImage? PosterImageUrl { get; init; }
 }

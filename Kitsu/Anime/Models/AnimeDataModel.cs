@@ -2,7 +2,7 @@
 
 public record AnimeDataModel
 {
-    public string? Id { get; set; }
-    public string? Type { get; set; }
-    public AnimeAttributesModel Attributes { get; set; } = new();
+    public string? Id { get; init; }
+    public string? Type { get; init; }
+    public AnimeAttributesModel Attributes { get; init; } = new();
 }

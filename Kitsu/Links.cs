@@ -1,8 +1,8 @@
 ﻿namespace Almanime.Kitsu;
 
-public class Links
+public record Links
 {
-    public string? First { get; set; }
-    public string? Next { get; set; }
-    public string? Last { get; set; }
+    public string? First { get; init; }
+    public string? Next { get; init; }
+    public string? Last { get; init; }
 }

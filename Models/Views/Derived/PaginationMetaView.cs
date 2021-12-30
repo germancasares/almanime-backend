@@ -2,10 +2,10 @@
 
 public record PaginationMetaView
 {
-    public string? BaseUrl { private get; set; }
-    public int PageSize { private get; set; }
-    public int CurrentPage { private get; set; }
-    public int Count { get; set; }
+    public string? BaseUrl { private get; init; }
+    public int PageSize { private get; init; }
+    public int CurrentPage { private get; init; }
+    public int Count { get; init; }
     public string First => $"{BaseUrl}?page=1&size={PageSize}";
     public string? Previous => CurrentPage == 1 ? null : $"{BaseUrl}?page={CurrentPage - 1}&size={PageSize}";
     public string? Next => CurrentPage * PageSize <= Count ? $"{BaseUrl}?page={CurrentPage + 1}&size={PageSize}" : null;

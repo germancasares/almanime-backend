@@ -2,6 +2,6 @@
 
 public record ModelWithMetaView<T>
 {
-    public PaginationMetaView Meta { get; set; } = default!;
-    public T Models { get; set; } = default!;
+    public PaginationMetaView Meta { get; init; } = default!;
+    public T Models { get; init; } = default!;
 }

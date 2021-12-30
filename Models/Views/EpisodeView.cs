@@ -2,10 +2,10 @@
 
 public record EpisodeView
 {
-    public Guid ID { get; set; }
+    public Guid ID { get; init; }
 
-    public int Number { get; set; }
-    public string? Name { get; set; }
-    public DateTime? Aired { get; set; }
-    public int? Duration { get; set; }
+    public int Number { get; init; }
+    public string? Name { get; init; }
+    public DateTime? Aired { get; init; }
+    public int? Duration { get; init; }
 }

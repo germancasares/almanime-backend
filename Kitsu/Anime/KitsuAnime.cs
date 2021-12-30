@@ -92,28 +92,28 @@ public class KitsuAnime
 
         DateTime.TryParseExact(anime.StartDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var startDate);
 
-        return new AnimeDTO
-        {
-            KitsuID = int.Parse(kitsuId ?? ""),
-            Slug = anime.Slug,
-            Name = anime.CanonicalTitle,
-            Synopsis = anime.Synopsis,
-            Status = status.Value,
-            StartDate = startDate,
-            EndDate = Utils.DateTimeOrDefault(anime.EndDate),
-            Season = EnumHelper.GetSeason(startDate.Month),
-            CoverImageUrl = new SizedImage
+        return new
+        (
+            KitsuID: int.Parse(kitsuId ?? ""),
+            Slug: anime.Slug,
+            Name: anime.CanonicalTitle,
+            Synopsis: anime.Synopsis,
+            Status: status.Value,
+            StartDate: startDate,
+            EndDate: Utils.DateTimeOrDefault(anime.EndDate),
+            Season: EnumHelper.GetSeason(startDate.Month),
+            CoverImageUrl: new SizedImage
             (
                 tiny: Uri.TryCreate(anime.CoverImage?.Tiny, new UriCreationOptions(), out var coverTiny) ? coverTiny : null,
                 small: Uri.TryCreate(anime.CoverImage?.Small, new UriCreationOptions(), out var coverSmall) ? coverSmall : null,
                 original: Uri.TryCreate(anime.CoverImage?.Original, new UriCreationOptions(), out var coverOriginal) ? coverOriginal : null
             ),
-            PosterImageUrl = new SizedImage
+            PosterImageUrl: new SizedImage
             (
                 tiny: Uri.TryCreate(anime.PosterImage?.Tiny, new UriCreationOptions(), out var posterTiny) ? posterTiny : null,
                 small: Uri.TryCreate(anime.PosterImage?.Small, new UriCreationOptions(), out var posterSmall) ? posterSmall : null,
                 original: Uri.TryCreate(anime.PosterImage?.Original, new UriCreationOptions(), out var posterOriginal) ? posterOriginal : null
-            ),
-        };
+            )
+        );
     }
 }

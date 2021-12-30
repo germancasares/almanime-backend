@@ -2,7 +2,7 @@
 
 public record EpisodeDataModel
 {
-    public string? Id { get; set; }
-    public string? Type { get; set; }
-    public EpisodeAttributesModel Attributes { get; set; } = new();
+    public string? Id { get; init; }
+    public string? Type { get; init; }
+    public EpisodeAttributesModel Attributes { get; init; } = new();
 }

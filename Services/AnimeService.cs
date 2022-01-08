@@ -22,7 +22,7 @@ public class AnimeService : IAnimeService
 
     public IQueryable<Anime> GetSeason(int year, ESeason season)
     {
-        if (season == ESeason.Winter) return _context.Animes.Where(anime => anime.StartDate >= new DateTime(year, 12, 1) && anime.StartDate < new DateTime(year + 1, 3, 1));
+        if (season == ESeason.Winter) return _context.Animes.Where(anime => anime.Season == season && (anime.StartDate.Month >= 12 || anime.StartDate.Month < 3));
 
         return _context.Animes.Where(anime => anime.StartDate.Year == year && anime.Season == season);
     }

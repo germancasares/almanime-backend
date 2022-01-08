@@ -18,7 +18,7 @@ public static class EpisodeMapper
     {
         episode.Aired = episodeDTO.Aired;
         episode.Number = episodeDTO.Number;
-        episode.Name = episodeDTO.Name ?? throw new ArgumentNullException(nameof(episodeDTO), "The value of 'episodeDTO.Name' should not be null");
+        episode.Name = episodeDTO.Name;
         episode.Duration = episodeDTO.Duration;
 
         return episode;

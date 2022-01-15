@@ -18,8 +18,16 @@ public partial class AlmanimeContext : DbContext
     {
         modelBuilder.ApplyConfiguration(new AnimeConfiguration());
         modelBuilder.ApplyConfiguration(new EpisodeConfiguration());
+        modelBuilder.ApplyConfiguration(new FansubConfiguration());
+        modelBuilder.ApplyConfiguration(new UserConfiguration());
+        modelBuilder.ApplyConfiguration(new MemberConfiguration());
+        modelBuilder.ApplyConfiguration(new SubtitleConfiguration());
     }
 
     public DbSet<Anime> Animes => Set<Anime>();
     public DbSet<Episode> Episodes => Set<Episode>();
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Fansub> Fansubs => Set<Fansub>();
+    public DbSet<Member> Members => Set<Member>();
+    public DbSet<Subtitle> Subtitles => Set<Subtitle>();
 }

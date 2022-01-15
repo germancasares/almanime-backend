@@ -2,7 +2,13 @@
 
 public class Episode : Base
 {
-    public Episode(int number, string? name, DateTime? aired, int? duration, Guid animeID)
+    public Episode(
+        int number, 
+        string? name, 
+        DateTime? aired, 
+        int? duration, 
+        Guid animeID
+    )
     {
         Number = number;
         Name = name;
@@ -18,4 +24,6 @@ public class Episode : Base
 
     public Guid AnimeID { get; set; }
     public virtual Anime Anime { get; set; } = default!;
+
+    public virtual ICollection<Subtitle> Subtitles { get; set; } = default!;
 }

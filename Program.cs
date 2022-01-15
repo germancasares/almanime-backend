@@ -11,13 +11,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AlmanimeContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Almanime"));
+    options.UseLazyLoadingProxies().UseSqlServer(builder.Configuration.GetConnectionString("Almanime"));
 });
 
 // Add services to the container.
 builder.Services.AddScoped<IAnimeService, AnimeService>();
 builder.Services.AddScoped<IEpisodeService, EpisodeService>();
-
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IFansubService, FansubService>();
+builder.Services.AddScoped<ISubtitleService, SubtitleService>();
+builder.Services.AddScoped<IFileService, FileService>();
 
 builder.Services.AddCors();
 

@@ -1,5 +1,4 @@
 ﻿using Almanime.Models.Enums;
-using System.ComponentModel.DataAnnotations;
 
 namespace Almanime.Models;
 
@@ -22,7 +21,7 @@ public class Anime : Base
         PosterImages = posterImages;
     }
 
-    private Anime(
+    protected Anime(
         int kitsuID,
         string slug,
         string name,
@@ -43,18 +42,11 @@ public class Anime : Base
         Synopsis = synopsis;
     }
 
-    [Required]
     public int KitsuID { get; set; }
-
-    [Required]
     public string Slug { get; set; }
-    [Required]
     public string Name { get; set; }
-    [Required]
     public ESeason Season { get; set; }
-    [Required]
     public EAnimeStatus Status { get; set; }
-    [Required]
     public DateTime StartDate { get; set; }
 
     public DateTime? EndDate { get; set; }

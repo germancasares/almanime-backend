@@ -9,6 +9,9 @@ public class EpisodeConfiguration : BaseModelConfiguration<Episode>
     {
         base.Configure(builder);
 
+        builder.Property(anime => anime.Number).IsRequired();
+        builder.Property(anime => anime.AnimeID).IsRequired();
+
         builder
             .HasOne(c => c.Anime)
             .WithMany(c => c.Episodes)

@@ -8,7 +8,10 @@ public sealed class MaxAttribute : DataTypeAttribute
 {
     public double Max { get; private set; }
 
-    public MaxAttribute(double max) : base("max") => Max = max;
+    public MaxAttribute(double max) : base("max")
+    {
+        Max = max;
+    }
 
     public override string FormatErrorMessage(string name)
     {

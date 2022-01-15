@@ -4,6 +4,7 @@ using Almanime.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Almanime.Migrations
 {
     [DbContext(typeof(AlmanimeContext))]
-    partial class AlmanimeContextModelSnapshot : ModelSnapshot
+    [Migration("20220112205830_AddSyntheticKeyToMembers")]
+    partial class AddSyntheticKeyToMembers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -181,15 +183,18 @@ namespace Almanime.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreationDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Format")
                         .HasColumnType("int");
 
                     b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("MemberFansubID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("MemberUserID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("ModificationDate")
@@ -204,7 +209,7 @@ namespace Almanime.Migrations
 
                     b.HasKey("EpisodeID", "MemberID");
 
-                    b.HasIndex("MemberID");
+                    b.HasIndex("MemberFansubID", "MemberUserID");
 
                     b.ToTable("Subtitles");
                 });
@@ -333,8 +338,7 @@ namespace Almanime.Migrations
 
                     b.HasOne("Almanime.Models.Member", "Member")
                         .WithMany("Subtitles")
-                        .HasForeignKey("MemberID")
-                        .HasPrincipalKey("ID")
+                        .HasForeignKey("MemberFansubID", "MemberUserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

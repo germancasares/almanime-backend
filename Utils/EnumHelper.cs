@@ -22,4 +22,11 @@ public static class EnumHelper
         int n when n == 12 => ESeason.Winter,
         _ => throw new Exception("Season out of range."),
     };
+
+    public static ESubtitleFormat GetSubtitleFormat(this IFormFile file) => (file.GetExtension()) switch
+    {
+        ".ass" => ESubtitleFormat.ASS,
+        ".srt" => ESubtitleFormat.SRT,
+        _ => throw new ArgumentNullException(nameof(file)),
+    };
 }

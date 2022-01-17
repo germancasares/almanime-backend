@@ -12,6 +12,9 @@ public class UserService : IUserService
     {
         _context = context;
     }
+
+    public IQueryable<User> Get() => _context.Users.AsQueryable();
+
     public void Create(string auth0Id, string name)
     {
         var user = _context.Users.SingleOrDefault(user => user.Auth0ID == auth0Id);

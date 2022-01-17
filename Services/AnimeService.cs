@@ -6,6 +6,7 @@ using Almanime.Repositories;
 using Almanime.Repositories.Queries;
 using Almanime.Services.Interfaces;
 using Almanime.Utils.Mappers;
+using Microsoft.EntityFrameworkCore;
 
 namespace Almanime.Services;
 
@@ -19,6 +20,7 @@ public class AnimeService : IAnimeService
     }
 
     public Anime? GetBySlug(string slug) => _context.Animes.GetBySlug(slug);
+    public IQueryable<Anime> Get() => _context.Animes.AsQueryable().AsNoTracking();
 
     public IQueryable<Anime> GetSeason(int year, ESeason season)
     {

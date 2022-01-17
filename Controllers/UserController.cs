@@ -17,6 +17,16 @@ public class UserController : ControllerBase
         _userService = userService;
     }
 
+    [HttpGet]
+    public IActionResult Get()
+    {
+        var users = _userService.Get();
+
+        return Ok(users.Select(user => new {
+            user.Name
+        }));
+    }
+
     [HttpPost]
     [Authorize]
     public IActionResult Post(UserDTO userDTO)

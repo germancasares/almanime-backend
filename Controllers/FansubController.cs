@@ -17,8 +17,23 @@ public class FansubController : ControllerBase
         _fansubService = fansubService;
     }
 
+    [HttpGet]
+    public IActionResult Get()
+    {
+        var fansubs = _fansubService.Get();
+
+        return Ok(fansubs.Select(fansub => new
+        {
+            fansub.Acronym,
+            fansub.Name,
+            fansub.Webpage,
+            fansub.CreationDate,
+            Members = fansub.Members.Count,
+        }));
+    }
+
     [HttpGet("acronym/{acronym}")]
-    public IActionResult Get(string acronym)
+    public IActionResult GetByAcronym(string acronym)
     {
         var fansub = _fansubService.GetByAcronym(acronym);
 
@@ -28,6 +43,8 @@ public class FansubController : ControllerBase
             fansub.Acronym,
             fansub.Name,
             fansub.Webpage,
+            fansub.CreationDate,
+            Members = fansub.Members.Count,
         });
     }
 

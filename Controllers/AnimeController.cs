@@ -20,6 +20,21 @@ public class AnimeController : ControllerBase
         _animeService = animeService;
     }
 
+    [HttpGet]
+    public IActionResult Get()
+    {
+        var animes = _animeService.Get();
+
+        return Ok(animes.Select(anime => new {
+            anime.Slug,
+            anime.Name,
+            anime.Season,
+            anime.Status,
+            anime.CoverImages,
+            Episodes = anime.Episodes.Count,
+        }));
+    }
+
     [HttpGet("slug/{slug}")]
     public IActionResult GetBySlug(string slug)
     {

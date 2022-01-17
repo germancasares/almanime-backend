@@ -23,6 +23,7 @@ public class FansubService : IFansubService
 
         return _context.Members.Any(member => member.Fansub.Acronym == acronym && member.User.Auth0ID == auth0ID);
     }
+    public IQueryable<Fansub> Get() => _context.Fansubs.AsQueryable();
 
     public Fansub? GetByAcronym(string acronym) => _context.Fansubs.GetByAcronym(acronym);
     public ICollection<Member> GetMembers(string acronym) => 

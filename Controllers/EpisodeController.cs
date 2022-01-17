@@ -23,10 +23,18 @@ public class EpisodeController : ControllerBase
         return Ok(episodes.Select(episode => episode.MapToView()));
     }
 
-    [HttpPost("populate/anime/{animeSlug}")]
-    public async Task<IActionResult> Populate(string animeSlug)
+    [HttpGet("anime/{animeSlug}/fansubs")]
+    public IActionResult GetFansubs(string animeSlug)
     {
-        await _episodeService.Populate(animeSlug);
+        var fansubs = _episodeService.GetFansubs(animeSlug);
+
+        return Ok(fansubs);
+    }
+
+    [HttpPost("populate")]
+    public async Task<IActionResult> Populate()
+    {
+        await _episodeService.Populate();
         return Ok();
     }
 }

@@ -23,6 +23,13 @@ public class SubtitleController : ControllerBase
     {
         var subtitle = await _subtitleService.Create(subtitleDTO, User.GetAuth0ID());
 
-        return Ok(subtitle.Url);
+        return Ok(new {
+            subtitle.Url,
+            subtitle.Format,
+            subtitle.CreationDate,
+            User = subtitle.Member.User.Name,
+            Anime = subtitle.Episode.Anime.Name,
+            Episode = subtitle.Episode.Number,
+        });
     }
 }

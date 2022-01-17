@@ -1,6 +1,7 @@
 ﻿using Almanime.Kitsu.Episode;
 using Almanime.Models;
 using Almanime.Models.DTO;
+using Almanime.Models.Views;
 using Almanime.Repositories;
 using Almanime.Repositories.Queries;
 using Almanime.Services.Interfaces;
@@ -18,6 +19,16 @@ public class EpisodeService : IEpisodeService
     }
 
     public IQueryable<Episode> GetByAnimeSlug(string animeSlug) => _context.Episodes.GetByAnimeSlug(animeSlug);
+
+    public Dictionary<int, Dictionary<string, string>> GetFansubs(string animeSlug) => new(
+        GetByAnimeSlug(animeSlug).Select(episode => new KeyValuePair<int, Dictionary<string, string>>(
+            episode.Number,
+            new Dictionary<string, string>(episode.Subtitles.Select(subtitle => new KeyValuePair<string, string>(
+                subtitle.Member.Fansub.Acronym,
+                subtitle.Url
+                )).ToList())
+            )).ToList()
+        );
 
     private Episode? Create(EpisodeDTO episodeDTO, Guid animeId)
     {
@@ -38,24 +49,32 @@ public class EpisodeService : IEpisodeService
         _context.SaveChanges();
     }
 
-    public async Task Populate(string animeSlug)
+    public async Task Populate()
     {
-        var anime = _context.Animes.GetBySlug(animeSlug);
+        var animes = _context.Animes.Select(anime => new { anime.KitsuID, anime.ID }).ToList();
 
-        if (anime == null) return;
-
-        var episodesDTO = await KitsuEpisodes.Fetch(anime.KitsuID);
-
-        episodesDTO.ForEach(episode =>
+        var tasks = animes.Select(async anime => new
         {
-            if (_context.Episodes.GetByKitsuIdAndNumber(anime.KitsuID, episode.Number) == null)
+            anime.ID,
+            anime.KitsuID,
+            Episodes = await KitsuEpisodes.Fetch(anime.KitsuID),
+        });
+
+        var algo = await Task.WhenAll(tasks);
+
+        algo.ToList().ForEach(anime =>
+        {
+            anime.Episodes.ForEach(episode =>
             {
-                Create(episode, anime.ID);
-            }
-            else
-            {
-                Update(episode, anime.KitsuID);
-            }
+                if (_context.Episodes.GetByKitsuIdAndNumber(anime.KitsuID, episode.Number) == null)
+                {
+                    Create(episode, anime.ID);
+                }
+                else
+                {
+                    Update(episode, anime.KitsuID);
+                }
+            });
         });
     }
 }

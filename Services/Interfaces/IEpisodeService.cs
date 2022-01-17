@@ -5,5 +5,6 @@ namespace Almanime.Services.Interfaces;
 public interface IEpisodeService
 {
     IQueryable<Episode> GetByAnimeSlug(string animeSlug);
-    Task Populate(string animeSlug);
+    Dictionary<int, Dictionary<string, string>> GetFansubs(string animeSlug);
+    Task Populate();
 }

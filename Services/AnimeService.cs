@@ -7,16 +7,19 @@ using Almanime.Repositories.Queries;
 using Almanime.Services.Interfaces;
 using Almanime.Utils.Mappers;
 using Microsoft.EntityFrameworkCore;
+using Nest;
 
 namespace Almanime.Services;
 
 public class AnimeService : IAnimeService
 {
     private readonly AlmanimeContext _context;
+    private readonly ElasticClient _elasticClient;
 
-    public AnimeService(AlmanimeContext context)
+    public AnimeService(AlmanimeContext context, ElasticClient elasticClient)
     {
         _context = context;
+        _elasticClient = elasticClient;
     }
 
     public Anime? GetBySlug(string slug) => _context.Animes.GetBySlug(slug);
@@ -37,6 +40,8 @@ public class AnimeService : IAnimeService
         var anime = _context.Animes.Add(animeDTO.MapToModel());
 
         _context.SaveChanges();
+
+        _elasticClient.Index(anime.Entity, idx => idx.Index("animes"));
 
         return anime.Entity;
     }

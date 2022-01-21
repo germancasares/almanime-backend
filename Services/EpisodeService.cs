@@ -1,21 +1,24 @@
 ﻿using Almanime.Kitsu.Episode;
 using Almanime.Models;
 using Almanime.Models.DTO;
-using Almanime.Models.Views;
 using Almanime.Repositories;
 using Almanime.Repositories.Queries;
 using Almanime.Services.Interfaces;
 using Almanime.Utils.Mappers;
+using Nest;
 
 namespace Almanime.Services;
 
 public class EpisodeService : IEpisodeService
 {
     private readonly AlmanimeContext _context;
+    private readonly ElasticClient _elasticClient;
 
-    public EpisodeService(AlmanimeContext context)
+    public EpisodeService(AlmanimeContext context, ElasticClient elasticClient)
     {
         _context = context;
+        _elasticClient = elasticClient;
+
     }
 
     public IQueryable<Episode> GetByAnimeSlug(string animeSlug) => _context.Episodes.GetByAnimeSlug(animeSlug);
@@ -35,6 +38,8 @@ public class EpisodeService : IEpisodeService
         var episode = _context.Episodes.Add(episodeDTO.MapToModel(animeId));
 
         _context.SaveChanges();
+
+        _elasticClient.Index(episode.Entity, idx => idx.Index("episodes"));
 
         return episode.Entity;
     }

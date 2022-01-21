@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Nest;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,11 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFansubService, FansubService>();
 builder.Services.AddScoped<ISubtitleService, SubtitleService>();
 builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddSingleton<ElasticClient>(
+    new ElasticClient(
+        new Uri(builder.Configuration.GetConnectionString("ElasticSearch"))
+    )
+);
 
 builder.Services.AddCors();
 

@@ -52,6 +52,8 @@ public class EpisodeService : IEpisodeService
 
         _context.Episodes.Update(episode.UpdateFromDTO(episodeDTO));
         _context.SaveChanges();
+
+        _elasticClient.Index(episode, idx => idx.Index("episodes"));
     }
 
     public async Task Populate()

@@ -54,6 +54,8 @@ public class AnimeService : IAnimeService
 
         _context.Animes.Update(anime.UpdateFromDTO(animeDTO));
         _context.SaveChanges();
+
+        _elasticClient.Index(anime, idx => idx.Index("animes"));
     }
 
     public async Task PopulateSeason(int year, ESeason season)

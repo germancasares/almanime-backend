@@ -39,7 +39,7 @@ public class EpisodeService : IEpisodeService
 
         _context.SaveChanges();
 
-        _elasticClient.Index(episode.Entity, idx => idx.Index("episodes"));
+        _elasticClient.Index(episode.Entity.MapToView(), idx => idx.Index("episodes"));
 
         return episode.Entity;
     }
@@ -53,7 +53,7 @@ public class EpisodeService : IEpisodeService
         _context.Episodes.Update(episode.UpdateFromDTO(episodeDTO));
         _context.SaveChanges();
 
-        _elasticClient.Index(episode, idx => idx.Index("episodes"));
+        _elasticClient.Index(episode.MapToView(), idx => idx.Index("episodes"));
     }
 
     public async Task Populate()

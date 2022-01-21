@@ -41,7 +41,7 @@ public class AnimeService : IAnimeService
 
         _context.SaveChanges();
 
-        _elasticClient.Index(anime.Entity, idx => idx.Index("animes"));
+        _elasticClient.Index(anime.Entity.MapToView(), idx => idx.Index("animes"));
 
         return anime.Entity;
     }
@@ -55,7 +55,7 @@ public class AnimeService : IAnimeService
         _context.Animes.Update(anime.UpdateFromDTO(animeDTO));
         _context.SaveChanges();
 
-        _elasticClient.Index(anime, idx => idx.Index("animes"));
+        _elasticClient.Index(anime.MapToView(), idx => idx.Index("animes"));
     }
 
     public async Task PopulateSeason(int year, ESeason season)

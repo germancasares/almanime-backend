@@ -1,6 +1,6 @@
 ﻿namespace Almanime.Models.DTO;
 
-public record UserDTO
+public readonly record struct UserDTO
 {
-    public string? Name { get; set; }
+    public string? Name { get; init; }
 }

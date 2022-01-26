@@ -1,4 +1,5 @@
 ﻿using Almanime.Models;
+using Almanime.Models.Documents;
 using Almanime.Models.DTO;
 
 namespace Almanime.Utils.Mappers;
@@ -18,4 +19,12 @@ public static class FansubMapper
             webpage: fansubDTO.Webpage
         );
     }
+
+    public static FansubDocument MapToDocument(this Fansub fansub) => new()
+    {
+        ID = fansub.ID,
+        CreationDate = fansub.CreationDate,
+        Acronym = fansub.Acronym,
+        Name = fansub.Name
+    };
 }

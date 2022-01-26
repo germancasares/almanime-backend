@@ -27,6 +27,23 @@ public class UserController : ControllerBase
         }));
     }
 
+    [HttpGet("me")]
+    [Authorize]
+    public IActionResult Me()
+    {
+        var auth0ID = User.GetAuth0ID();
+
+        if (auth0ID == null) throw new ArgumentNullException(nameof(auth0ID));
+
+        var user = _userService.GetByAuth0ID(auth0ID);
+
+        if (user == null) throw new ArgumentNullException(nameof(user));
+
+        return Ok(new {
+            user.Name,
+        });
+    }
+
     [HttpPost]
     [Authorize]
     public IActionResult Post(UserDTO userDTO)
@@ -34,7 +51,7 @@ public class UserController : ControllerBase
         var auth0ID = User.GetAuth0ID();
 
         if (auth0ID == null) throw new ArgumentNullException(nameof(auth0ID));
-        if (userDTO.Name == null) throw new ArgumentNullException(nameof(userDTO.Name));
+        if (userDTO.Name == null) throw new ArgumentNullException(nameof(userDTO));
 
         _userService.Create(auth0ID, userDTO.Name);
 

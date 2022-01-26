@@ -1,5 +1,6 @@
 ﻿using Almanime.Models;
 using Almanime.Models.DTO;
+using Almanime.Models.Documents;
 using Almanime.Models.Views;
 
 namespace Almanime.Utils.Mappers;
@@ -47,5 +48,13 @@ public static class AnimeMapper
         StartDate = anime.StartDate,
         CoverImages = anime.CoverImages,
         PosterImages = anime.PosterImages,
+    };
+
+    public static AnimeDocument MapToDocument(this Anime anime) => new()
+    {
+        ID = anime.ID,
+        CreationDate = anime.CreationDate,
+        Name = anime.Name,
+        Slug = anime.Slug,
     };
 }

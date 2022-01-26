@@ -1,10 +1,10 @@
 ﻿namespace Almanime.Models.DTO;
 
-public record SubtitleDTO
+public readonly record struct SubtitleDTO
 {
-    public IFormFile? File { get; set; }
+    public IFormFile? File { get; init; }
 
-    public string? FansubAcronym { get; set; }
-    public string? AnimeSlug { get; set; }
-    public int EpisodeNumber { get; set; }
+    public string? FansubAcronym { get; init; }
+    public string? AnimeSlug { get; init; }
+    public int EpisodeNumber { get; init; }
 }

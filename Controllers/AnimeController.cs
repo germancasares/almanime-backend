@@ -35,6 +35,14 @@ public class AnimeController : ControllerBase
         }));
     }
 
+    [HttpGet("search/{animeName}")]
+    public IActionResult Search(string animeName)
+    {
+        var results = _animeService.Search(animeName);
+
+        return Ok(results);
+    }
+
     [HttpGet("slug/{slug}")]
     public IActionResult GetBySlug(string slug)
     {

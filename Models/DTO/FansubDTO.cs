@@ -1,6 +1,6 @@
 ﻿namespace Almanime.Models.DTO;
 
-public record FansubDTO
+public readonly record struct FansubDTO
 {
     public string? Acronym { get; init; }
     public string? Name { get; init; }

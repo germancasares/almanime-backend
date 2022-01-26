@@ -1,4 +1,5 @@
 ﻿using Almanime.Models;
+using Almanime.Models.Documents;
 using Almanime.Models.DTO;
 using Almanime.Models.Enums;
 using Almanime.Repositories;
@@ -6,15 +7,19 @@ using Almanime.Repositories.Queries;
 using Almanime.Services.Interfaces;
 using Almanime.Utils.Mappers;
 using Domain.Enums;
+using Nest;
 
 namespace Almanime.Services;
 
 public class FansubService : IFansubService
 {
     private readonly AlmanimeContext _context;
-    public FansubService(AlmanimeContext context)
+    private readonly ElasticClient _elasticClient;
+
+    public FansubService(AlmanimeContext context, ElasticClient elasticClient)
     {
         _context = context;
+        _elasticClient = elasticClient;
     }
 
     public bool IsMember(string acronym, string? auth0ID)
@@ -24,6 +29,11 @@ public class FansubService : IFansubService
         return _context.Members.Any(member => member.Fansub.Acronym == acronym && member.User.Auth0ID == auth0ID);
     }
     public IQueryable<Fansub> Get() => _context.Fansubs.AsQueryable();
+
+    public IReadOnlyCollection<FansubDocument> Search(string fansubName) => _elasticClient.Search<FansubDocument>(s =>
+    s.Index("fansubs").From(0).Size(10)
+        .Query(q => q.QueryString(qs => qs.Query(fansubName).DefaultField(f => f.Name).DefaultOperator(Operator.And)))
+    ).Documents;
 
     public Fansub? GetByAcronym(string acronym) => _context.Fansubs.GetByAcronym(acronym);
     public ICollection<Member> GetMembers(string acronym) => 
@@ -50,6 +60,8 @@ public class FansubService : IFansubService
         });
 
         _context.SaveChanges();
+
+        _elasticClient.Index(fansub.MapToDocument(), idx => idx.Index("fansubs"));
 
         return fansub;
     }

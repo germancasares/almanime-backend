@@ -1,6 +1,6 @@
 ﻿namespace Almanime.Models.Views;
 
-public record UserView
+public readonly record struct UserView
 {
     public string? Auth0ID { get; init; }
 }

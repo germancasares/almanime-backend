@@ -1,4 +1,5 @@
 ﻿using Almanime.Models;
+using Almanime.Models.Documents;
 using Almanime.Models.DTO;
 
 namespace Almanime.Services.Interfaces;
@@ -11,4 +12,5 @@ public interface IFansubService
     ICollection<Member> GetMembers(string acronym);
     IEnumerable<Subtitle> GetSubtitles(string acronym);
     bool IsMember(string acronym, string? auth0ID);
+    IReadOnlyCollection<FansubDocument> Search(string fansubName);
 }

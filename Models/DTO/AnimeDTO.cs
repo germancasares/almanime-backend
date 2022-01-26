@@ -2,7 +2,7 @@
 
 namespace Almanime.Models.DTO;
 
-public record AnimeDTO
+public readonly record struct AnimeDTO
 {
     public int KitsuID { get; init; }
     public string? Slug { get; init; }

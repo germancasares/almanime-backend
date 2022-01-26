@@ -1,6 +1,7 @@
 ﻿using Almanime.Kitsu.Anime;
 using Almanime.Models;
 using Almanime.Models.DTO;
+using Almanime.Models.Documents;
 using Almanime.Models.Enums;
 using Almanime.Repositories;
 using Almanime.Repositories.Queries;
@@ -25,6 +26,11 @@ public class AnimeService : IAnimeService
     public Anime? GetBySlug(string slug) => _context.Animes.GetBySlug(slug);
     public IQueryable<Anime> Get() => _context.Animes.AsQueryable().AsNoTracking();
 
+    public IReadOnlyCollection<AnimeDocument> Search(string animeName) => _elasticClient.Search<AnimeDocument>(s =>
+        s.Index("animes").From(0).Size(10)
+            .Query(q => q.QueryString(qs => qs.Query(animeName).DefaultField(f => f.Name).DefaultOperator(Operator.And)))
+        ).Documents;
+
     public IQueryable<Anime> GetSeason(int year, ESeason season)
     {
         var startWinter = new DateTime(year-1, 12, 1);
@@ -41,7 +47,7 @@ public class AnimeService : IAnimeService
 
         _context.SaveChanges();
 
-        _elasticClient.Index(anime.Entity.MapToView(), idx => idx.Index("animes"));
+        _elasticClient.Index(anime.Entity.MapToDocument(), idx => idx.Index("animes"));
 
         return anime.Entity;
     }
@@ -55,7 +61,7 @@ public class AnimeService : IAnimeService
         _context.Animes.Update(anime.UpdateFromDTO(animeDTO));
         _context.SaveChanges();
 
-        _elasticClient.Index(anime.MapToView(), idx => idx.Index("animes"));
+        _elasticClient.Index(anime.MapToDocument(), idx => idx.Index("animes"));
     }
 
     public async Task PopulateSeason(int year, ESeason season)

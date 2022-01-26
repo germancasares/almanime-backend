@@ -32,6 +32,14 @@ public class FansubController : ControllerBase
         }));
     }
 
+    [HttpGet("search/{fansubName}")]
+    public IActionResult Search(string fansubName)
+    {
+        var results = _fansubService.Search(fansubName);
+
+        return Ok(results);
+    }
+
     [HttpGet("acronym/{acronym}")]
     public IActionResult GetByAcronym(string acronym)
     {

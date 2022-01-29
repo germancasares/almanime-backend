@@ -22,8 +22,7 @@ public class UserService : IUserService
 
         if (user != null) return;
 
-        user = _context.Users.Add(new User(auth0Id, name)).Entity;
-
+        _context.Users.Add(new User(auth0Id, name));
         _context.SaveChanges();
     }
 }

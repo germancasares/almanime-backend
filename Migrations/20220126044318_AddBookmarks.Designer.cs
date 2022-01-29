@@ -4,6 +4,7 @@ using Almanime.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Almanime.Migrations
 {
     [DbContext(typeof(AlmanimeContext))]
-    partial class AlmanimeContextModelSnapshot : ModelSnapshot
+    [Migration("20220126044318_AddBookmarks")]
+    partial class AddBookmarks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,7 +69,7 @@ namespace Almanime.Migrations
                     b.HasIndex("KitsuID")
                         .IsUnique();
 
-                    b.ToTable("Animes", (string)null);
+                    b.ToTable("Animes");
                 });
 
             modelBuilder.Entity("Almanime.Models.Bookmark", b =>
@@ -94,7 +96,7 @@ namespace Almanime.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Bookmarks", (string)null);
+                    b.ToTable("Bookmarks");
                 });
 
             modelBuilder.Entity("Almanime.Models.Episode", b =>
@@ -130,7 +132,7 @@ namespace Almanime.Migrations
 
                     b.HasIndex("AnimeID");
 
-                    b.ToTable("Episodes", (string)null);
+                    b.ToTable("Episodes");
                 });
 
             modelBuilder.Entity("Almanime.Models.Fansub", b =>
@@ -166,7 +168,7 @@ namespace Almanime.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Fansubs", (string)null);
+                    b.ToTable("Fansubs");
                 });
 
             modelBuilder.Entity("Almanime.Models.Member", b =>
@@ -196,7 +198,7 @@ namespace Almanime.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Members", (string)null);
+                    b.ToTable("Members");
                 });
 
             modelBuilder.Entity("Almanime.Models.Subtitle", b =>
@@ -233,7 +235,7 @@ namespace Almanime.Migrations
 
                     b.HasIndex("MemberID");
 
-                    b.ToTable("Subtitles", (string)null);
+                    b.ToTable("Subtitles");
                 });
 
             modelBuilder.Entity("Almanime.Models.User", b =>
@@ -266,12 +268,12 @@ namespace Almanime.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Almanime.Models.Anime", b =>
                 {
-                    b.OwnsOne("Almanime.Models.Anime.CoverImages#Almanime.Models.SizedImage", "CoverImages", b1 =>
+                    b.OwnsOne("Almanime.Models.SizedImage", "CoverImages", b1 =>
                         {
                             b1.Property<Guid>("AnimeID")
                                 .HasColumnType("uniqueidentifier");
@@ -287,13 +289,13 @@ namespace Almanime.Migrations
 
                             b1.HasKey("AnimeID");
 
-                            b1.ToTable("Animes", (string)null);
+                            b1.ToTable("Animes");
 
                             b1.WithOwner()
                                 .HasForeignKey("AnimeID");
                         });
 
-                    b.OwnsOne("Almanime.Models.Anime.PosterImages#Almanime.Models.SizedImage", "PosterImages", b1 =>
+                    b.OwnsOne("Almanime.Models.SizedImage", "PosterImages", b1 =>
                         {
                             b1.Property<Guid>("AnimeID")
                                 .HasColumnType("uniqueidentifier");
@@ -309,7 +311,7 @@ namespace Almanime.Migrations
 
                             b1.HasKey("AnimeID");
 
-                            b1.ToTable("Animes", (string)null);
+                            b1.ToTable("Animes");
 
                             b1.WithOwner()
                                 .HasForeignKey("AnimeID");

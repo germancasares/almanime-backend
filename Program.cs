@@ -24,6 +24,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFansubService, FansubService>();
 builder.Services.AddScoped<ISubtitleService, SubtitleService>();
 builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IBookmarkService, BookmarkService>();
 builder.Services.AddSingleton<ElasticClient>(
     new ElasticClient(
         new Uri(builder.Configuration.GetConnectionString("ElasticSearch"))

@@ -5,6 +5,7 @@ using Almanime.Services.Interfaces;
 using Almanime.Utils;
 using Almanime.Utils.DataAnnotations;
 using Almanime.Utils.Mappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Almanime.Controllers;

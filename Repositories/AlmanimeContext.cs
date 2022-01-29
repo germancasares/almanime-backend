@@ -22,6 +22,7 @@ public partial class AlmanimeContext : DbContext
         modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new MemberConfiguration());
         modelBuilder.ApplyConfiguration(new SubtitleConfiguration());
+        modelBuilder.ApplyConfiguration(new BookmarkConfiguration());
     }
 
     public DbSet<Anime> Animes => Set<Anime>();
@@ -30,4 +31,5 @@ public partial class AlmanimeContext : DbContext
     public DbSet<Fansub> Fansubs => Set<Fansub>();
     public DbSet<Member> Members => Set<Member>();
     public DbSet<Subtitle> Subtitles => Set<Subtitle>();
+    public DbSet<Bookmark> Bookmarks => Set<Bookmark>();
 }

@@ -33,7 +33,7 @@ public class BookmarkController : ControllerBase
 
         _bookmarkService.Create(auth0ID, animeSlug);
 
-        return Ok(_bookmarkService.GetByAuth0ID(auth0ID).Select(bookmark => bookmark.Anime.Slug));
+        return Ok();
     }
 
     [HttpDelete("animeSlug/{animeSlug}")]
@@ -44,6 +44,6 @@ public class BookmarkController : ControllerBase
 
         _bookmarkService.Delete(auth0ID, animeSlug);
 
-        return Ok(_bookmarkService.GetByAuth0ID(auth0ID).Select(bookmark => bookmark.Anime.Slug));
+        return Ok();
     }
 }

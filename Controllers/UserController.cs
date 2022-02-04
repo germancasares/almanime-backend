@@ -57,4 +57,18 @@ public class UserController : ControllerBase
 
         return Ok();
     }
+
+    [HttpPatch]
+    [Authorize]
+    public IActionResult Patch(UserDTO userDTO)
+    {
+        var auth0ID = User.GetAuth0ID();
+
+        if (auth0ID == null) throw new ArgumentNullException(nameof(auth0ID));
+        if (userDTO.Name == null) throw new ArgumentNullException(nameof(userDTO));
+
+        _userService.Update(auth0ID, userDTO.Name);
+
+        return Ok();
+    }
 }

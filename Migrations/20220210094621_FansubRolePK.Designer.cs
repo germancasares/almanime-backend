@@ -4,6 +4,7 @@ using Almanime.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Almanime.Migrations
 {
     [DbContext(typeof(AlmanimeContext))]
-    partial class AlmanimeContextModelSnapshot : ModelSnapshot
+    [Migration("20220210094621_FansubRolePK")]
+    partial class FansubRolePK
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -175,13 +177,13 @@ namespace Almanime.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("FansubID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreationDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<Guid>("FansubID")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
@@ -190,7 +192,7 @@ namespace Almanime.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ID", "FansubID");
+                    b.HasKey("ID");
 
                     b.HasIndex("FansubID");
 
@@ -222,7 +224,7 @@ namespace Almanime.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("RoleID", "FansubID");
+                    b.HasIndex("FansubID");
 
                     b.HasIndex("UserID", "FansubID")
                         .IsUnique();
@@ -332,18 +334,15 @@ namespace Almanime.Migrations
 
             modelBuilder.Entity("FansubRolePermission", b =>
                 {
-                    b.Property<Guid>("PermissionsID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("FansubRolesID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("FansubRolesFansubID")
+                    b.Property<Guid>("PermissionsID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("PermissionsID", "FansubRolesID", "FansubRolesFansubID");
+                    b.HasKey("FansubRolesID", "PermissionsID");
 
-                    b.HasIndex("FansubRolesID", "FansubRolesFansubID");
+                    b.HasIndex("PermissionsID");
 
                     b.ToTable("FansubRolePermission");
                 });
@@ -442,15 +441,15 @@ namespace Almanime.Migrations
 
             modelBuilder.Entity("Almanime.Models.Membership", b =>
                 {
-                    b.HasOne("Almanime.Models.User", "User")
+                    b.HasOne("Almanime.Models.FansubRole", "FansubRole")
                         .WithMany("Memberships")
-                        .HasForeignKey("UserID")
+                        .HasForeignKey("FansubID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Almanime.Models.FansubRole", "FansubRole")
+                    b.HasOne("Almanime.Models.User", "User")
                         .WithMany("Memberships")
-                        .HasForeignKey("RoleID", "FansubID")
+                        .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -480,15 +479,15 @@ namespace Almanime.Migrations
 
             modelBuilder.Entity("FansubRolePermission", b =>
                 {
-                    b.HasOne("Almanime.Models.Permission", null)
+                    b.HasOne("Almanime.Models.FansubRole", null)
                         .WithMany()
-                        .HasForeignKey("PermissionsID")
+                        .HasForeignKey("FansubRolesID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Almanime.Models.FansubRole", null)
+                    b.HasOne("Almanime.Models.Permission", null)
                         .WithMany()
-                        .HasForeignKey("FansubRolesID", "FansubRolesFansubID")
+                        .HasForeignKey("PermissionsID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

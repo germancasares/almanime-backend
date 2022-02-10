@@ -27,7 +27,7 @@ public class SubtitleController : ControllerBase
             subtitle.Url,
             subtitle.Format,
             subtitle.CreationDate,
-            //User = subtitle.Member.User.Name,
+            User = subtitle.Membership.User.Name,
             Anime = subtitle.Episode.Anime.Name,
             Episode = subtitle.Episode.Number,
         });

@@ -22,6 +22,7 @@ public partial class AlmanimeContext : DbContext
 
         modelBuilder.ApplyConfiguration(new FansubConfiguration());
         modelBuilder.ApplyConfiguration(new FansubRoleConfiguration());
+        modelBuilder.ApplyConfiguration(new PermissionConfiguration());
         modelBuilder.ApplyConfiguration(new MembershipConfiguration());
         modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new BookmarkConfiguration());
@@ -33,6 +34,7 @@ public partial class AlmanimeContext : DbContext
 
     public DbSet<Fansub> Fansubs => Set<Fansub>();
     public DbSet<FansubRole> FansubRoles => Set<FansubRole>();
+    public DbSet<Permission> Permission => Set<Permission>();
     public DbSet<Membership> Memberships => Set<Membership>();
     public DbSet<User> Users => Set<User>();
     public DbSet<Bookmark> Bookmarks => Set<Bookmark>();

@@ -20,18 +20,15 @@ public class FansubController : ControllerBase
     [HttpGet]
     public IActionResult Get()
     {
-        //var fansubs = _fansubService.Get();
+        var fansubs = _fansubService.Get();
 
-        //return Ok(fansubs.Select(fansub => new
-        //{
-        //    fansub.Acronym,
-        //    fansub.Name,
-        //    fansub.Webpage,
-        //    fansub.CreationDate,
-        //    Members = fansub.Members.Count,
-        //}));
-
-        return Ok();
+        return Ok(fansubs.Select(fansub => new {
+            fansub.Acronym,
+            fansub.Name,
+            fansub.Webpage,
+            fansub.CreationDate,
+            Members = fansub.FansubRoles.Select(role => role.Memberships).Count(),
+        }));
     }
 
     [HttpGet("search/{fansubName}")]
@@ -54,7 +51,7 @@ public class FansubController : ControllerBase
             fansub.Name,
             fansub.Webpage,
             fansub.CreationDate,
-            //Members = fansub.Members.Count,
+            Members = fansub.FansubRoles.Sum(role => role.Memberships.Count),
         });
     }
 
@@ -62,42 +59,36 @@ public class FansubController : ControllerBase
     [Authorize]
     public IActionResult IsMember(string acronym)
     {
-        //var isMember = _fansubService.IsMember(acronym, User.GetAuth0ID());
+        var isMember = _fansubService.IsMember(acronym, User.GetAuth0ID());
 
-        //return Ok(isMember);
-        return Ok();
+        return Ok(isMember);
     }
 
     [HttpGet("acronym/{acronym}/members")]
     public IActionResult GetMembers(string acronym)
     {
-        //var members = _fansubService.GetMembers(acronym);
+        var members = _fansubService.GetMembers(acronym);
 
-        //return Ok(members.Select(member => new
-        //{
-        //    member.User.Name,
-        //    Role = member.Role.ToString(),
-        //}));
-
-        return Ok();
+        return Ok(members.Select(member => new {
+            member.User.Name,
+            Role = member.FansubRole.Name,
+        }));
     }
 
     [HttpGet("acronym/{acronym}/subtitles")]
     public IActionResult GetSubtitles(string acronym)
     {
-        //var subtitles = _fansubService.GetSubtitles(acronym);
+        var subtitles = _fansubService.GetSubtitles(acronym);
 
-        //return Ok(subtitles.Select(subtitle => new {
-        //    subtitle.ID,
-        //    subtitle.Url,
-        //    subtitle.Format,
-        //    subtitle.CreationDate,
-        //    Anime = subtitle.Episode.Anime.Name,
-        //    Episode = subtitle.Episode.Number,
-        //    User = subtitle.Member.User.Name,
-        //}));
-
-        return Ok();
+        return Ok(subtitles.Select(subtitle => new {
+            subtitle.ID,
+            subtitle.Url,
+            subtitle.Format,
+            subtitle.CreationDate,
+            Anime = subtitle.Episode.Anime.Name,
+            Episode = subtitle.Episode.Number,
+            User = subtitle.Membership.User.Name,
+        }));
     }
 
     [HttpPost]

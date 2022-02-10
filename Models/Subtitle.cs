@@ -9,9 +9,9 @@ public class Subtitle : Base
         ESubtitleStatus status, 
         ESubtitleFormat format, 
         string url, 
-        Guid episodeID
-        //Guid memberID
-    ) : this(status, format, url, episodeID)
+        Guid episodeID,
+        Guid membershipID
+    ) : this(status, format, url, episodeID, membershipID)
     {
         ID = id;
     }
@@ -20,15 +20,15 @@ public class Subtitle : Base
         ESubtitleStatus status,
         ESubtitleFormat format,
         string url,
-        Guid episodeID
-        //Guid memberID
+        Guid episodeID,
+        Guid membershipID
     )
     {
         Status = status;
         Format = format;
         Url = url ?? throw new ArgumentNullException(nameof(url));
         EpisodeID = episodeID;
-        //MemberID = memberID;
+        MembershipID = membershipID;
     }
 
     public ESubtitleStatus Status { get; set; }
@@ -39,6 +39,6 @@ public class Subtitle : Base
     public Guid EpisodeID { get; set; }
     public virtual Episode Episode { get; set; } = default!;
 
-    //public Guid MemberID { get; set; }
-    //public virtual Member Member { get; set; } = default!;
+    public Guid MembershipID { get; set; }
+    public virtual Membership Membership { get; set; } = default!;
 }

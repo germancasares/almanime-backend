@@ -12,5 +12,8 @@ public class FansubRoleConfiguration : BaseModelConfiguration<FansubRole>
         builder.HasKey(member => new { member.ID, member.FansubID });
 
         builder.Property(user => user.Name).IsRequired();
+
+        //builder.Property(user => user.FansubID).IsRequired();
+        //builder.HasIndex(fansub => fansub.FansubID).IsUnique();
     }
 }

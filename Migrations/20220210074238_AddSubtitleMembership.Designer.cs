@@ -4,6 +4,7 @@ using Almanime.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Almanime.Migrations
 {
     [DbContext(typeof(AlmanimeContext))]
-    partial class AlmanimeContextModelSnapshot : ModelSnapshot
+    [Migration("20220210074238_AddSubtitleMembership")]
+    partial class AddSubtitleMembership
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -230,36 +232,6 @@ namespace Almanime.Migrations
                     b.ToTable("Memberships");
                 });
 
-            modelBuilder.Entity("Almanime.Models.Permission", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreationDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int>("Grant")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ModificationDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Permission");
-
-                    b.HasData(
-                        new
-                        {
-                            ID = new Guid("3332c912-2e46-48ee-86e8-8299dcf1127f"),
-                            CreationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Grant = 0
-                        });
-                });
-
             modelBuilder.Entity("Almanime.Models.Subtitle", b =>
                 {
                     b.Property<Guid>("EpisodeID")
@@ -328,24 +300,6 @@ namespace Almanime.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("FansubRolePermission", b =>
-                {
-                    b.Property<Guid>("PermissionsID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("FansubRolesID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("FansubRolesFansubID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("PermissionsID", "FansubRolesID", "FansubRolesFansubID");
-
-                    b.HasIndex("FansubRolesID", "FansubRolesFansubID");
-
-                    b.ToTable("FansubRolePermission");
                 });
 
             modelBuilder.Entity("Almanime.Models.Anime", b =>
@@ -476,21 +430,6 @@ namespace Almanime.Migrations
                     b.Navigation("Episode");
 
                     b.Navigation("Membership");
-                });
-
-            modelBuilder.Entity("FansubRolePermission", b =>
-                {
-                    b.HasOne("Almanime.Models.Permission", null)
-                        .WithMany()
-                        .HasForeignKey("PermissionsID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Almanime.Models.FansubRole", null)
-                        .WithMany()
-                        .HasForeignKey("FansubRolesID", "FansubRolesFansubID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Almanime.Models.Anime", b =>

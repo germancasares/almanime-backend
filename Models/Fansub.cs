@@ -13,4 +13,6 @@ public class Fansub : Base
 
     public string Name { get; set; }
     public string? Webpage { get; set; }
+
+    public virtual ICollection<FansubRole> FansubRoles { get; set; } = default!;
 }

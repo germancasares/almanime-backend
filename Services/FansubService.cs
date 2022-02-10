@@ -22,12 +22,12 @@ public class FansubService : IFansubService
         _elasticClient = elasticClient;
     }
 
-    public bool IsMember(string acronym, string? auth0ID)
-    {
-        if (auth0ID == null) return false;
+    //public bool IsMember(string acronym, string? auth0ID)
+    //{
+    //    if (auth0ID == null) return false;
 
-        return _context.Members.Any(member => member.Fansub.Acronym == acronym && member.User.Auth0ID == auth0ID);
-    }
+    //    return _context.Members.Any(member => member.Fansub.Acronym == acronym && member.User.Auth0ID == auth0ID);
+    //}
     public IQueryable<Fansub> Get() => _context.Fansubs.AsQueryable();
 
     public IReadOnlyCollection<FansubDocument> Search(string fansubName) => _elasticClient.Search<FansubDocument>(s =>
@@ -36,33 +36,50 @@ public class FansubService : IFansubService
     ).Documents;
 
     public Fansub? GetByAcronym(string acronym) => _context.Fansubs.GetByAcronym(acronym);
-    public ICollection<Member> GetMembers(string acronym) => 
-        _context.Fansubs.GetByAcronym(acronym)?.Members ?? throw new ArgumentNullException(nameof(acronym));
-    public IEnumerable<Subtitle> GetSubtitles(string acronym) => 
-        GetMembers(acronym).SelectMany(member => member.Subtitles)
-        .Where(subtitle => subtitle.Status == ESubtitleStatus.Published) ?? throw new ArgumentNullException(nameof(acronym));
+    //public ICollection<Member> GetMembers(string acronym) => 
+    //    _context.Fansubs.GetByAcronym(acronym)?.Members ?? throw new ArgumentNullException(nameof(acronym));
+    //public IEnumerable<Subtitle> GetSubtitles(string acronym) => 
+    //    GetMembers(acronym).SelectMany(member => member.Subtitles)
+    //    .Where(subtitle => subtitle.Status == ESubtitleStatus.Published) ?? throw new ArgumentNullException(nameof(acronym));
 
     public Fansub Create(FansubDTO fansubDTO, string? auth0ID)
     {
         if (auth0ID == null) throw new ArgumentNullException(nameof(auth0ID));
-
         var user = _context.Users.GetByAuth0ID(auth0ID);
-
         if (user == null) throw new ArgumentNullException(nameof(auth0ID));
 
         var fansub = _context.Fansubs.Add(fansubDTO.MapToModel()).Entity;
 
-        _context.Members.Add(new Member
-        {
-            Fansub = fansub,
-            User = user,
-            Role = EFansubRole.Founder,
-        });
+        //_context.Members.Add(new Member
+        //{
+        //    Fansub = fansub,
+        //    User = user,
+        //    Role = EFansubRole.Founder,
+        //});
 
         _context.SaveChanges();
 
         _elasticClient.Index(fansub.MapToDocument(), idx => idx.Index("fansubs"));
 
         return fansub;
+    }
+
+    public void Join(string acronym, string? auth0ID)
+    {
+        if (auth0ID == null) throw new ArgumentNullException(nameof(auth0ID));
+        var user = _context.Users.GetByAuth0ID(auth0ID);
+        if (user == null) throw new ArgumentNullException(nameof(auth0ID));
+
+        var fansub = _context.Fansubs.GetByAcronym(acronym);
+        if (fansub == null) throw new ArgumentNullException(nameof(acronym));
+
+        //_context.Members.Add(new Member
+        //{
+        //    Fansub = fansub,
+        //    User = user,
+        //    Role = EFansubRole.Member,
+        //});
+
+        _context.SaveChanges();
     }
 }

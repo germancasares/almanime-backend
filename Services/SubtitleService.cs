@@ -40,8 +40,8 @@ public class SubtitleService : ISubtitleService
         var fansub = _context.Fansubs.GetByAcronym(subtitleDTO.FansubAcronym);
         if (fansub == null) throw new ArgumentNullException(nameof(subtitleDTO));
 
-        var member = _context.Members.GetByFansubAndUser(fansub.ID, user.ID);
-        if (member == null) throw new ArgumentNullException(nameof(subtitleDTO));
+        //var member = _context.Members.GetByFansubAndUser(fansub.ID, user.ID);
+        //if (member == null) throw new ArgumentNullException(nameof(subtitleDTO));
 
 
         var subtitleID = Guid.NewGuid();
@@ -54,8 +54,8 @@ public class SubtitleService : ISubtitleService
             status: ESubtitleStatus.Published,
             format: subtitleDTO.File.GetSubtitleFormat(),
             url: url,
-            episodeID: episode.ID,
-            memberID: member.ID
+            episodeID: episode.ID
+            //memberID: member.ID
         ));
 
         _context.SaveChanges();

@@ -9,13 +9,16 @@ public class SubtitleConfiguration : BaseModelConfiguration<Subtitle>
     {
         base.Configure(builder);
 
-        builder.HasKey(subtitle => new { subtitle.EpisodeID, subtitle.MemberID });
+        builder.HasKey(subtitle => new { 
+            subtitle.EpisodeID, 
+            //subtitle.MemberID
+        });
 
-        builder
-            .HasOne(p => p.Member)
-            .WithMany(b => b.Subtitles)
-            .HasForeignKey(p => p.MemberID)
-            .HasPrincipalKey(b => b.ID);
+        //builder
+        //    .HasOne(p => p.Member)
+        //    .WithMany(b => b.Subtitles)
+        //    .HasForeignKey(p => p.MemberID)
+        //    .HasPrincipalKey(b => b.ID);
 
         builder
             .HasOne(p => p.Episode)

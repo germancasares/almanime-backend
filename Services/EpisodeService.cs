@@ -19,15 +19,15 @@ public class EpisodeService : IEpisodeService
 
     public IQueryable<Episode> GetByAnimeSlug(string animeSlug) => _context.Episodes.GetByAnimeSlug(animeSlug);
 
-    public Dictionary<int, Dictionary<string, string>> GetFansubs(string animeSlug) => new(
-        GetByAnimeSlug(animeSlug).Select(episode => new KeyValuePair<int, Dictionary<string, string>>(
-            episode.Number,
-            new Dictionary<string, string>(episode.Subtitles.Select(subtitle => new KeyValuePair<string, string>(
-                subtitle.Member.Fansub.Acronym,
-                subtitle.Url
-                )).ToList())
-            )).ToList()
-        );
+    //public Dictionary<int, Dictionary<string, string>> GetFansubs(string animeSlug) => new(
+    //    GetByAnimeSlug(animeSlug).Select(episode => new KeyValuePair<int, Dictionary<string, string>>(
+    //        episode.Number,
+    //        new Dictionary<string, string>(episode.Subtitles.Select(subtitle => new KeyValuePair<string, string>(
+    //            subtitle.Member.Fansub.Acronym,
+    //            subtitle.Url
+    //            )).ToList())
+    //        )).ToList()
+    //    );
 
     private Episode? Create(EpisodeDTO episodeDTO, Guid animeId)
     {

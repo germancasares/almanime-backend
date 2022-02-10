@@ -26,9 +26,11 @@ public class EpisodeController : ControllerBase
     [HttpGet("anime/{animeSlug}/fansubs")]
     public IActionResult GetFansubs(string animeSlug)
     {
-        var fansubs = _episodeService.GetFansubs(animeSlug);
+        //var fansubs = _episodeService.GetFansubs(animeSlug);
 
-        return Ok(fansubs);
+        //return Ok(fansubs);
+
+        return Ok();
     }
 
     [HttpPost("populate")]

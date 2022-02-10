@@ -12,4 +12,5 @@ public class User : Base
     public string Name { get; set; }
 
     public virtual ICollection<Bookmark> Bookmarks { get; set; } = default!;
+    public virtual ICollection<Membership> Memberships { get; set; } = default!;
 }

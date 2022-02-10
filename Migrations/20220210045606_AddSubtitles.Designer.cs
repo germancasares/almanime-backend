@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Almanime.Migrations
 {
     [DbContext(typeof(AlmanimeContext))]
-    [Migration("20220110040308_AddMissingFansub")]
-    partial class AddMissingFansub
+    [Migration("20220210045606_AddSubtitles")]
+    partial class AddSubtitles
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -108,78 +108,36 @@ namespace Almanime.Migrations
                     b.ToTable("Episodes");
                 });
 
-            modelBuilder.Entity("Almanime.Models.Fansub", b =>
+            modelBuilder.Entity("Almanime.Models.Subtitle", b =>
                 {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("EpisodeID")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Acronym")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreationDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
-                    b.Property<DateTime?>("ModificationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Webpage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Fansubs");
-                });
-
-            modelBuilder.Entity("Almanime.Models.Membership", b =>
-                {
-                    b.Property<Guid>("FansubID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UserID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Role")
+                    b.Property<int>("Format")
                         .HasColumnType("int");
 
-                    b.HasKey("FansubID", "UserID");
-
-                    b.HasIndex("UserID");
-
-                    b.ToTable("Memberships");
-                });
-
-            modelBuilder.Entity("Almanime.Models.User", b =>
-                {
                     b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Auth0ID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CreationDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("ID");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
-                    b.HasIndex("Auth0ID")
-                        .IsUnique();
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("Users");
+                    b.HasKey("EpisodeID");
+
+                    b.ToTable("Subtitles");
                 });
 
             modelBuilder.Entity("Almanime.Models.Anime", b =>
@@ -244,23 +202,15 @@ namespace Almanime.Migrations
                     b.Navigation("Anime");
                 });
 
-            modelBuilder.Entity("Almanime.Models.Membership", b =>
+            modelBuilder.Entity("Almanime.Models.Subtitle", b =>
                 {
-                    b.HasOne("Almanime.Models.Fansub", "Fansub")
-                        .WithMany("Memberships")
-                        .HasForeignKey("FansubID")
+                    b.HasOne("Almanime.Models.Episode", "Episode")
+                        .WithMany("Subtitles")
+                        .HasForeignKey("EpisodeID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Almanime.Models.User", "User")
-                        .WithMany("Memberships")
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Fansub");
-
-                    b.Navigation("User");
+                    b.Navigation("Episode");
                 });
 
             modelBuilder.Entity("Almanime.Models.Anime", b =>
@@ -268,14 +218,9 @@ namespace Almanime.Migrations
                     b.Navigation("Episodes");
                 });
 
-            modelBuilder.Entity("Almanime.Models.Fansub", b =>
+            modelBuilder.Entity("Almanime.Models.Episode", b =>
                 {
-                    b.Navigation("Memberships");
-                });
-
-            modelBuilder.Entity("Almanime.Models.User", b =>
-                {
-                    b.Navigation("Memberships");
+                    b.Navigation("Subtitles");
                 });
 #pragma warning restore 612, 618
         }

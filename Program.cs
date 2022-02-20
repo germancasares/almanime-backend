@@ -5,6 +5,7 @@ using IdentityServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Nest;
 using Serilog;
 using System.Text.Json.Serialization;
@@ -51,30 +52,83 @@ try
         opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
-
-    builder.Services
-        .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+    builder.Services.AddSwaggerGen(setup =>
+    {
+        setup.AddSecurityRequirement(new OpenApiSecurityRequirement()
         {
-            options.Authority = "https://localhost:5001";
-
-            options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidateAudience = false
-            };
+                new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Name = "Bearer",
+                    Scheme = "oauth2",
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    },
+                },
+                new List<string>()
+            }
         });
 
-    builder.Services
-        .AddAuthorization(o =>
+        setup.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
-            o.AddPolicy("auth0_new_user", p => p.RequireAuthenticatedUser().RequireClaim("scope", "alm:auth0_new_user"));
+            Name = "Authorization",
+            Description = "Please Enter Authentication Token",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "oauth2",
+            Flows = new OpenApiOAuthFlows
+            {
+                //AuthorizationCode = new OpenApiOAuthFlow
+                //{
+                //    Scopes = new Dictionary<string, string>
+                //    {
+                //        { "api1", "First scope for Almanime" }
+                //    }
+                //}
+                Implicit = new OpenApiOAuthFlow
+                {
+                    Scopes = new Dictionary<string, string>
+                    {
+                        { "api1", "First scope for Almanime" }
+                    }
+                }
+            }
         });
+    });
 
     builder.Services
         .AddIdentityServer()
         .AddInMemoryApiScopes(Config.ApiScopes)
         .AddInMemoryClients(Config.Clients);
+
+    builder.Services
+        .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+        {
+            //options.Audience = "https://almani.me/";
+            options.Authority = "https://localhost:7074";
+
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidIssuer = "https://localhost:7074",
+
+                ValidateAudience = false,
+                //ValidTypes = new[] { "at+jwt" },
+                //ValidAudience = "https://almani.me/",
+            };
+        });
+
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("ApiScope", policy =>
+        {
+            policy.RequireAuthenticatedUser();
+            policy.RequireClaim("scope", "api1");
+        });
+    });
 
     var app = builder.Build();
 

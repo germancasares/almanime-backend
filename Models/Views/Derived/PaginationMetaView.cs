@@ -1,6 +1,6 @@
 ﻿namespace Almanime.Models.Views.Derived;
 
-public readonly record PaginationMetaView
+public record PaginationMetaView
 {
     public string? BaseUrl { private get; init; }
     public int PageSize { private get; init; }

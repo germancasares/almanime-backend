@@ -2,7 +2,7 @@
 
 namespace Almanime.Models.Views;
 
-public readonly record AnimeView
+public record AnimeView
 {
     public Guid ID { get; init; }
 

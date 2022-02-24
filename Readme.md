@@ -1,7 +1,4 @@
 ﻿
-
-
-
 Add-Migration
 Bundle-Migration
 Drop-Database

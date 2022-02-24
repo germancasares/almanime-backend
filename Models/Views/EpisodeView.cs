@@ -1,6 +1,6 @@
 ﻿namespace Almanime.Models.Views;
 
-public readonly record struct EpisodeView
+public readonly record EpisodeView
 {
     public Guid ID { get; init; }
 

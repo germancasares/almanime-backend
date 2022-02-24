@@ -2,7 +2,7 @@
 
 namespace Almanime.Models.Views;
 
-public readonly record struct AnimeView
+public readonly record AnimeView
 {
     public Guid ID { get; init; }
 

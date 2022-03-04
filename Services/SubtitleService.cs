@@ -5,6 +5,7 @@ using Almanime.Repositories;
 using Almanime.Repositories.Queries;
 using Almanime.Services.Interfaces;
 using Almanime.Utils;
+using Domain.Enums;
 
 namespace Almanime.Services;
 
@@ -43,6 +44,8 @@ public class SubtitleService : ISubtitleService
         var membership = _context.Memberships.GetByFansubAndUser(fansub.ID, user.ID);
         if (membership == null) throw new ArgumentNullException(nameof(subtitleDTO));
 
+        var hasPermissionToCreate = _context.Memberships.HasUserPermissionInFansub(fansub.ID, user.ID, EPermission.CreateSubtitle);
+        if (!hasPermissionToCreate) throw new ArgumentNullException(nameof(auth0ID));
 
         var subtitleID = Guid.NewGuid();
 

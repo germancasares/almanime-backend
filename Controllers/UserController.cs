@@ -11,10 +11,12 @@ namespace Almanime.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly IRoleService _roleService;
 
-    public UserController(IUserService userService)
+    public UserController(IUserService userService, IRoleService roleService)
     {
         _userService = userService;
+        _roleService = roleService;
     }
 
     [HttpGet]
@@ -41,6 +43,7 @@ public class UserController : ControllerBase
 
         return Ok(new {
             user.Name,
+            Permissions = _roleService.GetByUser(user),
         });
     }
 
@@ -58,7 +61,7 @@ public class UserController : ControllerBase
         return Ok();
     }
 
-    [HttpPatch]
+    [HttpPut]
     [Authorize]
     public IActionResult Patch(UserDTO userDTO)
     {

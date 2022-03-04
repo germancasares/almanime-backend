@@ -42,6 +42,18 @@ public class FansubService : IFansubService
         GetMembers(acronym).SelectMany(membership => membership.Subtitles)
         .Where(subtitle => subtitle.Status == ESubtitleStatus.Published) ?? throw new ArgumentNullException(nameof(acronym));
 
+    public Dictionary<string, IEnumerable<EPermission>> GetRoles(string acronym)
+    {
+        var fansubPermissions = _context.FansubRoles
+            .Where(r => r.Fansub.Acronym == acronym)
+            .Select(role => new KeyValuePair<string, IEnumerable<EPermission>>(
+                role.Name,
+                role.Permissions.Select(p => p.Grant)
+            ));
+
+        return new Dictionary<string, IEnumerable<EPermission>>(fansubPermissions);
+    }
+
     public Fansub Create(FansubDTO fansubDTO, string? auth0ID)
     {
         if (auth0ID == null) throw new ArgumentNullException(nameof(auth0ID));
@@ -50,12 +62,13 @@ public class FansubService : IFansubService
 
         var fansub = _context.Fansubs.Add(fansubDTO.MapToModel()).Entity;
 
+        var editPermissionsPermission = _context.Permission.Single(p => p.Grant == EPermission.EditPermissions);
         var createSubtitlePermission = _context.Permission.Single(p => p.Grant == EPermission.CreateSubtitle);
         var adminRole = _context.FansubRoles.Add(new FansubRole
         {
             Fansub = fansub,
             Name = "Admin",
-            Permissions = new[] { createSubtitlePermission }
+            Permissions = new[] { editPermissionsPermission, createSubtitlePermission }
         }).Entity;
 
         _context.Memberships.Add(new Membership
@@ -104,6 +117,35 @@ public class FansubService : IFansubService
             FansubID = fansub.ID,
             RoleID = memberRole.ID,
         });
+
+        _context.SaveChanges();
+    }
+
+    public void UpdateRoles(string acronym, string? auth0ID, Dictionary<string, IEnumerable<EPermission>> roles)
+    {
+        if (auth0ID == null) throw new ArgumentNullException(nameof(auth0ID));
+        var user = _context.Users.GetByAuth0ID(auth0ID);
+        if (user == null) throw new ArgumentNullException(nameof(auth0ID));
+
+        var fansub = _context.Fansubs.GetByAcronym(acronym);
+        if (fansub == null) throw new ArgumentNullException(nameof(acronym));
+
+        var hasPermissionToEdit = _context.Memberships.HasUserPermissionInFansub(fansub.ID, user.ID, EPermission.EditPermissions);
+        if (!hasPermissionToEdit) throw new ArgumentNullException(nameof(auth0ID));
+
+        if (!roles["Admin"].Contains(EPermission.EditPermissions))
+        {
+            roles["Admin"] = roles["Admin"].Append(EPermission.EditPermissions);
+        }
+
+        foreach(var roleName in roles.Keys)
+        {
+            var role = _context.FansubRoles.SingleOrDefault(r => r.Name == roleName && r.FansubID == fansub.ID);
+            if (role == null) continue;
+
+            role.Permissions.Clear();
+            role.Permissions = _context.Permission.Where(p => roles[roleName].Contains(p.Grant)).ToList();
+        }
 
         _context.SaveChanges();
     }

@@ -1,8 +1,11 @@
-﻿using Almanime.Models.DTO;
+﻿using Almanime.Models;
+using Almanime.Models.DTO;
 using Almanime.Services.Interfaces;
 using Almanime.Utils;
+using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Almanime.Controllers;
 
@@ -89,6 +92,22 @@ public class FansubController : ControllerBase
             Episode = subtitle.Episode.Number,
             User = subtitle.Membership.User.Name,
         }));
+    }
+
+    [HttpGet("acronym/{acronym}/roles")]
+    public IActionResult GetRoles(string acronym)
+    {
+        var roles = _fansubService.GetRoles(acronym);
+
+        return Ok(roles);
+    }
+
+    [HttpPut("acronym/{acronym}/roles")]
+    public IActionResult PutRoles(string acronym, Dictionary<string, IEnumerable<EPermission>> roles)
+    {
+        _fansubService.UpdateRoles(acronym, User.GetAuth0ID(), roles);
+
+        return Ok();
     }
 
     [HttpPost]

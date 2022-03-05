@@ -4,6 +4,7 @@ using Almanime.Services.Interfaces;
 using Almanime.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace Almanime.Controllers;
 
@@ -53,6 +54,7 @@ public class UserController : ControllerBase
         if (userDTO.Name == null) throw new AlmNullException(nameof(userDTO.Name));
 
         _userService.Create(auth0ID, userDTO.Name);
+        Log.Information("User {Auth0ID} has been created with Name {Name}", auth0ID, userDTO.Name);
 
         return Ok();
     }
@@ -66,6 +68,7 @@ public class UserController : ControllerBase
         if (userDTO.Name == null) throw new AlmNullException(nameof(userDTO.Name));
 
         _userService.Update(auth0ID, userDTO.Name);
+        Log.Information("User {Auth0ID} has changed Name to {Name}", auth0ID, userDTO.Name);
 
         return Ok();
     }

@@ -55,7 +55,6 @@ public class AnimeService : IAnimeService
     private void Update(AnimeDTO animeDTO)
     {
         var anime = _context.Animes.GetByKitsuID(animeDTO.KitsuID);
-
         if (anime == null) return;
 
         _context.Animes.Update(anime.UpdateFromDTO(animeDTO));

@@ -107,7 +107,7 @@ public class FansubController : ControllerBase
     {
         _fansubService.UpdateRoles(acronym, User.GetAuth0ID(), roles);
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpPost]
@@ -129,6 +129,6 @@ public class FansubController : ControllerBase
     {
         _fansubService.Join(acronym, User.GetAuth0ID());
 
-        return Ok();
+        return NoContent();
     }
 }

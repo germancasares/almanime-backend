@@ -39,7 +39,7 @@ public class UserController : ControllerBase
 
         var user = _userService.GetByAuth0ID(auth0ID);
 
-        if (user == null) throw new ArgumentNullException(nameof(user));
+        if (user == null) return NotFound();
 
         return Ok(new {
             user.Name,

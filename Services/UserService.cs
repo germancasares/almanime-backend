@@ -19,7 +19,6 @@ public class UserService : IUserService
     public void Create(string auth0Id, string name)
     {
         var user = _context.Users.SingleOrDefault(user => user.Auth0ID == auth0Id);
-
         if (user != null) return;
 
         _context.Users.Add(new User(auth0Id, name));
@@ -29,7 +28,6 @@ public class UserService : IUserService
     public void Update(string auth0Id, string name)
     {
         var user = _context.Users.SingleOrDefault(user => user.Auth0ID == auth0Id);
-
         if (user == null) return;
 
         user.Name = name;

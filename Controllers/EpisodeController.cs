@@ -35,6 +35,6 @@ public class EpisodeController : ControllerBase
     public async Task<IActionResult> Populate()
     {
         await _episodeService.Populate();
-        return Ok();
+        return NoContent();
     }
 }

@@ -79,12 +79,6 @@ public class KitsuAnime
         return true;
     }
 
-    private static string? GetBaseUrl(string? id, string? url)
-    {
-        if (id is null || url is null) return null;
-        return url[..(url.IndexOf(id) + id.Length + 1)];
-    }
-
     private static AnimeDTO MapToDTO(string? kitsuId, AnimeAttributesModel anime)
     {
         var status = EnumHelper.GetEnumFromString<EAnimeStatus>(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(anime.Status ?? ""));

@@ -35,13 +35,13 @@ public class AlmDbException : AlmException
 
 public class AlmPermissionException : AlmException
 {
-    public EPermission Permission { get; set; }
+    public string Permission { get; set; }
     public string UserName { get; set; }
     public string FansubName { get; set; }
 
     public AlmPermissionException(EPermission permission, string userName, string fansubName) : base(EValidationCode.DoesntHavePermission, "permission")
     {
-        Permission = permission;
+        Permission = permission.ToString();
         UserName = userName;
         FansubName = fansubName;
     }

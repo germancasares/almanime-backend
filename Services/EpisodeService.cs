@@ -29,7 +29,7 @@ public class EpisodeService : IEpisodeService
             )).ToList()
         );
 
-    private Episode? Create(EpisodeDTO episodeDTO, Guid animeId)
+    private Episode Create(EpisodeDTO episodeDTO, Guid animeId)
     {
         var episode = _context.Episodes.Add(episodeDTO.MapToModel(animeId));
 
@@ -41,7 +41,6 @@ public class EpisodeService : IEpisodeService
     private void Update(EpisodeDTO episodeDTO, int kitsuId)
     {
         var episode = _context.Episodes.GetByKitsuIdAndNumber(kitsuId, episodeDTO.Number);
-
         if (episode == null) return;
 
         _context.Episodes.Update(episode.UpdateFromDTO(episodeDTO));

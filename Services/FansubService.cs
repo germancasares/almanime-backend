@@ -22,12 +22,8 @@ public class FansubService : IFansubService
         _elasticClient = elasticClient;
     }
 
-    public bool IsMember(string acronym, string? auth0ID)
-    {
-        if (auth0ID == null) return false;
-
-        return _context.Memberships.Any(membership => membership.FansubRole.Fansub.Acronym == acronym && membership.User.Auth0ID == auth0ID);
-    }
+    public bool IsMember(string acronym, string auth0ID) => _context.Memberships
+        .Any(membership => membership.FansubRole.Fansub.Acronym == acronym && membership.User.Auth0ID == auth0ID);
     public IQueryable<Fansub> Get() => _context.Fansubs.AsQueryable();
 
     public IReadOnlyCollection<FansubDocument> Search(string fansubName) => _elasticClient.Search<FansubDocument>(s =>
@@ -35,12 +31,12 @@ public class FansubService : IFansubService
         .Query(q => q.QueryString(qs => qs.Query(fansubName).DefaultField(f => f.Name).DefaultOperator(Operator.And)))
     ).Documents;
 
-    public Fansub? GetByAcronym(string acronym) => _context.Fansubs.GetByAcronym(acronym);
+    public Fansub GetByAcronym(string acronym) => _context.Fansubs.GetByAcronym(acronym);
     public IEnumerable<Membership> GetMembers(string acronym) =>
-        _context.Fansubs.GetByAcronym(acronym)?.FansubRoles.SelectMany(role => role.Memberships) ?? throw new ArgumentNullException(nameof(acronym));
+        _context.Fansubs.GetByAcronym(acronym).FansubRoles.SelectMany(role => role.Memberships);
     public IEnumerable<Subtitle> GetSubtitles(string acronym) =>
         GetMembers(acronym).SelectMany(membership => membership.Subtitles)
-        .Where(subtitle => subtitle.Status == ESubtitleStatus.Published) ?? throw new ArgumentNullException(nameof(acronym));
+        .Where(subtitle => subtitle.Status == ESubtitleStatus.Published);
 
     public Dictionary<string, IEnumerable<EPermission>> GetRoles(string acronym)
     {
@@ -54,16 +50,13 @@ public class FansubService : IFansubService
         return new Dictionary<string, IEnumerable<EPermission>>(fansubPermissions);
     }
 
-    public Fansub Create(FansubDTO fansubDTO, string? auth0ID)
+    public Fansub Create(FansubDTO fansubDTO, string auth0ID)
     {
-        if (auth0ID == null) throw new ArgumentNullException(nameof(auth0ID));
         var user = _context.Users.GetByAuth0ID(auth0ID);
-        if (user == null) throw new ArgumentNullException(nameof(auth0ID));
-
         var fansub = _context.Fansubs.Add(fansubDTO.MapToModel()).Entity;
-
         var editPermissionsPermission = _context.Permission.Single(p => p.Grant == EPermission.EditPermissions);
         var createSubtitlePermission = _context.Permission.Single(p => p.Grant == EPermission.CreateSubtitle);
+
         var adminRole = _context.FansubRoles.Add(new FansubRole
         {
             Fansub = fansub,
@@ -85,23 +78,25 @@ public class FansubService : IFansubService
         return fansub;
     }
 
-    public void Join(string acronym, string? auth0ID)
+    public void Join(string acronym, string auth0ID)
     {
-        if (auth0ID == null) throw new ArgumentNullException(nameof(auth0ID));
         var user = _context.Users.GetByAuth0ID(auth0ID);
-        if (user == null) throw new ArgumentNullException(nameof(auth0ID));
-
         var fansub = _context.Fansubs.GetByAcronym(acronym);
-        if (fansub == null) throw new ArgumentNullException(nameof(acronym));
 
         var isAlreadyMember = _context.Memberships.Any(membership => membership.UserID == user.ID && membership.FansubID == fansub.ID);
-        if (isAlreadyMember) throw new InvalidOperationException("User is already a member of the fansub");
+        if (isAlreadyMember)
+        {
+            throw new AlmDbException(EValidationCode.AlreadyInDB, "member", new()
+            {
+                { nameof(user), user.Name },
+                { nameof(fansub), fansub.Name },
+            });
+        }
 
         var memberRole = _context.FansubRoles.SingleOrDefault(role => role.FansubID == fansub.ID && role.Name == "Member");
         if (memberRole == null)
         {
             var createSubtitlePermission = _context.Permission.Single(p => p.Grant == EPermission.CreateSubtitle);
-
 
             memberRole = _context.FansubRoles.Add(new FansubRole
             {
@@ -121,17 +116,13 @@ public class FansubService : IFansubService
         _context.SaveChanges();
     }
 
-    public void UpdateRoles(string acronym, string? auth0ID, Dictionary<string, IEnumerable<EPermission>> roles)
+    public void UpdateRoles(string acronym, string auth0ID, Dictionary<string, IEnumerable<EPermission>> roles)
     {
-        if (auth0ID == null) throw new ArgumentNullException(nameof(auth0ID));
         var user = _context.Users.GetByAuth0ID(auth0ID);
-        if (user == null) throw new ArgumentNullException(nameof(auth0ID));
-
         var fansub = _context.Fansubs.GetByAcronym(acronym);
-        if (fansub == null) throw new ArgumentNullException(nameof(acronym));
 
         var hasPermissionToEdit = _context.Memberships.HasUserPermissionInFansub(fansub.ID, user.ID, EPermission.EditPermissions);
-        if (!hasPermissionToEdit) throw new ArgumentNullException(nameof(auth0ID));
+        if (!hasPermissionToEdit) throw new AlmPermissionException(EPermission.EditPermissions, user.Name, fansub.Name);
 
         if (!roles["Admin"].Contains(EPermission.EditPermissions))
         {

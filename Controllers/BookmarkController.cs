@@ -1,4 +1,5 @@
-﻿using Almanime.Services.Interfaces;
+﻿using Almanime.Models;
+using Almanime.Services.Interfaces;
 using Almanime.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,7 +34,7 @@ public class BookmarkController : ControllerBase
 
         _bookmarkService.Create(auth0ID, animeSlug);
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpDelete("animeSlug/{animeSlug}")]
@@ -44,6 +45,6 @@ public class BookmarkController : ControllerBase
 
         _bookmarkService.Delete(auth0ID, animeSlug);
 
-        return Ok();
+        return NoContent();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Almanime.Models;
+using Almanime.Models.Enums;
 using Almanime.Repositories;
 using Almanime.Repositories.Queries;
 using Almanime.Services.Interfaces;
@@ -14,17 +15,12 @@ public class BookmarkService : IBookmarkService
         _context = context;
     }
 
-    public IQueryable<Bookmark> GetByAuth0ID(string? auth0ID) => _context.Bookmarks.Where(bookmark => bookmark.User.Auth0ID == auth0ID);
+    public IQueryable<Bookmark> GetByAuth0ID(string auth0ID) => _context.Bookmarks.Where(bookmark => bookmark.User.Auth0ID == auth0ID);
 
-    public void Create(string? auth0ID, string slug)
+    public void Create(string auth0ID, string slug)
     {
-        if (auth0ID == null) throw new ArgumentNullException(nameof(auth0ID));
-
         var user = _context.Users.GetByAuth0ID(auth0ID);
-        if (user == null) throw new ArgumentException(null, nameof(auth0ID));
-
         var anime = _context.Animes.GetBySlug(slug);
-        if (anime == null) throw new ArgumentException(null, nameof(slug));
 
         var bookmark = _context.Bookmarks.SingleOrDefault(bookmark => bookmark.UserID == user.ID && bookmark.AnimeID == anime.ID);
         if (bookmark != null) return;
@@ -37,15 +33,10 @@ public class BookmarkService : IBookmarkService
         _context.SaveChanges();
     }
 
-    public void Delete(string? auth0ID, string slug)
+    public void Delete(string auth0ID, string slug)
     {
-        if (auth0ID == null) throw new ArgumentNullException(nameof(auth0ID));
-
         var user = _context.Users.GetByAuth0ID(auth0ID);
-        if (user == null) throw new ArgumentException(null, nameof(auth0ID));
-
         var anime = _context.Animes.GetBySlug(slug);
-        if (anime == null) throw new ArgumentException(null, nameof(slug));
 
         var bookmark = _context.Bookmarks.SingleOrDefault(bookmark => bookmark.UserID == user.ID && bookmark.AnimeID == anime.ID);
         if (bookmark == null) return;

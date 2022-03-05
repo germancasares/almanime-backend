@@ -1,6 +1,7 @@
 using Almanime.Repositories;
 using Almanime.Services;
 using Almanime.Services.Interfaces;
+using Almanime.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -32,12 +33,14 @@ builder.Services.AddSingleton<ElasticClient>(
     )
 );
 
+
 builder.Services.AddCors();
 
 builder.Services.AddControllers().AddJsonOptions(opts =>
 {
     opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
+
 // Learn more about configuring Swagger/OpenAlmanime at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(setup =>
@@ -106,6 +109,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 } 
@@ -115,6 +119,8 @@ else
     var db = scope.ServiceProvider.GetRequiredService<AlmanimeContext>();
     db.Database.Migrate();
 }
+
+app.UseMiddleware<ErrorHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 

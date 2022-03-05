@@ -1,4 +1,5 @@
-﻿using Almanime.Models.DTO;
+﻿using Almanime.Models;
+using Almanime.Models.DTO;
 using Almanime.Services.Interfaces;
 using Almanime.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -35,11 +36,7 @@ public class UserController : ControllerBase
     {
         var auth0ID = User.GetAuth0ID();
 
-        if (auth0ID == null) throw new ArgumentNullException(nameof(auth0ID));
-
         var user = _userService.GetByAuth0ID(auth0ID);
-
-        if (user == null) return NotFound();
 
         return Ok(new {
             user.Name,
@@ -53,8 +50,7 @@ public class UserController : ControllerBase
     {
         var auth0ID = User.GetAuth0ID();
 
-        if (auth0ID == null) throw new ArgumentNullException(nameof(auth0ID));
-        if (userDTO.Name == null) throw new ArgumentNullException(nameof(userDTO));
+        if (userDTO.Name == null) throw new AlmNullException(nameof(userDTO.Name));
 
         _userService.Create(auth0ID, userDTO.Name);
 
@@ -67,8 +63,7 @@ public class UserController : ControllerBase
     {
         var auth0ID = User.GetAuth0ID();
 
-        if (auth0ID == null) throw new ArgumentNullException(nameof(auth0ID));
-        if (userDTO.Name == null) throw new ArgumentNullException(nameof(userDTO));
+        if (userDTO.Name == null) throw new AlmNullException(nameof(userDTO.Name));
 
         _userService.Update(auth0ID, userDTO.Name);
 

@@ -23,7 +23,7 @@ public class AnimeService : IAnimeService
         _elasticClient = elasticClient;
     }
 
-    public Anime? GetBySlug(string slug) => _context.Animes.GetBySlug(slug);
+    public Anime GetBySlug(string slug) => _context.Animes.GetBySlug(slug);
     public IQueryable<Anime> Get() => _context.Animes.AsQueryable().AsNoTracking();
 
     public IReadOnlyCollection<AnimeDocument> Search(string animeName) => _elasticClient.Search<AnimeDocument>(s =>

@@ -1,5 +1,6 @@
 ﻿using Almanime.Models;
 using Almanime.Repositories;
+using Almanime.Repositories.Queries;
 using Almanime.Services.Interfaces;
 
 namespace Almanime.Services;
@@ -13,7 +14,7 @@ public class UserService : IUserService
         _context = context;
     }
 
-    public User? GetByAuth0ID(string auth0ID) => _context.Users.SingleOrDefault(user => user.Auth0ID == auth0ID);
+    public User GetByAuth0ID(string auth0ID) => _context.Users.GetByAuth0ID(auth0ID);
     public IQueryable<User> Get() => _context.Users.AsQueryable();
 
     public void Create(string auth0Id, string name)
@@ -25,10 +26,9 @@ public class UserService : IUserService
         _context.SaveChanges();
     }
 
-    public void Update(string auth0Id, string name)
+    public void Update(string auth0ID, string name)
     {
-        var user = _context.Users.SingleOrDefault(user => user.Auth0ID == auth0Id);
-        if (user == null) return;
+        var user = _context.Users.GetByAuth0ID(auth0ID);
 
         user.Name = name;
 

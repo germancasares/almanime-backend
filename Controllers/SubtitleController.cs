@@ -1,4 +1,5 @@
-﻿using Almanime.Models.DTO;
+﻿using Almanime.Models;
+using Almanime.Models.DTO;
 using Almanime.Services.Interfaces;
 using Almanime.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -21,7 +22,17 @@ public class SubtitleController : ControllerBase
     [Authorize]
     public async Task<IActionResult> PostAsync([FromForm]SubtitleDTO subtitleDTO)
     {
-        var subtitle = await _subtitleService.Create(subtitleDTO, User.GetAuth0ID());
+        if (subtitleDTO.FansubAcronym == null) throw new AlmNullException(nameof(subtitleDTO.FansubAcronym));
+        if (subtitleDTO.AnimeSlug == null) throw new AlmNullException(nameof(subtitleDTO.AnimeSlug));
+        if (subtitleDTO.File == null) throw new AlmNullException(nameof(subtitleDTO.File));
+
+        var subtitle = await _subtitleService.Create(
+            User.GetAuth0ID(),
+            subtitleDTO.FansubAcronym,
+            subtitleDTO.AnimeSlug,
+            subtitleDTO.EpisodeNumber,
+            subtitleDTO.File
+        );
 
         return Ok(new {
             subtitle.Url,

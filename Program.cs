@@ -21,6 +21,8 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
+    builder.WebHost.UseSentry();
+
     builder.Configuration.AddEnvironmentVariables();
 
     builder.Services.AddDbContext<AlmanimeContext>(options =>
@@ -45,7 +47,10 @@ try
 
     builder.Host.UseSerilog((context, loggerConfig) => loggerConfig
         .WriteTo.Console()
-        .ReadFrom.Configuration(context.Configuration)
+        .WriteTo.Sentry(options =>
+        {
+            builder.Configuration.GetSection("Sentry").Bind(options);
+        })
     );
 
     builder.Services.AddCors();
@@ -117,6 +122,8 @@ try
 
 
     var app = builder.Build();
+
+    app.UseSentryTracing();
 
     app.UseSerilogRequestLogging();
 

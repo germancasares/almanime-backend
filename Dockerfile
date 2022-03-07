@@ -18,7 +18,7 @@ RUN dotnet publish "Almanime.csproj" -c Release -o /app/publish
 
 FROM base AS final
 ARG RELEASE
-ENV SENTRY_RELEASE=RELEASE
+ENV SENTRY_RELEASE=$RELEASE
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Almanime.dll"]

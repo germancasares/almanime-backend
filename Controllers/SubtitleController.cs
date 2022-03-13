@@ -12,10 +12,20 @@ namespace Almanime.Controllers;
 public class SubtitleController : ControllerBase
 {
     private readonly ISubtitleService _subtitleService;
+    private readonly IFileService _fileService;
 
-    public SubtitleController(ISubtitleService subtitleService)
+    public SubtitleController(ISubtitleService subtitleService, IFileService fileService)
     {
         _subtitleService = subtitleService;
+        _fileService = fileService;
+    }
+
+    [HttpGet("fansub/{fansubAcronym}/anime/{animeSlug}/episode/{episodeNumber}")]
+    public async Task<IActionResult> GetAsync(string fansubAcronym, string animeSlug, int episodeNumber)
+    {
+        var (file, contentType, fileName) = await _fileService.DownloadSubtitle(fansubAcronym, animeSlug, episodeNumber);
+
+        return File(file, contentType, fileName);
     }
 
     [HttpPost]

@@ -38,15 +38,13 @@ public class SubtitleService : ISubtitleService
         var hasPermissionToCreate = _context.Memberships.HasUserPermissionInFansub(fansub.ID, user.ID, EPermission.CreateSubtitle);
         if (!hasPermissionToCreate) throw new AlmPermissionException(EPermission.CreateSubtitle, user.Name, fansub.Name);
 
-        var subtitleID = Guid.NewGuid();
-
-        var url = await _fileService.UploadSubtitle(file, fansub.ID, subtitleID);
+        await _fileService.UploadSubtitle(file, fansubAcronym, animeSlug, episodeNumber, episode.Anime.Name, file.GetSubtitleFormat());
 
         var subtitle = _context.Subtitles.Add(new (
-            id: subtitleID,
+            id: Guid.NewGuid(),
             status: ESubtitleStatus.Published,
             format: file.GetSubtitleFormat(),
-            url: url,
+            url: $"/subtitle/fansub/{fansubAcronym}/anime/{animeSlug}/episode/{episodeNumber}",
             episodeID: episode.ID,
             membershipID: membership.ID
         ));

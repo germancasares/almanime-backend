@@ -63,15 +63,15 @@ public class EpisodeService : IEpisodeService
         {
             anime.Episodes.ForEach(episode =>
             {
-                  if (_context.Episodes.GetByKitsuIdAndNumber(anime.KitsuID, episode.Number) == null)
-                  {
-                      Create(episode, anime.ID);
-                  }
-                  else
-                  {
-                      Update(episode, anime.KitsuID);
-                  }
-              });
+                if (_context.Episodes.GetByKitsuIdAndNumber(anime.KitsuID, episode.Number) == null)
+                {
+                    Create(episode, anime.ID);
+                }
+                else
+                {
+                    Update(episode, anime.KitsuID);
+                }
+            });
         });
     }
 }

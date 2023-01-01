@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using System;
 
 #nullable disable
 
@@ -11,8 +11,7 @@ namespace Almanime.Migrations
         {
             migrationBuilder.CreateTable(
                 name: "Fansubs",
-                columns: table => new
-                {
+                columns: table => new {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Acronym = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false),

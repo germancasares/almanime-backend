@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using System;
 
 #nullable disable
 
@@ -11,8 +11,7 @@ namespace Almanime.Migrations
         {
             migrationBuilder.CreateTable(
                 name: "Permission",
-                columns: table => new
-                {
+                columns: table => new {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<int>(type: "int", nullable: false),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -25,8 +24,7 @@ namespace Almanime.Migrations
 
             migrationBuilder.CreateTable(
                 name: "FansubRolePermission",
-                columns: table => new
-                {
+                columns: table => new {
                     PermissionsID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FansubRolesID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FansubRolesFansubID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)

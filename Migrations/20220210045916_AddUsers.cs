@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using System;
 
 #nullable disable
 
@@ -11,8 +11,7 @@ namespace Almanime.Migrations
         {
             migrationBuilder.CreateTable(
                 name: "FansubRole",
-                columns: table => new
-                {
+                columns: table => new {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FansubID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -32,8 +31,7 @@ namespace Almanime.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Users",
-                columns: table => new
-                {
+                columns: table => new {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Auth0ID = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -47,8 +45,7 @@ namespace Almanime.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Bookmark",
-                columns: table => new
-                {
+                columns: table => new {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AnimeID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -74,8 +71,7 @@ namespace Almanime.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Membership",
-                columns: table => new
-                {
+                columns: table => new {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     RoleID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),

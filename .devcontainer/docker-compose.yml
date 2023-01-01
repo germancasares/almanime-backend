@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  alm-api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ..:/almanime-backend-dotnet6:cached
+    command: sleep infinity
+    network_mode: service:alm-db
+
+  alm-blob:
+    image: mcr.microsoft.com/azure-blob-storage:1.4.2-linux-amd64
+    container_name: alm-blob
+    volumes:
+      - blob-data:/blobroot
+    ports:
+      - 11002:11002
+    environment:
+      - LOCAL_STORAGE_ACCOUNT_NAME=almanimeblobs
+      - LOCAL_STORAGE_ACCOUNT_KEY=m1Bmfyca0IzUz8AdiBoXyUMukmj1eXOZO5A/NnfvcVJLlc3enGgHZiaWJesGFidjz5yaQcWD2WUYUs6dg7f0bw==
+    restart: unless-stopped
+
+  alm-db:
+    container_name: alm-db
+    image: mcr.microsoft.com/azure-sql-edge:latest
+    volumes:
+      - db-data:/var/opt/mssql
+    ports:
+      - 1433:1433
+    environment:
+      ACCEPT_EULA: Y
+      MSSQL_SA_PASSWORD: P@ssw0rd
+    restart: unless-stopped
+
+volumes:
+  blob-data:
+  db-data:

@@ -43,9 +43,9 @@ public class FileService : IFileService
     }
 
     public async Task<Uri> UploadSubtitle(
-        IFormFile subtitle, 
-        string fansubAcronym, 
-        string animeSlug, 
+        IFormFile subtitle,
+        string fansubAcronym,
+        string animeSlug,
         int episodeNumber,
         string animeName,
         ESubtitleFormat format

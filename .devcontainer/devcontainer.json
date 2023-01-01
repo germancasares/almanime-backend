@@ -1,0 +1,68 @@
+{
+	"name": "C# (.NET) and MS SQL",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "alm-api",
+	"workspaceFolder": "/${localWorkspaceFolderBasename}",
+	"features": {
+		"ghcr.io/devcontainers/features/dotnet:1": {},
+		"ghcr.io/devcontainers-contrib/features/pulumi:1": {}
+	},
+	"postCreateCommand": "bash .devcontainer/mssql/postCreateCommand.sh 'P@ssw0rd' './bin/Debug/' './.devcontainer/mssql/'",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"mhutchie.git-graph",
+				"GitHub.vscode-pull-request-github",
+				"bierner.markdown-preview-github-styles",
+				"ms-dotnettools.csharp",
+				"ms-mssql.mssql",
+				"aliasadidev.nugetpackagemanagergui"
+			],
+			"settings": {
+				"diffEditor.codeLens": true,
+				"debug.terminal.clearBeforeReusing": true,
+				"editor.bracketPairColorization.enabled": true,
+				"editor.formatOnSave": true,
+				"editor.guides.bracketPairs": "active",
+				"editor.tabSize": 2,
+				"explorer.confirmDragAndDrop": false,
+				"files.autoSave": "afterDelay",
+				"git-graph.repository.fetchAndPrune": true,
+				"git-graph.repository.fetchAndPruneTags": true,
+				"git-graph.repository.onLoad.showCheckedOutBranch": true,
+				"git-graph.repository.onLoad.showSpecificBranches": [
+					"master",
+					"remotes/origin/master"
+				],
+				"git.autofetch": true,
+				"git.confirmSync": false,
+				"git.enableSmartCommit": true,
+				"git.pruneOnFetch": true,
+				"window.autoDetectColorScheme": true,
+				"[json]": {
+					"editor.defaultFormatter": "vscode.json-language-features"
+				},
+				"omnisharp.organizeImportsOnFormat": true,
+				"omnisharp.enableImportCompletion": true,
+				"omnisharp.enableRoslynAnalyzers": true,
+				"omnisharp.enableEditorConfigSupport": true,
+				"mssql.connections": [
+					{
+						"server": "localhost,1433",
+						"database": "",
+						"authenticationType": "SqlLogin",
+						"user": "sa",
+						"password": "P@ssw0rd",
+						"emptyPasswordInput": false,
+						"savePassword": false,
+						"profileName": "mssql-container"
+					}
+				]
+			}
+		}
+	},
+	"forwardPorts": [
+		1433,
+		11002
+	]
+}

@@ -94,9 +94,9 @@ try
                 Implicit = new OpenApiOAuthFlow
                 {
                     Scopes = new Dictionary<string, string>
-                    {
-                        { "alm:read_data", "Read data from Almanime" }
-                    }
+            {
+            { "alm:read_data", "Read data from Almanime" }
+            }
                 }
             }
         });

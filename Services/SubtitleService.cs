@@ -40,7 +40,7 @@ public class SubtitleService : ISubtitleService
 
         await _fileService.UploadSubtitle(file, fansubAcronym, animeSlug, episodeNumber, episode.Anime.Name, file.GetSubtitleFormat());
 
-        var subtitle = _context.Subtitles.Add(new (
+        var subtitle = _context.Subtitles.Add(new(
             id: Guid.NewGuid(),
             status: ESubtitleStatus.Published,
             format: file.GetSubtitleFormat(),

@@ -22,8 +22,7 @@ public class ErrorHandlerMiddleware
         {
             var response = context.Response;
             response.StatusCode = (int)HttpStatusCode.BadRequest;
-            await response.WriteAsJsonAsync(new
-            {
+            await response.WriteAsJsonAsync(new {
                 almException.Field,
                 almException.Rule,
                 almException.Code,

@@ -1,7 +1,7 @@
 ﻿using Almanime.Kitsu.Anime;
 using Almanime.Models;
-using Almanime.Models.DTO;
 using Almanime.Models.Documents;
+using Almanime.Models.DTO;
 using Almanime.Models.Enums;
 using Almanime.Repositories;
 using Almanime.Repositories.Queries;
@@ -33,7 +33,7 @@ public class AnimeService : IAnimeService
 
     public IQueryable<Anime> GetSeason(int year, ESeason season)
     {
-        var startWinter = new DateTime(year-1, 12, 1);
+        var startWinter = new DateTime(year - 1, 12, 1);
         var startSpring = new DateTime(year, 3, 1);
 
         if (season == ESeason.Winter) return _context.Animes.Where(anime => anime.Season == season && anime.StartDate >= startWinter && anime.StartDate < startSpring);

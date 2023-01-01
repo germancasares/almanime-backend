@@ -21,7 +21,7 @@ public abstract class AlmException : Exception
 
 public class AlmNullException : AlmException
 {
-    public AlmNullException(string field) : base(EValidationCode.NotEmpty, field) {}
+    public AlmNullException(string field) : base(EValidationCode.NotEmpty, field) { }
 }
 
 public class AlmDbException : AlmException

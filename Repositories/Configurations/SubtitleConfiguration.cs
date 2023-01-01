@@ -9,7 +9,7 @@ public class SubtitleConfiguration : BaseModelConfiguration<Subtitle>
     {
         base.Configure(builder);
 
-        builder.HasKey(subtitle => new { 
+        builder.HasKey(subtitle => new {
             subtitle.EpisodeID,
             subtitle.MembershipID
         });

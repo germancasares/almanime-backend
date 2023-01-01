@@ -3,10 +3,10 @@
 public class Episode : Base
 {
     public Episode(
-        int number, 
-        string? name, 
-        DateTime? aired, 
-        int? duration, 
+        int number,
+        string? name,
+        DateTime? aired,
+        int? duration,
         Guid animeID
     )
     {

@@ -102,7 +102,7 @@ public class FansubService : IFansubService
             {
                 Fansub = fansub,
                 Name = "Member",
-                Permissions = new [] { createSubtitlePermission }
+                Permissions = new[] { createSubtitlePermission }
             }).Entity;
         }
 
@@ -129,7 +129,7 @@ public class FansubService : IFansubService
             roles["Admin"] = roles["Admin"].Append(EPermission.EditPermissions);
         }
 
-        foreach(var roleName in roles.Keys)
+        foreach (var roleName in roles.Keys)
         {
             var role = _context.FansubRoles.SingleOrDefault(r => r.Name == roleName && r.FansubID == fansub.ID);
             if (role == null) continue;

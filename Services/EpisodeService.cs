@@ -51,8 +51,7 @@ public class EpisodeService : IEpisodeService
     {
         var animes = _context.Animes.Select(anime => new { anime.KitsuID, anime.ID }).ToList();
 
-        var tasks = animes.Select(async anime => new
-        {
+        var tasks = animes.Select(async anime => new {
             anime.ID,
             anime.KitsuID,
             Episodes = await KitsuEpisodes.Fetch(anime.KitsuID),
@@ -64,15 +63,15 @@ public class EpisodeService : IEpisodeService
         {
             anime.Episodes.ForEach(episode =>
             {
-                if (_context.Episodes.GetByKitsuIdAndNumber(anime.KitsuID, episode.Number) == null)
-                {
-                    Create(episode, anime.ID);
-                }
-                else
-                {
-                    Update(episode, anime.KitsuID);
-                }
-            });
+                  if (_context.Episodes.GetByKitsuIdAndNumber(anime.KitsuID, episode.Number) == null)
+                  {
+                      Create(episode, anime.ID);
+                  }
+                  else
+                  {
+                      Update(episode, anime.KitsuID);
+                  }
+              });
         });
     }
 }

@@ -30,7 +30,7 @@ public class SubtitleController : ControllerBase
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> PostAsync([FromForm]SubtitleDTO subtitleDTO)
+    public async Task<IActionResult> PostAsync([FromForm] SubtitleDTO subtitleDTO)
     {
         if (subtitleDTO.FansubAcronym == null) throw new AlmNullException(nameof(subtitleDTO.FansubAcronym));
         if (subtitleDTO.AnimeSlug == null) throw new AlmNullException(nameof(subtitleDTO.AnimeSlug));

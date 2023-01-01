@@ -76,7 +76,8 @@ public class AnimeController : ControllerBase
 
         if (includeMeta)
         {
-            animeSeasonPageView = animeSeasonPageView with { 
+            animeSeasonPageView = animeSeasonPageView with
+            {
                 Meta = new()
                 {
                     BaseUrl = Request.GetFullPath(),

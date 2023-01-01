@@ -6,9 +6,9 @@ public class Subtitle : Base
 {
     public Subtitle(
         Guid id,
-        ESubtitleStatus status, 
-        ESubtitleFormat format, 
-        string url, 
+        ESubtitleStatus status,
+        ESubtitleFormat format,
+        string url,
         Guid episodeID,
         Guid membershipID
     ) : this(status, format, url, episodeID, membershipID)

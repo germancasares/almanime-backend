@@ -7,7 +7,11 @@
 		"ghcr.io/devcontainers/features/dotnet:1": {},
 		"ghcr.io/devcontainers-contrib/features/pulumi:1": {}
 	},
-	"postCreateCommand": "bash .devcontainer/mssql/postCreateCommand.sh 'P@ssw0rd' './bin/Debug/' './.devcontainer/mssql/'",
+	"postCreateCommand": {
+		"sql": "bash .devcontainer/mssql/postCreateCommand.sh 'P@ssw0rd' './bin/Debug/' './.devcontainer/mssql/'",
+		"ef": "dotnet tool install --global dotnet-ef",
+		"https": "dotnet dev-certs https --trust"
+	},
 	"customizations": {
 		"vscode": {
 			"extensions": [

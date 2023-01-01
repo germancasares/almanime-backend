@@ -7,4 +7,5 @@ Optimize-DbContext
 Remove-Migration  
 Scaffold-DbContext  
 Script-Migration  
-Update-Database  
+Update-Database: dotnet-ef database update
+dotnet run

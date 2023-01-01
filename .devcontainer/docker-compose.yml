@@ -2,6 +2,7 @@ version: '3'
 
 services:
   alm-api:
+    container_name: alm-api
     build: 
       context: .
       dockerfile: Dockerfile

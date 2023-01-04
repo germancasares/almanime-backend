@@ -39,7 +39,7 @@ try
     builder.Services.AddScoped<IFileService, FileService>();
     builder.Services.AddScoped<IBookmarkService, BookmarkService>();
     builder.Services.AddScoped<IRoleService, RoleService>();
-    builder.Services.AddSingleton<ElasticClient>(
+    builder.Services.AddSingleton(
         new ElasticClient(
             new Uri(builder.Configuration.GetConnectionString("ElasticSearch"))
         )

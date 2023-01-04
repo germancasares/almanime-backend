@@ -12,6 +12,9 @@
 		"ef": "dotnet tool install --global dotnet-ef",
 		"https": "dotnet dev-certs https --trust"
 	},
+	"postAttachCommand": {
+		"restore": "rm -rf obj/ bin/ && dotnet clean && dotnet restore && dotnet build"
+	},
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -21,6 +24,7 @@
 				"ms-dotnettools.csharp",
 				"ms-mssql.mssql",
 				"aliasadidev.nugetpackagemanagergui"
+				// "richardwillis.vscode-entity-framework"
 			],
 			"settings": {
 				"diffEditor.codeLens": true,

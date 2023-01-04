@@ -32,6 +32,7 @@ public static class AnimeMapper
         anime.Synopsis = animeDTO.Synopsis;
         anime.CoverImages = animeDTO.CoverImageUrl;
         anime.PosterImages = animeDTO.PosterImageUrl;
+        anime.ModificationDate = DateTime.Now;
 
         return anime;
     }
@@ -56,5 +57,7 @@ public static class AnimeMapper
         CreationDate = anime.CreationDate,
         Name = anime.Name,
         Slug = anime.Slug,
+        Season = anime.Season,
+        StartDate = anime.StartDate
     };
 }

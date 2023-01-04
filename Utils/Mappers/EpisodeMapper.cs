@@ -20,6 +20,7 @@ public static class EpisodeMapper
         episode.Number = episodeDTO.Number;
         episode.Name = episodeDTO.Name;
         episode.Duration = episodeDTO.Duration;
+        episode.ModificationDate = DateTime.Now;
 
         return episode;
     }

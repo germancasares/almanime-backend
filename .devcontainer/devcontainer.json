@@ -18,8 +18,8 @@
     "restore": "rm -rf obj/ bin/ && dotnet clean && dotnet restore && dotnet build"
   },
   "forwardPorts": [
-    5000,
-    5001
+    5116,
+    7116
   ],
   "portsAttributes": {
     "5001": {

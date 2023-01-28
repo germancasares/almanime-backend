@@ -12,9 +12,9 @@ services:
     command: sleep infinity
     container_name: alm-api
     environment:
-      - ConnectionStrings:Almanime=Server=alm-db;Database=Almanime;User=sa;Password=P@ssw0rd
-      - ConnectionStrings:ElasticSearch=http://alm-search:9200
-      - ConnectionStrings:AzureWebJobsStorage=DefaultEndpointsProtocol=https;BlobEndpoint=http://alm-blob:11002/almanimeblobs;AccountName=almanimeblobs;AccountKey=m1Bmfyca0IzUz8AdiBoXyUMukmj1eXOZO5A/NnfvcVJLlc3enGgHZiaWJesGFidjz5yaQcWD2WUYUs6dg7f0bw==
+      - ConnectionStrings__Almanime=Server=alm-db;Database=Almanime;User=sa;Password=P@ssw0rd;TrustServerCertificate=True
+      - ConnectionStrings__ElasticSearch=http://alm-search:9200
+      - ConnectionStrings__AzureWebJobsStorage=DefaultEndpointsProtocol=https;BlobEndpoint=http://alm-blob:11002/almanimeblobs;AccountName=almanimeblobs;AccountKey=m1Bmfyca0IzUz8AdiBoXyUMukmj1eXOZO5A/NnfvcVJLlc3enGgHZiaWJesGFidjz5yaQcWD2WUYUs6dg7f0bw==
     depends_on:
       - alm-db
       - alm-search

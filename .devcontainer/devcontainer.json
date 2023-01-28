@@ -34,8 +34,8 @@
         "bierner.markdown-preview-github-styles",
         "ms-dotnettools.csharp",
         "ms-mssql.mssql",
-        "aliasadidev.nugetpackagemanagergui",
-        "richardwillis.vscode-entity-framework"
+        // "richardwillis.vscode-entity-framework",
+        "aliasadidev.nugetpackagemanagergui"
       ],
       "settings": {
         "diffEditor.codeLens": true,

@@ -1,67 +1,77 @@
 version: '3'
 
 services:
+    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
+    # network_mode: service:alm-db
   alm-api:
-    container_name: alm-api
     build: 
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ..:/almanime-backend-dotnet6:cached
+      - ..:/almanime-backend:cached
     command: sleep infinity
-    network_mode: service:alm-db
-
-  alm_kibana:
-    image: kibana:7.16.3
-    container_name: alm_kibana
-    volumes:
-      - kibana-data:/usr/share/kibana/data
-    ports:
-      - 5601:5601
+    container_name: alm-api
     environment:
-      - ELASTICSEARCH_HOSTS=http://alm_search:9200
+      - ConnectionStrings:Almanime=Server=alm-db;Database=Almanime;User=sa;Password=P@ssw0rd
+      - ConnectionStrings:ElasticSearch=http://alm-search:9200
+      - ConnectionStrings:AzureWebJobsStorage=DefaultEndpointsProtocol=https;BlobEndpoint=http://alm-blob:11002/almanimeblobs;AccountName=almanimeblobs;AccountKey=m1Bmfyca0IzUz8AdiBoXyUMukmj1eXOZO5A/NnfvcVJLlc3enGgHZiaWJesGFidjz5yaQcWD2WUYUs6dg7f0bw==
     depends_on:
-      - alm_search
+      - alm-db
+      - alm-search
+      - alm-blob
     restart: unless-stopped
 
-  alm_search:
-    image: elasticsearch:7.16.3
-    container_name: alm_search
+  alm-kibana:
+    image: kibana:7.16.3
+    container_name: alm-kibana
     volumes:
-      - search-data:/usr/share/elasticsearch/data
+      - alm-kibana:/usr/share/kibana/data
+    environment:
+      - ELASTICSEARCH_HOSTS=http://alm-search:9200
+    depends_on:
+      - alm-search
+    ports:
+      - 5601:5601
+    restart: unless-stopped
+
+  alm-search:
+    image: elasticsearch:7.16.3
+    container_name: alm-search
+    volumes:
+      - alm-search:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
     ports:
       - 9200:9200
       - 9300:9300
-    environment:
-      - discovery.type=single-node
     restart: unless-stopped
 
   alm-blob:
     image: mcr.microsoft.com/azure-blob-storage:1.4.2-linux-amd64
     container_name: alm-blob
-    volumes:
-      - blob-data:/blobroot
-    ports:
-      - 11002:11002
     environment:
       - LOCAL_STORAGE_ACCOUNT_NAME=almanimeblobs
       - LOCAL_STORAGE_ACCOUNT_KEY=m1Bmfyca0IzUz8AdiBoXyUMukmj1eXOZO5A/NnfvcVJLlc3enGgHZiaWJesGFidjz5yaQcWD2WUYUs6dg7f0bw==
+    volumes:
+      - alm-blob:/blobroot
+    ports:
+      - 11002:11002
     restart: unless-stopped
 
   alm-db:
-    container_name: alm-db
     image: mcr.microsoft.com/azure-sql-edge:latest
+    container_name: alm-db
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=P@ssw0rd
     volumes:
-      - db-data:/var/opt/mssql
+      - alm-db:/var/opt/mssql
     ports:
       - 1433:1433
-    environment:
-      ACCEPT_EULA: Y
-      MSSQL_SA_PASSWORD: P@ssw0rd
     restart: unless-stopped
 
 volumes:
-  kibana-data:
-  search-data:
-  blob-data:
-  db-data:
+  alm-kibana:
+  alm-search:
+  alm-blob:
+  alm-db:

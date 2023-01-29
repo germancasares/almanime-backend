@@ -45,6 +45,10 @@ services:
       - 9200:9200
       - 9300:9300
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G
 
   alm-blob:
     image: mcr.microsoft.com/azure-blob-storage:1.4.2-linux-amd64

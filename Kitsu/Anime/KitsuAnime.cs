@@ -9,105 +9,159 @@ namespace Almanime.Kitsu.Anime;
 
 public class KitsuAnime
 {
-    private const int MAX_PER_PAGE = 20;
-    private const string KITSU_API = "https://kitsu.io/api/edge";
-    private static readonly HttpClient Client = new();
+  private const int MAX_PER_PAGE = 20;
+  private const string KITSU_API = "https://kitsu.io/api/edge";
+  private const string ANIME_MAPPING_URL = "https://raw.githubusercontent.com/manami-project/anime-offline-database/master/anime-offline-database-minified.json";
+  private static readonly HttpClient Client = new();
 
-    public static async Task<List<AnimeDTO>> FetchSeason(int year, ESeason season)
+  public static async Task<List<AnimeDTO>> FetchSeason(int year, ESeason season)
+  {
+    var mapping = await GetAnimeMapping();
+
+    var rawAnimes = await GetRawAnimes(year, season);
+
+    var rawAnimesFiltered = rawAnimes.Where(model => model.Id != null && IsProcessable(model.Attributes));
+
+#pragma warning disable CS8604 // Possible null reference argument.
+    var animesDTO = rawAnimesFiltered.Select(model =>
     {
-        var rawAnimes = await GetRawAnimes(year, season);
+      var ids = mapping.ContainsKey(model.Id) ? mapping[model.Id] : new Dictionary<string, int?>();
+      return MapToDTO(model.Id, model.Attributes, ids);
+    });
+#pragma warning restore CS8604 // Possible null reference argument.
 
-        var rawAnimesFiltered = rawAnimes.Where(model => model.Id != null && IsProcessable(model.Attributes));
+    var animesDTOFiltered = animesDTO.Where(a => a.Status != EAnimeStatus.Tba);
 
-        var animesDTO = rawAnimesFiltered.Select(model => MapToDTO(model.Id, model.Attributes));
+    return animesDTOFiltered.ToList();
+  }
 
-        var animesDTOFiltered = animesDTO.Where(a => a.Status != EAnimeStatus.Tba);
+  private static async Task<List<AnimeDataModel>> GetRawAnimes(int year, ESeason season)
+  {
+    var animeDataModels = new List<AnimeDataModel>();
+    var url = $"{KITSU_API}/anime?filter[seasonYear]={year}&filter[season]={season.ToString().ToLower()}&page[limit]={MAX_PER_PAGE}";
 
-        return animesDTOFiltered.ToList();
+    while (!string.IsNullOrWhiteSpace(url))
+    {
+      var response = await Client.GetStringAsync(url);
+      var animeCollection = JsonSerializer.Deserialize<AnimeCollection>(response, new JsonSerializerOptions { PropertyNameCaseInsensitive = true, });
+
+      animeDataModels.AddRange(animeCollection?.Data ?? new List<AnimeDataModel>());
+      url = animeCollection?.Links.Next;
     }
 
-    private static async Task<List<AnimeDataModel>> GetRawAnimes(int year, ESeason season)
+    return animeDataModels;
+  }
+
+  private static async Task<Dictionary<string, Dictionary<string, int?>>> GetAnimeMapping()
+  {
+    var response = await Client.GetStringAsync(ANIME_MAPPING_URL);
+    var animeMapping = JsonSerializer.Deserialize<Manami>(response, new JsonSerializerOptions { PropertyNameCaseInsensitive = true, });
+
+    var mapping = new Dictionary<string, Dictionary<string, int?>>();
+
+    Func<List<string>, string, int?> getID = (List<string> sources, string url) =>
     {
-        var animeDataModels = new List<AnimeDataModel>();
-        var url = $"{KITSU_API}/anime?filter[seasonYear]={year}&filter[season]={season.ToString().ToLower()}&page[limit]={MAX_PER_PAGE}";
+      var id = sources.LastOrDefault(source => source.Contains(url))?.Replace(url, "");
+      return id == null ? null : int.Parse(id);
+    };
 
-        while (!string.IsNullOrWhiteSpace(url))
-        {
-            var response = await Client.GetStringAsync(url);
-            var animeCollection = JsonSerializer.Deserialize<AnimeCollection>(response, new JsonSerializerOptions { PropertyNameCaseInsensitive = true, });
+    foreach (var manamiEntry in animeMapping?.Data ?? new List<ManamiAnime>())
+    {
+      if (manamiEntry.Type != "TV") continue;
 
-            animeDataModels.AddRange(animeCollection?.Data ?? new List<AnimeDataModel>());
-            url = animeCollection?.Links.Next;
-        }
+      var kitsuUrl = manamiEntry.Sources.LastOrDefault(source => source.Contains("https://kitsu.io/anime/"));
 
-        return animeDataModels;
+      if (kitsuUrl == null) continue;
+
+      mapping.Add(
+          kitsuUrl.Replace("https://kitsu.io/anime/", ""),
+          new Dictionary<string, int?>
+          {
+            {
+              "AniDB", getID(manamiEntry.Sources, "https://anidb.net/anime/")
+            },
+            {
+              "AniList", getID(manamiEntry.Sources, "https://anilist.co/anime/")
+            },
+            {
+              "MyAnimeList", getID(manamiEntry.Sources, "https://myanimelist.net/anime/")
+            },
+          }
+      );
     }
 
-    private static bool IsProcessable(AnimeAttributesModel anime)
+    return mapping;
+  }
+
+  private static bool IsProcessable(AnimeAttributesModel anime)
+  {
+    // Anime
+    if (anime is null)
     {
-        // Anime
-        if (anime is null)
-        {
-            return false;
-        }
-
-        // Subtype
-        if (anime.Subtype != "TV")
-        {
-            return false;
-        }
-
-        // Slug
-        if (anime.Slug is "delete")
-        {
-            return false;
-        }
-
-        // Status
-        var status = EnumHelper.GetEnumFromString<EAnimeStatus>(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(anime.Status ?? ""));
-        if (!status.HasValue)
-        {
-            return false;
-        }
-
-        // StartDate
-        if (Utils.DateTimeOrDefault(anime.StartDate) == null)
-        {
-            return false;
-        }
-
-        return true;
+      return false;
     }
 
-    private static AnimeDTO MapToDTO(string? kitsuId, AnimeAttributesModel anime)
+    // Subtype
+    if (anime.Subtype != "TV")
     {
-        var status = EnumHelper.GetEnumFromString<EAnimeStatus>(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(anime.Status ?? ""));
-        if (!status.HasValue) throw new Exception("The EAnimeStatus could not be parsed.");
-
-        DateTime.TryParseExact(anime.StartDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var startDate);
-
-        return new AnimeDTO
-        {
-            KitsuID = int.Parse(kitsuId ?? ""),
-            Slug = anime.Slug,
-            Name = anime.CanonicalTitle,
-            Synopsis = anime.Synopsis,
-            Status = status.Value,
-            StartDate = startDate,
-            EndDate = Utils.DateTimeOrDefault(anime.EndDate),
-            Season = EnumHelper.GetSeason(startDate.Month),
-            CoverImageUrl = new SizedImage
-            (
-                tiny: Uri.TryCreate(anime.CoverImage?.Tiny, new UriCreationOptions(), out var coverTiny) ? coverTiny : null,
-                small: Uri.TryCreate(anime.CoverImage?.Small, new UriCreationOptions(), out var coverSmall) ? coverSmall : null,
-                original: Uri.TryCreate(anime.CoverImage?.Original, new UriCreationOptions(), out var coverOriginal) ? coverOriginal : null
-            ),
-            PosterImageUrl = new SizedImage
-            (
-                tiny: Uri.TryCreate(anime.PosterImage?.Tiny, new UriCreationOptions(), out var posterTiny) ? posterTiny : null,
-                small: Uri.TryCreate(anime.PosterImage?.Small, new UriCreationOptions(), out var posterSmall) ? posterSmall : null,
-                original: Uri.TryCreate(anime.PosterImage?.Original, new UriCreationOptions(), out var posterOriginal) ? posterOriginal : null
-            ),
-        };
+      return false;
     }
+
+    // Slug
+    if (anime.Slug is "delete")
+    {
+      return false;
+    }
+
+    // Status
+    var status = EnumHelper.GetEnumFromString<EAnimeStatus>(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(anime.Status ?? ""));
+    if (!status.HasValue)
+    {
+      return false;
+    }
+
+    // StartDate
+    if (Utils.DateTimeOrDefault(anime.StartDate) == null)
+    {
+      return false;
+    }
+
+    return true;
+  }
+
+  private static AnimeDTO MapToDTO(string? kitsuId, AnimeAttributesModel anime, Dictionary<string, int?> ids)
+  {
+    var status = EnumHelper.GetEnumFromString<EAnimeStatus>(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(anime.Status ?? ""));
+    if (!status.HasValue) throw new Exception("The EAnimeStatus could not be parsed.");
+
+    DateTime.TryParseExact(anime.StartDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var startDate);
+
+    return new AnimeDTO
+    {
+      KitsuID = int.Parse(kitsuId ?? ""),
+      AniDBID = ids.TryGetValue("AniDB", out var aniDBID) ? aniDBID : null,
+      AniListID = ids.TryGetValue("AniList", out var aniListID) ? aniListID : null,
+      MyAnimeListID = ids.TryGetValue("MyAnimeList", out var myAnimeListID) ? myAnimeListID : null,
+
+      Slug = anime.Slug,
+      Name = anime.CanonicalTitle,
+      Synopsis = anime.Synopsis,
+      Status = status.Value,
+      StartDate = startDate,
+      EndDate = Utils.DateTimeOrDefault(anime.EndDate),
+      Season = EnumHelper.GetSeason(startDate.Month),
+      CoverImageUrl = new SizedImage
+        (
+          tiny: Uri.TryCreate(anime.CoverImage?.Tiny, new UriCreationOptions(), out var coverTiny) ? coverTiny : null,
+          small: Uri.TryCreate(anime.CoverImage?.Small, new UriCreationOptions(), out var coverSmall) ? coverSmall : null,
+          original: Uri.TryCreate(anime.CoverImage?.Original, new UriCreationOptions(), out var coverOriginal) ? coverOriginal : null
+        ),
+      PosterImageUrl = new SizedImage
+        (
+          tiny: Uri.TryCreate(anime.PosterImage?.Tiny, new UriCreationOptions(), out var posterTiny) ? posterTiny : null,
+          small: Uri.TryCreate(anime.PosterImage?.Small, new UriCreationOptions(), out var posterSmall) ? posterSmall : null,
+          original: Uri.TryCreate(anime.PosterImage?.Original, new UriCreationOptions(), out var posterOriginal) ? posterOriginal : null
+        ),
+    };
+  }
 }

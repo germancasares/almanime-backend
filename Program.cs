@@ -10,157 +10,155 @@ using Nest;
 using Serilog;
 using System.Text.Json.Serialization;
 
+var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
+
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .CreateBootstrapLogger();
+  .ReadFrom.Configuration(builder.Configuration)
+  .WriteTo.Console()
+  .WriteTo.Sentry(options =>
+    {
+      builder.Configuration.GetSection("Sentry").Bind(options);
+    })
+  .CreateBootstrapLogger();
 
 Log.Information("Starting up");
 
-
 try
 {
-    var builder = WebApplication.CreateBuilder(args);
+  builder.Host.UseSerilog();
+  builder.WebHost.UseSentry();
 
-    builder.WebHost.UseSentry();
+  builder.Services.AddDbContext<AlmanimeContext>(options =>
+  {
+    options.UseLazyLoadingProxies().UseSqlServer(builder.Configuration.GetConnectionString("Almanime"));
+  });
 
-    builder.Configuration.AddEnvironmentVariables();
+  // Add services to the container.
+  builder.Services.AddScoped<IAnimeService, AnimeService>();
+  builder.Services.AddScoped<IEpisodeService, EpisodeService>();
+  builder.Services.AddScoped<IUserService, UserService>();
+  builder.Services.AddScoped<IFansubService, FansubService>();
+  builder.Services.AddScoped<ISubtitleService, SubtitleService>();
+  builder.Services.AddScoped<IFileService, FileService>();
+  builder.Services.AddScoped<IBookmarkService, BookmarkService>();
+  builder.Services.AddScoped<IRoleService, RoleService>();
+  builder.Services.AddSingleton(
+    new ElasticClient(
+      new Uri(builder.Configuration.GetConnectionString("ElasticSearch"))
+    )
+  );
 
-    builder.Services.AddDbContext<AlmanimeContext>(options =>
-    {
-        options.UseLazyLoadingProxies().UseSqlServer(builder.Configuration.GetConnectionString("Almanime"));
-    });
+  builder.Services.AddCors();
 
-    // Add services to the container.
-    builder.Services.AddScoped<IAnimeService, AnimeService>();
-    builder.Services.AddScoped<IEpisodeService, EpisodeService>();
-    builder.Services.AddScoped<IUserService, UserService>();
-    builder.Services.AddScoped<IFansubService, FansubService>();
-    builder.Services.AddScoped<ISubtitleService, SubtitleService>();
-    builder.Services.AddScoped<IFileService, FileService>();
-    builder.Services.AddScoped<IBookmarkService, BookmarkService>();
-    builder.Services.AddScoped<IRoleService, RoleService>();
-    builder.Services.AddSingleton(
-        new ElasticClient(
-            new Uri(builder.Configuration.GetConnectionString("ElasticSearch"))
-        )
-    );
+  builder.Services.AddControllers().AddJsonOptions(opts =>
+  {
+    opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+  });
 
-    builder.Host.UseSerilog((context, loggerConfig) => loggerConfig
-        .WriteTo.Console()
-        .WriteTo.Sentry(options =>
+  // Learn more about configuring Swagger/OpenAlmanime at https://aka.ms/aspnetcore/swashbuckle
+  builder.Services.AddEndpointsApiExplorer();
+  builder.Services.AddSwaggerGen(setup =>
+  {
+    setup.AddSecurityRequirement(new OpenApiSecurityRequirement()
+      {
         {
-            builder.Configuration.GetSection("Sentry").Bind(options);
-        })
-    );
-
-    builder.Services.AddCors();
-
-    builder.Services.AddControllers().AddJsonOptions(opts =>
-    {
-        opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    });
-
-    // Learn more about configuring Swagger/OpenAlmanime at https://aka.ms/aspnetcore/swashbuckle
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen(setup =>
-    {
-        setup.AddSecurityRequirement(new OpenApiSecurityRequirement()
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                In = ParameterLocation.Header,
-                Name = "Bearer",
-                Scheme = "oauth2",
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                },
-            },
-            new List<string>()
-        }
-    });
-
-        setup.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-        {
-            Name = "Authorization",
-            Description = "Please Enter Authentication Token",
+          new OpenApiSecurityScheme
+          {
             In = ParameterLocation.Header,
-            Type = SecuritySchemeType.ApiKey,
+            Name = "Bearer",
             Scheme = "oauth2",
-            Flows = new OpenApiOAuthFlows
+            Reference = new OpenApiReference
             {
-                Implicit = new OpenApiOAuthFlow
-                {
-                    Scopes = new Dictionary<string, string>
+              Type = ReferenceType.SecurityScheme,
+              Id = "Bearer"
+            },
+          },
+          new List<string>()
+        }
+      }
+    );
+
+    setup.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+      {
+        Name = "Authorization",
+        Description = "Please Enter Authentication Token",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "oauth2",
+        Flows = new OpenApiOAuthFlows
+        {
+          Implicit = new OpenApiOAuthFlow
+          {
+            Scopes = new Dictionary<string, string>
             {
-            { "alm:read_data", "Read data from Almanime" }
+              { "alm:read_data", "Read data from Almanime" }
             }
-                }
-            }
-        });
+          }
+        }
+      }
+    );
+  });
+
+  builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
+    {
+      c.Authority = $"https://{builder.Configuration["Auth0:Domain"]}";
+      c.TokenValidationParameters = new TokenValidationParameters
+      {
+        ValidAudience = builder.Configuration["Auth0:Audience"],
+        ValidIssuer = $"{builder.Configuration["Auth0:Domain"]}"
+      };
     });
 
-    builder.Services
-        .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
-        {
-            c.Authority = $"https://{builder.Configuration["Auth0:Domain"]}";
-            c.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidAudience = builder.Configuration["Auth0:Audience"],
-                ValidIssuer = $"{builder.Configuration["Auth0:Domain"]}"
-            };
-        });
-
-    builder.Services
-        .AddAuthorization(o =>
-        {
-            o.AddPolicy("auth0_new_user", p => p.RequireAuthenticatedUser().RequireClaim("scope", "alm:auth0_new_user"));
-        });
-
-
-    var app = builder.Build();
-
-    app.UseSentryTracing();
-
-    app.UseSerilogRequestLogging();
-
-    // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
+  builder.Services
+    .AddAuthorization(o =>
     {
-        app.UseDeveloperExceptionPage();
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
-    else
-    {
-        using var scope = app.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AlmanimeContext>();
-        db.Database.Migrate();
-    }
+      o.AddPolicy("auth0_new_user", p => p.RequireAuthenticatedUser().RequireClaim("scope", "alm:auth0_new_user"));
+    });
 
 
-    app.UseMiddleware<ErrorHandlerMiddleware>();
+  var app = builder.Build();
 
-    app.UseHttpsRedirection();
+  app.UseSentryTracing();
 
-    app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+  app.UseSerilogRequestLogging();
 
-    app.UseAuthentication();
-    app.UseAuthorization();
+  // Configure the HTTP request pipeline.
+  if (app.Environment.IsDevelopment())
+  {
+    app.UseDeveloperExceptionPage();
+    app.UseSwagger();
+    app.UseSwaggerUI();
+  }
+  else
+  {
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<AlmanimeContext>();
+    db.Database.Migrate();
+  }
 
-    app.MapControllers();
+  app.UseMiddleware<ErrorHandlerMiddleware>();
 
-    app.Run();
+  app.UseHttpsRedirection();
+
+  app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+
+  app.UseAuthentication();
+  app.UseAuthorization();
+
+  app.MapControllers();
+
+  app.Run();
 }
+catch (HostAbortedException) {}
 catch (Exception ex)
 {
-    Log.Fatal(ex, "Unhandled exception");
+  Log.Fatal(ex, "Unhandled exception");
 }
 finally
 {
-    Log.Information("Shut down complete");
-    Log.CloseAndFlush();
+  Log.Information("Shut down complete");
+  Log.CloseAndFlush();
 }

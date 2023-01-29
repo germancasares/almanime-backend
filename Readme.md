@@ -8,4 +8,3 @@ Remove-Migration
 Scaffold-DbContext  
 Script-Migration  
 Update-Database: dotnet-ef database update
-dotnet run

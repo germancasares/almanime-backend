@@ -5,6 +5,7 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
+# https://github.com/dotnet/sdk/issues/28971
 FROM mcr.microsoft.com/dotnet/sdk:7.0-bullseye-slim-amd64 AS build
 
 ARG TARGETARCH

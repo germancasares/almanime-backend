@@ -27,9 +27,16 @@ public class AnimeService : IAnimeService
   public IQueryable<Anime> Get() => _context.Animes.AsQueryable().AsNoTracking();
 
   public IReadOnlyCollection<AnimeDocument> Search(string animeName) => _elasticClient.Search<AnimeDocument>(s =>
-      s.Index("animes").From(0).Size(10)
-          .Query(q => q.QueryString(qs => qs.Query(animeName).DefaultField(f => f.Name).DefaultOperator(Operator.And)))
-      ).Documents;
+    s.Index("animes").From(0).Size(10)
+        .Query(q => q.QueryString(qs => qs.Query(animeName).DefaultField(f => f.Name).DefaultOperator(Operator.And)))
+    ).Documents;
+
+  public IEnumerable<Anime> GetByBookmarks(string auth0ID) => _context
+    .Users
+    .SingleOrDefault(user => user.Auth0ID == auth0ID)?
+    .Bookmarks
+    .Select(bookmark => bookmark.Anime) 
+    ?? new List<Anime>();
 
   public IQueryable<Anime> GetSeason(int year, ESeason season)
   {

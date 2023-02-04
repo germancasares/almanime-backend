@@ -57,7 +57,7 @@ public class AnimeController : ControllerBase
     public IActionResult GetSeason(
         int year,
         ESeason season,
-        [FromQuery] int page = 1,
+        [FromQuery][Min(1)] int page = 1,
         [FromQuery][Max(25)] int size = 8,
         [FromQuery] bool includeMeta = false
     )

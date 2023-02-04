@@ -43,11 +43,11 @@ try
   builder.Services.AddScoped<IFileService, FileService>();
   builder.Services.AddScoped<IBookmarkService, BookmarkService>();
   builder.Services.AddScoped<IRoleService, RoleService>();
-  builder.Services.AddSingleton(
-    new ElasticClient(
-      new Uri(builder.Configuration.GetConnectionString("ElasticSearch"))
-    )
-  );
+  var elasticSearchUri = builder.Configuration.GetConnectionString("ElasticSearch");
+  if (elasticSearchUri != null)
+  {
+    builder.Services.AddSingleton(new ElasticClient(new Uri(elasticSearchUri)));
+  }
 
   builder.Services.AddCors();
 
@@ -80,23 +80,23 @@ try
     );
 
     setup.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+      Name = "Authorization",
+      Description = "Please Enter Authentication Token",
+      In = ParameterLocation.Header,
+      Type = SecuritySchemeType.ApiKey,
+      Scheme = "oauth2",
+      Flows = new OpenApiOAuthFlows
       {
-        Name = "Authorization",
-        Description = "Please Enter Authentication Token",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "oauth2",
-        Flows = new OpenApiOAuthFlows
+        Implicit = new OpenApiOAuthFlow
         {
-          Implicit = new OpenApiOAuthFlow
-          {
-            Scopes = new Dictionary<string, string>
+          Scopes = new Dictionary<string, string>
             {
               { "alm:read_data", "Read data from Almanime" }
             }
-          }
         }
       }
+    }
     );
   });
 
@@ -152,7 +152,7 @@ try
 
   app.Run();
 }
-catch (HostAbortedException) {}
+catch (HostAbortedException) { }
 catch (Exception ex)
 {
   Log.Fatal(ex, "Unhandled exception");

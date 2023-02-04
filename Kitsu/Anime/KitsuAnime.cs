@@ -25,7 +25,7 @@ public class KitsuAnime
 #pragma warning disable CS8604 // Possible null reference argument.
     var animesDTO = rawAnimesFiltered.Select(model =>
     {
-      var ids = mapping.ContainsKey(model.Id) ? mapping[model.Id] : new Dictionary<string, int?>();
+      var ids = mapping.TryGetValue(model.Id, out var value) ? value : new Dictionary<string, int?>();
       return MapToDTO(model.Id, model.Attributes, ids);
     });
 #pragma warning restore CS8604 // Possible null reference argument.
@@ -59,11 +59,11 @@ public class KitsuAnime
 
     var mapping = new Dictionary<string, Dictionary<string, int?>>();
 
-    Func<List<string>, string, int?> getID = (List<string> sources, string url) =>
+    int? getID(List<string> sources, string url)
     {
       var id = sources.LastOrDefault(source => source.Contains(url))?.Replace(url, "");
       return id == null ? null : int.Parse(id);
-    };
+    }
 
     foreach (var manamiEntry in animeMapping?.Data ?? new List<ManamiAnime>())
     {

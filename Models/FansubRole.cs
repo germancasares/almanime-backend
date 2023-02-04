@@ -4,22 +4,20 @@ public class FansubRole : Base
 {
   public FansubRole(
     string name,
-    Fansub fansub,
+    Guid fansubID,
     ICollection<Permission> permissions
-  ) : this(name, fansub.ID, fansub)
+  ) : this(name, fansubID)
   {
     Permissions = permissions;
   }
 
   protected FansubRole(
     string name,
-    Guid fansubID,
-    Fansub fansub
+    Guid fansubID
   )
   {
     Name = name;
     FansubID = fansubID;
-    Fansub = fansub;
   }
 
   public string Name { get; set; }

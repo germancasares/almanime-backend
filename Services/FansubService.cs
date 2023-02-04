@@ -59,7 +59,7 @@ public class FansubService : IFansubService
 
     var adminRole = _context.FansubRoles.Add(new FansubRole(
       name:"admin",
-      fansub: fansub,
+      fansubID: fansub.ID,
       permissions: new[] { editPermissionsPermission, createSubtitlePermission }
     )).Entity;
 
@@ -101,7 +101,7 @@ public class FansubService : IFansubService
 
       memberRole = _context.FansubRoles.Add(new FansubRole(
         name: "Member",
-        fansub: fansub,
+        fansubID: fansub.ID,
         permissions: new[] { createSubtitlePermission }
       )).Entity;
     }

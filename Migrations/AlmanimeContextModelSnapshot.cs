@@ -79,7 +79,7 @@ namespace Almanime.Migrations
                     b.HasIndex("KitsuID")
                         .IsUnique();
 
-                    b.ToTable("Animes");
+                    b.ToTable("Animes", (string)null);
                 });
 
             modelBuilder.Entity("Almanime.Models.Bookmark", b =>
@@ -106,7 +106,7 @@ namespace Almanime.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Bookmarks");
+                    b.ToTable("Bookmarks", (string)null);
                 });
 
             modelBuilder.Entity("Almanime.Models.Episode", b =>
@@ -142,7 +142,7 @@ namespace Almanime.Migrations
 
                     b.HasIndex("AnimeID");
 
-                    b.ToTable("Episodes");
+                    b.ToTable("Episodes", (string)null);
                 });
 
             modelBuilder.Entity("Almanime.Models.Fansub", b =>
@@ -178,7 +178,7 @@ namespace Almanime.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Fansubs");
+                    b.ToTable("Fansubs", (string)null);
                 });
 
             modelBuilder.Entity("Almanime.Models.FansubRole", b =>
@@ -206,7 +206,7 @@ namespace Almanime.Migrations
 
                     b.HasIndex("FansubID");
 
-                    b.ToTable("FansubRoles");
+                    b.ToTable("FansubRoles", (string)null);
                 });
 
             modelBuilder.Entity("Almanime.Models.Membership", b =>
@@ -239,7 +239,7 @@ namespace Almanime.Migrations
                     b.HasIndex("UserID", "FansubID")
                         .IsUnique();
 
-                    b.ToTable("Memberships");
+                    b.ToTable("Memberships", (string)null);
                 });
 
             modelBuilder.Entity("Almanime.Models.Permission", b =>
@@ -261,7 +261,7 @@ namespace Almanime.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Permission");
+                    b.ToTable("Permission", (string)null);
 
                     b.HasData(
                         new
@@ -312,7 +312,7 @@ namespace Almanime.Migrations
 
                     b.HasIndex("MembershipID");
 
-                    b.ToTable("Subtitles");
+                    b.ToTable("Subtitles", (string)null);
                 });
 
             modelBuilder.Entity("Almanime.Models.User", b =>
@@ -345,7 +345,7 @@ namespace Almanime.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("FansubRolePermission", b =>
@@ -363,12 +363,12 @@ namespace Almanime.Migrations
 
                     b.HasIndex("FansubRolesID", "FansubRolesFansubID");
 
-                    b.ToTable("FansubRolePermission");
+                    b.ToTable("FansubRolePermission", (string)null);
                 });
 
             modelBuilder.Entity("Almanime.Models.Anime", b =>
                 {
-                    b.OwnsOne("Almanime.Models.SizedImage", "CoverImages", b1 =>
+                    b.OwnsOne("Almanime.Models.Anime.CoverImages#Almanime.Models.SizedImage", "CoverImages", b1 =>
                         {
                             b1.Property<Guid>("AnimeID")
                                 .HasColumnType("uniqueidentifier");
@@ -384,13 +384,13 @@ namespace Almanime.Migrations
 
                             b1.HasKey("AnimeID");
 
-                            b1.ToTable("Animes");
+                            b1.ToTable("Animes", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("AnimeID");
                         });
 
-                    b.OwnsOne("Almanime.Models.SizedImage", "PosterImages", b1 =>
+                    b.OwnsOne("Almanime.Models.Anime.PosterImages#Almanime.Models.SizedImage", "PosterImages", b1 =>
                         {
                             b1.Property<Guid>("AnimeID")
                                 .HasColumnType("uniqueidentifier");
@@ -406,7 +406,7 @@ namespace Almanime.Migrations
 
                             b1.HasKey("AnimeID");
 
-                            b1.ToTable("Animes");
+                            b1.ToTable("Animes", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("AnimeID");

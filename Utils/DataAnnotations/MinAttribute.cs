@@ -4,23 +4,23 @@ using System.Globalization;
 namespace Almanime.Utils.DataAnnotations;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter, AllowMultiple = false)]
-public sealed class MaxAttribute : DataTypeAttribute
+public sealed class MinAttribute : DataTypeAttribute
 {
-  public double Max { get; private set; }
+  public double Min { get; private set; }
 
-  public MaxAttribute(double max) : base("max")
+  public MinAttribute(double min) : base("min")
   {
-    Max = max;
+    Min = min;
   }
 
   public override string FormatErrorMessage(string name)
   {
     if (ErrorMessage == null && ErrorMessageResourceName == null)
     {
-      ErrorMessage = "The field {0} must be less than or equal to {1}";
+      ErrorMessage = "The field {0} must be more than or equal to {1}";
     }
 
-    return string.Format(CultureInfo.CurrentCulture, ErrorMessageString, name, Max);
+    return string.Format(CultureInfo.CurrentCulture, ErrorMessageString, name, Min);
   }
 
   public override bool IsValid(object? value)
@@ -29,6 +29,6 @@ public sealed class MaxAttribute : DataTypeAttribute
 
     var isDouble = double.TryParse(Convert.ToString(value), out var valueAsDouble);
 
-    return isDouble && valueAsDouble <= Max;
+    return isDouble && valueAsDouble >= Min;
   }
 }

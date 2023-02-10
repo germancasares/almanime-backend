@@ -35,7 +35,8 @@
         "ms-dotnettools.csharp",
         "ms-mssql.mssql",
         // "richardwillis.vscode-entity-framework",
-        "aliasadidev.nugetpackagemanagergui"
+        "aliasadidev.nugetpackagemanagergui",
+        "formulahendry.dotnet-test-explorer"
       ],
       "settings": {
         "diffEditor.codeLens": true,

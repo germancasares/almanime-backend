@@ -43,11 +43,11 @@ try
   builder.Services.AddScoped<IFileService, FileService>();
   builder.Services.AddScoped<IBookmarkService, BookmarkService>();
   builder.Services.AddScoped<IRoleService, RoleService>();
-  builder.Services.AddSingleton(
-    new ElasticClient(
-      new Uri(builder.Configuration.GetConnectionString("ElasticSearch"))
-    )
-  );
+  var elasticSearchUri = builder.Configuration.GetConnectionString("ElasticSearch");
+  if (elasticSearchUri != null)
+  {
+    builder.Services.AddSingleton(new ElasticClient(new Uri(elasticSearchUri)));
+  }
 
   builder.Services.AddCors();
 
@@ -60,44 +60,19 @@ try
   builder.Services.AddEndpointsApiExplorer();
   builder.Services.AddSwaggerGen(setup =>
   {
-    setup.AddSecurityRequirement(new OpenApiSecurityRequirement()
-      {
-        {
-          new OpenApiSecurityScheme
-          {
-            In = ParameterLocation.Header,
-            Name = "Bearer",
-            Scheme = "oauth2",
-            Reference = new OpenApiReference
-            {
-              Type = ReferenceType.SecurityScheme,
-              Id = "Bearer"
-            },
-          },
-          new List<string>()
-        }
-      }
-    );
-
+    // https://stackoverflow.com/a/61365691/10291066
+    // https://github.com/domaindrivendev/Swashbuckle.AspNetCore#add-security-definitions-and-requirements
     setup.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-      {
-        Name = "Authorization",
-        Description = "Please Enter Authentication Token",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "oauth2",
-        Flows = new OpenApiOAuthFlows
-        {
-          Implicit = new OpenApiOAuthFlow
-          {
-            Scopes = new Dictionary<string, string>
-            {
-              { "alm:read_data", "Read data from Almanime" }
-            }
-          }
-        }
-      }
-    );
+    {
+      Name = "Authorization",
+      Description = "Please Enter Authentication Token",
+      In = ParameterLocation.Header,
+      Type = SecuritySchemeType.Http,
+      Scheme = "bearer",
+      BearerFormat = "JWT"
+    });
+
+    setup.OperationFilter<AddAuthHeaderOperationFilter>();
   });
 
   builder.Services
@@ -152,7 +127,7 @@ try
 
   app.Run();
 }
-catch (HostAbortedException) {}
+catch (HostAbortedException) { }
 catch (Exception ex)
 {
   Log.Fatal(ex, "Unhandled exception");

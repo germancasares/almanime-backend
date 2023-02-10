@@ -10,7 +10,7 @@ public static class ExtensionHelper
   public static string GetAuth0ID(this ClaimsPrincipal user)
   {
     var auth0ID = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-    if (auth0ID == null) throw new AlmNullException(nameof(auth0ID));
+    if (auth0ID == null || !Guid.TryParse(auth0ID, out _)) throw new AlmNullException(nameof(auth0ID));
 
     return auth0ID;
   }

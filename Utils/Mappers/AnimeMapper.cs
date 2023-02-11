@@ -8,20 +8,20 @@ namespace Almanime.Utils.Mappers;
 public static class AnimeMapper
 {
   public static Anime MapToModel(this AnimeDTO anime) => new(
-      kitsuID: anime.KitsuID,
-      myAnimeListID: anime.MyAnimeListID,
-      aniListID: anime.AniListID,
-      aniDBID: anime.AniDBID,
-      slug: anime.Slug ?? throw new ArgumentNullException(nameof(anime), "The value of 'anime.Slug' should not be null"),
-      name: anime.Name ?? throw new ArgumentNullException(nameof(anime), "The value of 'anime.Name' should not be null"),
-      season: anime.Season,
-      status: anime.Status,
-      startDate: anime.StartDate,
-      endDate: anime.EndDate,
-      synopsis: anime.Synopsis,
-      coverImages: anime.CoverImageUrl,
-      posterImages: anime.PosterImageUrl
-    );
+    kitsuID: anime.KitsuID,
+    myAnimeListID: anime.MyAnimeListID,
+    aniListID: anime.AniListID,
+    aniDBID: anime.AniDBID,
+    slug: anime.Slug ?? throw new ArgumentNullException(nameof(anime), "The value of 'anime.Slug' should not be null"),
+    name: anime.Name ?? throw new ArgumentNullException(nameof(anime), "The value of 'anime.Name' should not be null"),
+    season: anime.Season,
+    status: anime.Status,
+    startDate: anime.StartDate,
+    endDate: anime.EndDate,
+    synopsis: anime.Synopsis,
+    coverImages: anime.CoverImageUrl,
+    posterImages: anime.PosterImageUrl
+  );
 
   public static Anime UpdateFromDTO(this Anime anime, AnimeDTO animeDTO)
   {

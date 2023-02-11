@@ -1,4 +1,5 @@
-﻿using Almanime.Models;
+﻿using Almanime.Kitsu.Anime.Models;
+using Almanime.Models;
 using Almanime.Models.DTO;
 using Almanime.Models.Enums;
 using Almanime.Utils;
@@ -38,7 +39,7 @@ public class KitsuAnime
   private static async Task<List<AnimeDataModel>> GetRawAnimes(int year, ESeason season)
   {
     var animeDataModels = new List<AnimeDataModel>();
-    var url = $"{KITSU_API}/anime?filter[seasonYear]={year}&filter[season]={season.ToString().ToLower()}&page[limit]={MAX_PER_PAGE}";
+    var url = $"{KITSU_API}/anime?filter[seasonYear]={year}&filter[season]={season.ToString().ToLower(CultureInfo.CurrentCulture)}&page[limit]={MAX_PER_PAGE}";
 
     while (!string.IsNullOrWhiteSpace(url))
     {
@@ -74,19 +75,19 @@ public class KitsuAnime
       if (kitsuUrl == null) continue;
 
       mapping.Add(
-          kitsuUrl.Replace("https://kitsu.io/anime/", ""),
-          new Dictionary<string, int?>
+        kitsuUrl.Replace("https://kitsu.io/anime/", ""),
+        new Dictionary<string, int?>
+        {
           {
-            {
-              "AniDB", getID(manamiEntry.Sources, "https://anidb.net/anime/")
-            },
-            {
-              "AniList", getID(manamiEntry.Sources, "https://anilist.co/anime/")
-            },
-            {
-              "MyAnimeList", getID(manamiEntry.Sources, "https://myanimelist.net/anime/")
-            },
-          }
+            "AniDB", getID(manamiEntry.Sources, "https://anidb.net/anime/")
+          },
+          {
+            "AniList", getID(manamiEntry.Sources, "https://anilist.co/anime/")
+          },
+          {
+            "MyAnimeList", getID(manamiEntry.Sources, "https://myanimelist.net/anime/")
+          },
+        }
       );
     }
 
@@ -121,12 +122,7 @@ public class KitsuAnime
     }
 
     // StartDate
-    if (Utils.DateTimeOrDefault(anime.StartDate) == null)
-    {
-      return false;
-    }
-
-    return true;
+    return Utils.DateTimeOrDefault(anime.StartDate) != null;
   }
 
   private static AnimeDTO MapToDTO(string? kitsuId, AnimeAttributesModel anime, Dictionary<string, int?> ids)
@@ -151,17 +147,17 @@ public class KitsuAnime
       EndDate = Utils.DateTimeOrDefault(anime.EndDate),
       Season = EnumHelper.GetSeason(startDate.Month),
       CoverImageUrl = new SizedImage
-        (
-          tiny: Uri.TryCreate(anime.CoverImage?.Tiny, new UriCreationOptions(), out var coverTiny) ? coverTiny : null,
-          small: Uri.TryCreate(anime.CoverImage?.Small, new UriCreationOptions(), out var coverSmall) ? coverSmall : null,
-          original: Uri.TryCreate(anime.CoverImage?.Original, new UriCreationOptions(), out var coverOriginal) ? coverOriginal : null
-        ),
+      (
+        tiny: Uri.TryCreate(anime.CoverImage?.Tiny, new UriCreationOptions(), out var coverTiny) ? coverTiny : null,
+        small: Uri.TryCreate(anime.CoverImage?.Small, new UriCreationOptions(), out var coverSmall) ? coverSmall : null,
+        original: Uri.TryCreate(anime.CoverImage?.Original, new UriCreationOptions(), out var coverOriginal) ? coverOriginal : null
+      ),
       PosterImageUrl = new SizedImage
-        (
-          tiny: Uri.TryCreate(anime.PosterImage?.Tiny, new UriCreationOptions(), out var posterTiny) ? posterTiny : null,
-          small: Uri.TryCreate(anime.PosterImage?.Small, new UriCreationOptions(), out var posterSmall) ? posterSmall : null,
-          original: Uri.TryCreate(anime.PosterImage?.Original, new UriCreationOptions(), out var posterOriginal) ? posterOriginal : null
-        ),
+      (
+        tiny: Uri.TryCreate(anime.PosterImage?.Tiny, new UriCreationOptions(), out var posterTiny) ? posterTiny : null,
+        small: Uri.TryCreate(anime.PosterImage?.Small, new UriCreationOptions(), out var posterSmall) ? posterSmall : null,
+        original: Uri.TryCreate(anime.PosterImage?.Original, new UriCreationOptions(), out var posterOriginal) ? posterOriginal : null
+      ),
     };
   }
 }

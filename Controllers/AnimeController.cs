@@ -49,9 +49,7 @@ public class AnimeController : ControllerBase
   {
     var anime = _animeService.GetBySlug(slug);
 
-    if (anime == null) return NotFound();
-
-    return Ok(anime.MapToView());
+    return anime == null ? NotFound() : Ok(anime.MapToView());
   }
 
   [HttpGet("bookmarked")]
@@ -82,9 +80,9 @@ public class AnimeController : ControllerBase
     var animeSeason = _animeService.GetSeason(year, season);
 
     var animeSeasonPage = animeSeason
-        .OrderByDescending(anime => anime.CoverImages != null && anime.CoverImages.Tiny != null)
-        .ThenBy(a => a.Name)
-        .Page(page, size);
+      .OrderByDescending(anime => anime.CoverImages != null && anime.CoverImages.Tiny != null)
+      .ThenBy(a => a.Name)
+      .Page(page, size);
 
     var animeSeasonPageView = new ModelWithMetaView<List<AnimeView>>
     {

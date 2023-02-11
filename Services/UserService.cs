@@ -7,32 +7,32 @@ namespace Almanime.Services;
 
 public class UserService : IUserService
 {
-    private readonly AlmanimeContext _context;
+  private readonly AlmanimeContext _context;
 
-    public UserService(AlmanimeContext context)
-    {
-        _context = context;
-    }
+  public UserService(AlmanimeContext context)
+  {
+    _context = context;
+  }
 
-    public User GetByAuth0ID(string auth0ID) => _context.Users.GetByAuth0ID(auth0ID);
-    public IQueryable<User> Get() => _context.Users.AsQueryable();
+  public User GetByAuth0ID(string auth0ID) => _context.Users.GetByAuth0ID(auth0ID);
+  public IQueryable<User> Get() => _context.Users.AsQueryable();
 
-    public void Create(string auth0Id, string name)
-    {
-        var user = _context.Users.SingleOrDefault(user => user.Auth0ID == auth0Id);
-        if (user != null) return;
+  public void Create(string auth0Id, string name)
+  {
+    var user = _context.Users.SingleOrDefault(user => user.Auth0ID == auth0Id);
+    if (user != null) return;
 
-        _context.Users.Add(new User(auth0Id, name));
-        _context.SaveChanges();
-    }
+    _context.Users.Add(new User(auth0Id, name));
+    _context.SaveChanges();
+  }
 
-    public void Update(string auth0ID, string name)
-    {
-        var user = _context.Users.GetByAuth0ID(auth0ID);
+  public void Update(string auth0Id, string name)
+  {
+    var user = _context.Users.GetByAuth0ID(auth0Id);
 
-        user.Name = name;
+    user.Name = name;
 
-        _context.Users.Update(user);
-        _context.SaveChanges();
-    }
+    _context.Users.Update(user);
+    _context.SaveChanges();
+  }
 }

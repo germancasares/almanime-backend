@@ -15,10 +15,10 @@ public static class EnumHelper
 
   public static ESeason GetSeason(int month) => month switch
   {
-    int n when n >= 1 && n <= 2 => ESeason.Winter,
-    int n when n >= 3 && n <= 5 => ESeason.Spring,
-    int n when n >= 6 && n <= 8 => ESeason.Summer,
-    int n when n >= 9 && n <= 11 => ESeason.Fall,
+    int n when n is >= 1 and <= 2 => ESeason.Winter,
+    int n when n is >= 3 and <= 5 => ESeason.Spring,
+    int n when n is >= 6 and <= 8 => ESeason.Summer,
+    int n when n is >= 9 and <= 11 => ESeason.Fall,
     int n when n == 12 => ESeason.Winter,
     _ => throw new Exception("Season out of range."),
   };

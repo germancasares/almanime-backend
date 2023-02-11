@@ -28,14 +28,14 @@ public class AnimeService : IAnimeService
 
   public IReadOnlyCollection<AnimeDocument> Search(string animeName) => _elasticClient.Search<AnimeDocument>(s =>
     s.Index("animes").From(0).Size(10)
-        .Query(q => q.QueryString(qs => qs.Query(animeName).DefaultField(f => f.Name).DefaultOperator(Operator.And)))
+      .Query(q => q.QueryString(qs => qs.Query(animeName).DefaultField(f => f.Name).DefaultOperator(Operator.And)))
     ).Documents;
 
   public IEnumerable<Anime> GetByBookmarks(string auth0ID) => _context
     .Users
     .SingleOrDefault(user => user.Auth0ID == auth0ID)?
     .Bookmarks
-    .Select(bookmark => bookmark.Anime) 
+    .Select(bookmark => bookmark.Anime)
     ?? new List<Anime>();
 
   public IQueryable<Anime> GetSeason(int year, ESeason season)
@@ -43,9 +43,9 @@ public class AnimeService : IAnimeService
     var startWinter = new DateTime(year - 1, 12, 1);
     var startSpring = new DateTime(year, 3, 1);
 
-    if (season == ESeason.Winter) return _context.Animes.Where(anime => anime.Season == season && anime.StartDate >= startWinter && anime.StartDate < startSpring);
-
-    return _context.Animes.Where(anime => anime.StartDate.Year == year && anime.Season == season);
+    return season == ESeason.Winter
+      ? _context.Animes.Where(anime => anime.Season == season && anime.StartDate >= startWinter && anime.StartDate < startSpring)
+      : _context.Animes.Where(anime => anime.StartDate.Year == year && anime.Season == season);
   }
 
   private Anime Create(AnimeDTO animeDTO)

@@ -1,5 +1,4 @@
-﻿using Almanime.Models;
-using Almanime.Services.Interfaces;
+﻿using Almanime.Services.Interfaces;
 using Almanime.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,41 +9,41 @@ namespace Almanime.Controllers;
 [ApiController]
 public class BookmarkController : ControllerBase
 {
-    private readonly IBookmarkService _bookmarkService;
+  private readonly IBookmarkService _bookmarkService;
 
-    public BookmarkController(IBookmarkService bookmarkService)
-    {
-        _bookmarkService = bookmarkService;
-    }
+  public BookmarkController(IBookmarkService bookmarkService)
+  {
+    _bookmarkService = bookmarkService;
+  }
 
-    [HttpGet]
-    [Authorize]
-    public IActionResult Get()
-    {
-        var auth0ID = User.GetAuth0ID();
+  [HttpGet]
+  [Authorize]
+  public IActionResult Get()
+  {
+    var auth0ID = User.GetAuth0ID();
 
-        return Ok(_bookmarkService.GetByAuth0ID(auth0ID).Select(bookmark => bookmark.Anime.Slug));
-    }
+    return Ok(_bookmarkService.GetByAuth0ID(auth0ID).Select(bookmark => bookmark.Anime.Slug));
+  }
 
-    [HttpPost("animeSlug/{animeSlug}")]
-    [Authorize]
-    public IActionResult Create(string animeSlug)
-    {
-        var auth0ID = User.GetAuth0ID();
+  [HttpPost("animeSlug/{animeSlug}")]
+  [Authorize]
+  public IActionResult Create(string animeSlug)
+  {
+    var auth0ID = User.GetAuth0ID();
 
-        _bookmarkService.Create(auth0ID, animeSlug);
+    _bookmarkService.Create(auth0ID, animeSlug);
 
-        return NoContent();
-    }
+    return NoContent();
+  }
 
-    [HttpDelete("animeSlug/{animeSlug}")]
-    [Authorize]
-    public IActionResult Delete(string animeSlug)
-    {
-        var auth0ID = User.GetAuth0ID();
+  [HttpDelete("animeSlug/{animeSlug}")]
+  [Authorize]
+  public IActionResult Delete(string animeSlug)
+  {
+    var auth0ID = User.GetAuth0ID();
 
-        _bookmarkService.Delete(auth0ID, animeSlug);
+    _bookmarkService.Delete(auth0ID, animeSlug);
 
-        return NoContent();
-    }
+    return NoContent();
+  }
 }

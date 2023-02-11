@@ -6,7 +6,6 @@ using Almanime.Repositories;
 using Almanime.Repositories.Queries;
 using Almanime.Services.Interfaces;
 using Almanime.Utils.Mappers;
-using Domain.Enums;
 using Nest;
 
 namespace Almanime.Services;
@@ -58,7 +57,7 @@ public class FansubService : IFansubService
     var createSubtitlePermission = _context.Permission.Single(p => p.Grant == EPermission.CreateSubtitle);
 
     var adminRole = _context.FansubRoles.Add(new FansubRole(
-      name:"admin",
+      name: "admin",
       fansubID: fansub.ID,
       permissions: new[] { editPermissionsPermission, createSubtitlePermission }
     )).Entity;

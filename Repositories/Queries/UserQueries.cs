@@ -6,17 +6,12 @@ namespace Almanime.Repositories.Queries;
 
 public static class UserQueries
 {
-    public static User GetByAuth0ID(this DbSet<User> users, string auth0ID)
+  public static User GetByAuth0ID(this DbSet<User> users, string auth0ID)
+  {
+    var user = users.SingleOrDefault(user => user.Auth0ID == auth0ID);
+    return user ?? throw new AlmDbException(EValidationCode.DoesntExistInDB, nameof(user), new()
     {
-        var user = users.SingleOrDefault(user => user.Auth0ID == auth0ID);
-        if (user == null)
-        {
-            throw new AlmDbException(EValidationCode.DoesntExistInDB, nameof(user), new()
-            {
-                { nameof(auth0ID), auth0ID },
-            });
-        }
-
-        return user;
-    }
+      { nameof(auth0ID), auth0ID },
+    });
+  }
 }

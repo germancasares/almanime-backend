@@ -37,9 +37,7 @@ public static class TestGetSubtitleFormat
     // Arrange
     var formFile = GetMockFileWithExtension(extension);
 
-    // Act
-
-    // Assert
+    // Act & Assert
     formFile
       .Invoking(file => file.GetSubtitleFormat())
       .Should()

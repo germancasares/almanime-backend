@@ -40,21 +40,21 @@ public class FileService : IFileService
   private async Task<Response<BlobDownloadStreamingResult>> Download(string blob) => await _blobServiceClient.GetBlobContainerClient(BlobContainerName).GetBlobClient(blob).DownloadStreamingAsync();
 
   public async Task<Uri> UploadSubtitle(
-      IFormFile subtitle,
-      string fansubAcronym,
-      string animeSlug,
-      int episodeNumber,
-      string animeName,
-      ESubtitleFormat format
+    IFormFile subtitle,
+    string fansubAcronym,
+    string animeSlug,
+    int episodeNumber,
+    string animeName,
+    ESubtitleFormat format
   )
   {
     var blobName = $"fansub/{fansubAcronym}/{animeSlug}/{episodeNumber}";
 
     var metadata = new Dictionary<string, string>
-        {
-            { "AnimeName", animeName },
-            { "ESubtitleFormat", format.ToString() },
-        };
+    {
+      { "AnimeName", animeName },
+      { "ESubtitleFormat", format.ToString() },
+    };
 
     return await Upload(subtitle, blobName, metadata);
   }

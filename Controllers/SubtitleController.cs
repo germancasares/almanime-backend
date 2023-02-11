@@ -11,46 +11,46 @@ namespace Almanime.Controllers;
 [ApiController]
 public class SubtitleController : ControllerBase
 {
-    private readonly ISubtitleService _subtitleService;
-    private readonly IFileService _fileService;
+  private readonly ISubtitleService _subtitleService;
+  private readonly IFileService _fileService;
 
-    public SubtitleController(ISubtitleService subtitleService, IFileService fileService)
-    {
-        _subtitleService = subtitleService;
-        _fileService = fileService;
-    }
+  public SubtitleController(ISubtitleService subtitleService, IFileService fileService)
+  {
+    _subtitleService = subtitleService;
+    _fileService = fileService;
+  }
 
-    [HttpGet("fansub/{fansubAcronym}/anime/{animeSlug}/episode/{episodeNumber}")]
-    public async Task<IActionResult> GetAsync(string fansubAcronym, string animeSlug, int episodeNumber)
-    {
-        var (file, contentType, fileName) = await _fileService.DownloadSubtitle(fansubAcronym, animeSlug, episodeNumber);
+  [HttpGet("fansub/{fansubAcronym}/anime/{animeSlug}/episode/{episodeNumber}")]
+  public async Task<IActionResult> GetAsync(string fansubAcronym, string animeSlug, int episodeNumber)
+  {
+    var (file, contentType, fileName) = await _fileService.DownloadSubtitle(fansubAcronym, animeSlug, episodeNumber);
 
-        return File(file, contentType, fileName);
-    }
+    return File(file, contentType, fileName);
+  }
 
-    [HttpPost]
-    [Authorize]
-    public async Task<IActionResult> PostAsync([FromForm] SubtitleDTO subtitleDTO)
-    {
-        if (subtitleDTO.FansubAcronym == null) throw new AlmNullException(nameof(subtitleDTO.FansubAcronym));
-        if (subtitleDTO.AnimeSlug == null) throw new AlmNullException(nameof(subtitleDTO.AnimeSlug));
-        if (subtitleDTO.File == null) throw new AlmNullException(nameof(subtitleDTO.File));
+  [HttpPost]
+  [Authorize]
+  public async Task<IActionResult> PostAsync([FromForm] SubtitleDTO subtitleDTO)
+  {
+    if (subtitleDTO.FansubAcronym == null) throw new AlmNullException(nameof(subtitleDTO.FansubAcronym));
+    if (subtitleDTO.AnimeSlug == null) throw new AlmNullException(nameof(subtitleDTO.AnimeSlug));
+    if (subtitleDTO.File == null) throw new AlmNullException(nameof(subtitleDTO.File));
 
-        var subtitle = await _subtitleService.Create(
-            User.GetAuth0ID(),
-            subtitleDTO.FansubAcronym,
-            subtitleDTO.AnimeSlug,
-            subtitleDTO.EpisodeNumber,
-            subtitleDTO.File
-        );
+    var subtitle = await _subtitleService.Create(
+      User.GetAuth0ID(),
+      subtitleDTO.FansubAcronym,
+      subtitleDTO.AnimeSlug,
+      subtitleDTO.EpisodeNumber,
+      subtitleDTO.File
+    );
 
-        return Ok(new {
-            subtitle.Url,
-            subtitle.Format,
-            subtitle.CreationDate,
-            User = subtitle.Membership.User.Name,
-            Anime = subtitle.Episode.Anime.Name,
-            Episode = subtitle.Episode.Number,
-        });
-    }
+    return Ok(new {
+      subtitle.Url,
+      subtitle.Format,
+      subtitle.CreationDate,
+      User = subtitle.Membership.User.Name,
+      Anime = subtitle.Episode.Anime.Name,
+      Episode = subtitle.Episode.Number,
+    });
+  }
 }

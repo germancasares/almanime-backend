@@ -13,8 +13,8 @@ public static class TestGetIdentityID
   public static void ValidNameIdentifier_ShouldReturnGuid([Values("00000000-0000-0000-0000-000000000000", "B70DDB8F-892B-4E56-886F-A7F253F8A56B")] string nameIdentifier)
   {
     // Arrange
-    var claims = new List<Claim>() 
-    { 
+    var claims = new List<Claim>()
+    {
       new Claim(ClaimTypes.NameIdentifier, nameIdentifier),
     };
     var identity = new ClaimsIdentity(claims, "TestAuthType");
@@ -28,11 +28,11 @@ public static class TestGetIdentityID
   }
 
   [Test]
-  public static void InvalidNameIdentifier_ShouldThrowException([Values("", "random", "3213215324314213", "-1", "@@@@")]string nameIdentifier)
+  public static void InvalidNameIdentifier_ShouldThrowException([Values("", "random", "3213215324314213", "-1", "@@@@")] string nameIdentifier)
   {
     // Arrange
-    var claims = new List<Claim>() 
-    { 
+    var claims = new List<Claim>()
+    {
       new Claim(ClaimTypes.NameIdentifier, nameIdentifier),
     };
     var identity = new ClaimsIdentity(claims, "TestAuthType");

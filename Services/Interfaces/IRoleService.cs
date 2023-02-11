@@ -1,9 +1,9 @@
 ﻿using Almanime.Models;
-using Domain.Enums;
+using Almanime.Models.Enums;
 
 namespace Almanime.Services.Interfaces;
 
 public interface IRoleService
 {
-    Dictionary<string, IEnumerable<EPermission>> GetByUser(User user);
+  Dictionary<string, IEnumerable<EPermission>> GetByUser(User user);
 }

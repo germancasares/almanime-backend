@@ -63,6 +63,10 @@
         "[json]": {
           "editor.defaultFormatter": "vscode.json-language-features"
         },
+        "[csharp]": {
+          "editor.defaultFormatter": "ms-dotnettools.csharp",
+          "editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll"]
+        },
         "omnisharp.organizeImportsOnFormat": true,
         "omnisharp.enableImportCompletion": true,
         "omnisharp.enableRoslynAnalyzers": true,

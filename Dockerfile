@@ -13,7 +13,10 @@ ARG TARGETOS
 
 RUN arch=$TARGETARCH \
     && if [ "$arch" = "amd64" ]; then arch="x64"; fi \
-    && echo $TARGETOS-$arch && echo $TARGETOS-$arch > /tmp/rid
+    && echo $TARGETOS-$arch
+RUN arch=$TARGETARCH \
+    && if [ "$arch" = "amd64" ]; then arch="x64"; fi \
+    && echo $TARGETOS-$arch > /tmp/rid
 
 WORKDIR /src
 COPY ["Almanime.csproj", "."]

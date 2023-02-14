@@ -11,10 +11,10 @@ COPY ["Almanime.csproj", "."]
 RUN dotnet restore "./Almanime.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "Almanime.csproj" -c Release -o /app/build
+RUN dotnet build "Almanime.csproj" -c Release -o "/app/build"
 
 FROM build AS publish
-RUN dotnet publish "Almanime.csproj" -c Release -o /app/publish
+RUN dotnet publish "Almanime.csproj" -c Release -o "/app/publish"
 
 FROM base AS final
 ARG RELEASE

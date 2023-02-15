@@ -5,31 +5,17 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-# FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-# --- Remove once builds work in Github Actions ---
-FROM mcr.microsoft.com/dotnet/sdk:7.0-bullseye-slim-amd64 AS build
-ARG TARGETARCH
-ARG TARGETOS
-RUN arch=$TARGETARCH \
-    && if [ "$arch" = "amd64" ]; then arch="x64"; fi \
-    && echo $TARGETOS-$arch > /tmp/rid
-
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 
 WORKDIR /src
 COPY ["Almanime.csproj", "."]
-# RUN dotnet restore "./Almanime.csproj"
-# --- Remove once builds work in Github Actions ---
-RUN dotnet restore "./Almanime.csproj" -r $(cat /tmp/rid)
+RUN dotnet restore "./Almanime.csproj"
 COPY . .
 WORKDIR "/src/."
-# RUN dotnet build "Almanime.csproj" -c Release -o "/app/build"
-# --- Remove once builds work in Github Actions ---
-RUN dotnet build "Almanime.csproj" -c Release -o "/app/build" -r $(cat /tmp/rid) --self-contained false --no-restore
+RUN dotnet build "Almanime.csproj" -c Release -o "/app/build"
 
 FROM build AS publish
-# RUN dotnet publish "Almanime.csproj" -c Release -o "/app/publish"
-# --- Remove once builds work in Github Actions ---
-RUN dotnet publish "Almanime.csproj" -c Release -o "/app/publish" -r $(cat /tmp/rid)
+RUN dotnet publish "Almanime.csproj" -c Release -o "/app/publish"
 
 FROM base AS final
 ARG RELEASE

@@ -83,14 +83,14 @@ try
       c.TokenValidationParameters = new TokenValidationParameters
       {
         ValidAudience = builder.Configuration["Auth0:Audience"],
-        ValidIssuer = $"{builder.Configuration["Auth0:Domain"]}"
+        ValidIssuer = builder.Configuration["Auth0:Domain"],
       };
     });
 
   builder.Services
     .AddAuthorization(o =>
     {
-      o.AddPolicy("auth0_new_user", p => p.RequireAuthenticatedUser().RequireClaim("scope", "alm:auth0_new_user"));
+      o.AddPolicy("auth0_new_user", p => p.RequireAuthenticatedUser().RequireClaim("scope", "openid profile email"));
     });
 
 

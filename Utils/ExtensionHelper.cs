@@ -10,7 +10,7 @@ public static class ExtensionHelper
   public static string GetAuth0ID(this ClaimsPrincipal user)
   {
     var auth0ID = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-    return auth0ID == null || !Guid.TryParse(auth0ID, out _) ? throw new AlmNullException(nameof(auth0ID)) : auth0ID;
+    return auth0ID ?? throw new AlmNullException(nameof(auth0ID));
   }
 
   public static string GetExtension(this IFormFile file) => Path.GetExtension(file.FileName);

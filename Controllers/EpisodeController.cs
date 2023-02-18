@@ -1,5 +1,6 @@
 ﻿using Almanime.Services.Interfaces;
 using Almanime.Utils.Mappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Almanime.Controllers;
@@ -32,6 +33,7 @@ public class EpisodeController : ControllerBase
   }
 
   [HttpPost("populate")]
+  [Authorize("write:animes")]
   public async Task<IActionResult> Populate()
   {
     await _episodeService.Populate();

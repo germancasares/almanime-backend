@@ -107,6 +107,7 @@ public class AnimeController : ControllerBase
   }
 
   [HttpPost("populate/year/{year}/season/{season}")]
+  [Authorize("write:animes")]
   public async Task<IActionResult> PopulateSeasonAsync(int year, ESeason season)
   {
     await _animeService.PopulateSeason(year, season);

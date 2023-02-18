@@ -3,6 +3,7 @@ using Almanime.Services;
 using Almanime.Services.Interfaces;
 using Almanime.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -88,9 +89,26 @@ try
     });
 
   builder.Services
-    .AddAuthorization(o =>
+    .AddAuthorization(options =>
     {
-      o.AddPolicy("auth0_new_user", p => p.RequireAuthenticatedUser().RequireClaim("scope", "openid profile email"));
+      options.AddPolicy("write:animes", policy => 
+        policy.RequireAssertion(context =>
+          context.User.HasClaim(claim =>
+            claim.Type == "permissions" &&
+            claim.Value == "write:animes" &&
+            claim.Issuer == $"https://{builder.Configuration["Auth0:Domain"]}/"
+          )
+        )
+      );
+      options.AddPolicy("write:episodes", policy => 
+        policy.RequireAssertion(context =>
+          context.User.HasClaim(claim =>
+            claim.Type == "permissions" &&
+            claim.Value == "write:episodes" &&
+            claim.Issuer == $"https://{builder.Configuration["Auth0:Domain"]}/"
+          )
+        )
+      );
     });
 
 

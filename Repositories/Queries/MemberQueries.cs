@@ -21,6 +21,12 @@ public static class MemberQueries
     .FansubRole
     .Permissions
     .Any(
-        p => p.Grant == permission
+      p => p.Grant == permission
     ) ?? false;
+
+  public static void ThrowIfUserDoesntHavePermissionInFansub(this DbSet<Membership> memberships, Fansub fansub, User user, EPermission permission)
+  {
+    var hasPermission = HasUserPermissionInFansub(memberships, fansub.ID, user.ID, permission);
+    if (!hasPermission) throw new AlmPermissionException(permission, user.Name, fansub.Name);
+  }
 }

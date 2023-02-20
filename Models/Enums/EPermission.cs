@@ -2,6 +2,7 @@
 
 public enum EPermission
 {
-  EditPermissions,
-  CreateSubtitle,
+  DraftSubtitle = 10,
+  PublishSubtitle = 11,
+  EditPermissions = 20,
 }

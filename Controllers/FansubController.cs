@@ -92,7 +92,27 @@ public class FansubController : ControllerBase
     }));
   }
 
+  [HttpGet("acronym/{acronym}/subtitles/drafts")]
+  [Authorize]
+  public IActionResult GetSubtitlesDrafts(string acronym)
+  {
+    var user = User.GetAuth0ID();
+
+    var subtitles = _fansubService.GetSubtitlesDrafts(acronym, user);
+
+    return Ok(subtitles.Select(subtitle => new {
+      subtitle.ID,
+      subtitle.Url,
+      subtitle.Format,
+      subtitle.CreationDate,
+      Anime = subtitle.Episode.Anime.Name,
+      Episode = subtitle.Episode.Number,
+      User = subtitle.Membership.User.Name,
+    }));
+  }
+
   [HttpGet("acronym/{acronym}/roles")]
+  [Authorize]
   public IActionResult GetRoles(string acronym)
   {
     var roles = _fansubService.GetRoles(acronym);
@@ -101,9 +121,12 @@ public class FansubController : ControllerBase
   }
 
   [HttpPut("acronym/{acronym}/roles")]
+  [Authorize]
   public IActionResult PutRoles(string acronym, Dictionary<string, IEnumerable<EPermission>> roles)
   {
-    _fansubService.UpdateRoles(acronym, User.GetAuth0ID(), roles);
+    var user = User.GetAuth0ID();
+
+    _fansubService.UpdateRoles(acronym, user, roles);
 
     return NoContent();
   }
@@ -112,7 +135,9 @@ public class FansubController : ControllerBase
   [Authorize]
   public IActionResult Post(FansubDTO fansubDTO)
   {
-    var fansub = _fansubService.Create(fansubDTO, User.GetAuth0ID());
+    var user = User.GetAuth0ID();
+
+    var fansub = _fansubService.Create(fansubDTO, user);
 
     return Ok(new {
       fansub.Acronym,
@@ -125,7 +150,9 @@ public class FansubController : ControllerBase
   [Authorize]
   public IActionResult Join(string acronym)
   {
-    _fansubService.Join(acronym, User.GetAuth0ID());
+    var user = User.GetAuth0ID();
+
+    _fansubService.Join(acronym, user);
 
     return NoContent();
   }

@@ -35,21 +35,23 @@ public class SubtitleService : ISubtitleService
     var membership = _context.Memberships.GetByFansubAndUser(fansub.ID, user.ID);
     var subtitle = _context.Subtitles.GetByFansubIDAndEpisodeID(fansub.ID, episode.ID);
 
-    var hasPermissionToCreate = _context.Memberships.HasUserPermissionInFansub(fansub.ID, user.ID, EPermission.CreateSubtitle);
-    if (!hasPermissionToCreate) throw new AlmPermissionException(EPermission.CreateSubtitle, user.Name, fansub.Name);
+    _context.Memberships.ThrowIfUserDoesntHavePermissionInFansub(fansub, user, EPermission.DraftSubtitle);
 
     await _fileService.UploadSubtitle(file, fansubAcronym, animeSlug, episodeNumber, episode.Anime.Name, file.GetSubtitleFormat());
 
-    if (subtitle == null) {
+    if (subtitle == null)
+    {
       subtitle = _context.Subtitles.Add(new(
         id: Guid.NewGuid(),
-        status: ESubtitleStatus.Published,
+        status: ESubtitleStatus.Draft,
         format: file.GetSubtitleFormat(),
         url: $"/subtitle/fansub/{fansubAcronym}/anime/{animeSlug}/episode/{episodeNumber}",
         episodeID: episode.ID,
         membershipID: membership.ID
       )).Entity;
-    } else {
+    }
+    else
+    {
       subtitle.Format = file.GetSubtitleFormat();
       subtitle.ModificationDate = DateTime.Now;
 

@@ -27,24 +27,35 @@ public class FansubService : IFansubService
 
   public IReadOnlyCollection<FansubDocument> Search(string fansubName) => _elasticClient.Search<FansubDocument>(s =>
   s.Index("fansubs").From(0).Size(10)
-      .Query(q => q.QueryString(qs => qs.Query(fansubName).DefaultField(f => f.Name).DefaultOperator(Operator.And)))
+    .Query(q => q.QueryString(qs => qs.Query(fansubName).DefaultField(f => f.Name).DefaultOperator(Operator.And)))
   ).Documents;
 
   public Fansub GetByAcronym(string acronym) => _context.Fansubs.GetByAcronym(acronym);
   public IEnumerable<Membership> GetMembers(string acronym) =>
-      _context.Fansubs.GetByAcronym(acronym).FansubRoles.SelectMany(role => role.Memberships);
+    _context.Fansubs.GetByAcronym(acronym).FansubRoles.SelectMany(role => role.Memberships);
   public IEnumerable<Subtitle> GetSubtitles(string acronym) =>
-      GetMembers(acronym).SelectMany(membership => membership.Subtitles)
-      .Where(subtitle => subtitle.Status == ESubtitleStatus.Published);
+    GetMembers(acronym).SelectMany(membership => membership.Subtitles)
+    .Where(subtitle => subtitle.Status == ESubtitleStatus.Published);
+
+  public IEnumerable<Subtitle> GetSubtitlesDrafts(string acronym, string auth0ID)
+  {
+    var user = _context.Users.GetByAuth0ID(auth0ID);
+    var fansub = _context.Fansubs.GetByAcronym(acronym);
+
+    _context.Memberships.ThrowIfUserDoesntHavePermissionInFansub(fansub, user, EPermission.PublishSubtitle);
+
+    return GetMembers(acronym).SelectMany(membership => membership.Subtitles)
+    .Where(subtitle => subtitle.Status == ESubtitleStatus.Draft);
+  }
 
   public Dictionary<string, IEnumerable<EPermission>> GetRoles(string acronym)
   {
     var fansubPermissions = _context.FansubRoles
-        .Where(r => r.Fansub.Acronym == acronym)
-        .Select(role => new KeyValuePair<string, IEnumerable<EPermission>>(
-            role.Name,
-            role.Permissions.Select(p => p.Grant)
-        ));
+      .Where(r => r.Fansub.Acronym == acronym)
+      .Select(role => new KeyValuePair<string, IEnumerable<EPermission>>(
+        role.Name,
+        role.Permissions.Select(p => p.Grant)
+      ));
 
     return new Dictionary<string, IEnumerable<EPermission>>(fansubPermissions);
   }
@@ -53,13 +64,15 @@ public class FansubService : IFansubService
   {
     var user = _context.Users.GetByAuth0ID(auth0ID);
     var fansub = _context.Fansubs.Add(fansubDTO.MapToModel()).Entity;
+
+    var draftSubtitlePermission = _context.Permission.Single(p => p.Grant == EPermission.DraftSubtitle);
+    var publishSubtitlePermission = _context.Permission.Single(p => p.Grant == EPermission.PublishSubtitle);
     var editPermissionsPermission = _context.Permission.Single(p => p.Grant == EPermission.EditPermissions);
-    var createSubtitlePermission = _context.Permission.Single(p => p.Grant == EPermission.CreateSubtitle);
 
     var adminRole = _context.FansubRoles.Add(new FansubRole(
       name: "admin",
       fansubID: fansub.ID,
-      permissions: new[] { editPermissionsPermission, createSubtitlePermission }
+      permissions: new[] { draftSubtitlePermission, publishSubtitlePermission, editPermissionsPermission }
     )).Entity;
 
     _context.Memberships.Add(new Membership
@@ -96,12 +109,13 @@ public class FansubService : IFansubService
     var memberRole = _context.FansubRoles.SingleOrDefault(role => role.FansubID == fansub.ID && role.Name == "Member");
     if (memberRole == null)
     {
-      var createSubtitlePermission = _context.Permission.Single(p => p.Grant == EPermission.CreateSubtitle);
+      var draftSubtitlePermission = _context.Permission.Single(p => p.Grant == EPermission.DraftSubtitle);
+      var publishSubtitlePermission = _context.Permission.Single(p => p.Grant == EPermission.DraftSubtitle);
 
       memberRole = _context.FansubRoles.Add(new FansubRole(
         name: "Member",
         fansubID: fansub.ID,
-        permissions: new[] { createSubtitlePermission }
+        permissions: new[] { draftSubtitlePermission, publishSubtitlePermission }
       )).Entity;
     }
 
@@ -120,8 +134,7 @@ public class FansubService : IFansubService
     var user = _context.Users.GetByAuth0ID(auth0ID);
     var fansub = _context.Fansubs.GetByAcronym(acronym);
 
-    var hasPermissionToEdit = _context.Memberships.HasUserPermissionInFansub(fansub.ID, user.ID, EPermission.EditPermissions);
-    if (!hasPermissionToEdit) throw new AlmPermissionException(EPermission.EditPermissions, user.Name, fansub.Name);
+    _context.Memberships.ThrowIfUserDoesntHavePermissionInFansub(fansub, user, EPermission.EditPermissions);
 
     if (!roles["Admin"].Contains(EPermission.EditPermissions))
     {

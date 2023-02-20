@@ -13,6 +13,7 @@ public interface IFansubService
   IEnumerable<Membership> GetMembers(string acronym);
   Dictionary<string, IEnumerable<EPermission>> GetRoles(string acronym);
   IEnumerable<Subtitle> GetSubtitles(string acronym);
+  IEnumerable<Subtitle> GetSubtitlesDrafts(string acronym, string auth0ID);
   bool IsMember(string acronym, string auth0ID);
   void Join(string acronym, string auth0ID);
   IReadOnlyCollection<FansubDocument> Search(string fansubName);

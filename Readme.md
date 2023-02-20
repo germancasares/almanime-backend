@@ -1,4 +1,4 @@
-﻿Add-Migration  
+﻿Add-Migration: dotnet-ef migrations add
 Bundle-Migration  
 Drop-Database  
 Get-DbContext  

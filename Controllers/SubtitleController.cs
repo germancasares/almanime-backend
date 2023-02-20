@@ -36,7 +36,7 @@ public class SubtitleController : ControllerBase
     if (subtitleDTO.AnimeSlug == null) throw new AlmNullException(nameof(subtitleDTO.AnimeSlug));
     if (subtitleDTO.File == null) throw new AlmNullException(nameof(subtitleDTO.File));
 
-    var subtitle = await _subtitleService.Create(
+    var subtitle = await _subtitleService.CreateOrUpdate(
       User.GetAuth0ID(),
       subtitleDTO.FansubAcronym,
       subtitleDTO.AnimeSlug,

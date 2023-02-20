@@ -16,7 +16,7 @@ public class Subtitle : Base
     ID = id;
   }
 
-  protected Subtitle(
+  public Subtitle(
     ESubtitleStatus status,
     ESubtitleFormat format,
     string url,

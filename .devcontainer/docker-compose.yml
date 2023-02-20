@@ -51,7 +51,7 @@ services:
           memory: 1G
 
   alm-blob:
-    image: mcr.microsoft.com/azure-blob-storage:1.4.2-linux-amd64
+    image: mcr.microsoft.com/azure-blob-storage:1.4.3-linux-amd64
     container_name: alm-blob
     environment:
       - LOCAL_STORAGE_ACCOUNT_NAME=almanimeblobs

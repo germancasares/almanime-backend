@@ -65,7 +65,7 @@
         },
         "[csharp]": {
           "editor.defaultFormatter": "ms-dotnettools.csharp",
-          "editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll"]
+          "editor.codeActionsOnSave": ["source.organizeImports"]
         },
         "omnisharp.organizeImportsOnFormat": true,
         "omnisharp.enableImportCompletion": true,

@@ -49,7 +49,7 @@ public class EpisodeService : IEpisodeService
 
   public async Task Populate()
   {
-    var animes = _context.Animes.Select(anime => new { anime.KitsuID, anime.ID }).ToList();
+    var animes = _context.Animes.Where(anime => anime.Slug == "ijiranaide-nagatoro-san-2nd-attack").Select(anime => new { anime.KitsuID, anime.ID }).ToList();
 
     var tasks = animes.Select(async anime => new {
       anime.ID,
@@ -57,9 +57,7 @@ public class EpisodeService : IEpisodeService
       Episodes = await KitsuEpisodes.Fetch(anime.KitsuID),
     });
 
-    var algo = await Task.WhenAll(tasks);
-
-    algo.ToList().ForEach(anime =>
+    (await Task.WhenAll(tasks)).ToList().ForEach(anime =>
     {
       anime.Episodes.ForEach(episode =>
         {

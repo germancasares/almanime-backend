@@ -23,6 +23,11 @@ public class PermissionConfiguration : BaseModelConfiguration<Permission>
       },
       new Permission
       {
+        ID = new Guid("E8A5F5ED-DEF3-4140-A226-5D93DFC9ED15"),
+        Grant = EPermission.UnpublishSubtitle,
+      },
+      new Permission
+      {
         ID = new Guid("C7D17F4C-57CA-4B3A-8029-EF14CBB5AAF0"),
         Grant = EPermission.EditPermissions,
       }

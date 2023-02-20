@@ -28,6 +28,46 @@ public class SubtitleController : ControllerBase
     return File(file, contentType, fileName);
   }
 
+  [HttpPatch("fansub/{fansubAcronym}/anime/{animeSlug}/episode/{episodeNumber}/publish")]
+  [Authorize]
+  public IActionResult Publish(string fansubAcronym, string animeSlug, int episodeNumber)
+  {
+    if (fansubAcronym == null) throw new AlmNullException(nameof(fansubAcronym));
+    if (animeSlug == null) throw new AlmNullException(nameof(animeSlug));
+    if (episodeNumber <= 0) throw new AlmNullException(nameof(episodeNumber));
+
+    var subtitle = _subtitleService.Publish(User.GetAuth0ID(), fansubAcronym, animeSlug, episodeNumber);
+
+    return Ok(new {
+      subtitle.Url,
+      subtitle.Format,
+      subtitle.CreationDate,
+      User = subtitle.Membership.User.Name,
+      Anime = subtitle.Episode.Anime.Name,
+      Episode = subtitle.Episode.Number,
+    });
+  }
+
+  [HttpPatch("fansub/{fansubAcronym}/anime/{animeSlug}/episode/{episodeNumber}/unpublish")]
+  [Authorize]
+  public IActionResult Unpublish(string fansubAcronym, string animeSlug, int episodeNumber)
+  {
+    if (fansubAcronym == null) throw new AlmNullException(nameof(fansubAcronym));
+    if (animeSlug == null) throw new AlmNullException(nameof(animeSlug));
+    if (episodeNumber <= 0) throw new AlmNullException(nameof(episodeNumber));
+
+    var subtitle = _subtitleService.Unpublish(User.GetAuth0ID(), fansubAcronym, animeSlug, episodeNumber);
+
+    return Ok(new {
+      subtitle.Url,
+      subtitle.Format,
+      subtitle.CreationDate,
+      User = subtitle.Membership.User.Name,
+      Anime = subtitle.Episode.Anime.Name,
+      Episode = subtitle.Episode.Number,
+    });
+  }
+
   [HttpPost]
   [Authorize]
   public async Task<IActionResult> PostAsync([FromForm] SubtitleDTO subtitleDTO)

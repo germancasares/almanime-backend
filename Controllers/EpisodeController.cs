@@ -33,7 +33,7 @@ public class EpisodeController : ControllerBase
   }
 
   [HttpPost("populate")]
-  [Authorize("write:animes")]
+  [Authorize("write:episodes")]
   public async Task<IActionResult> Populate()
   {
     await _episodeService.Populate();

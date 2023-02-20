@@ -21,6 +21,64 @@ public class SubtitleService : ISubtitleService
     _fileService = fileService;
   }
 
+  public Subtitle Publish(
+    string auth0ID,
+    string fansubAcronym,
+    string animeSlug,
+    int episodeNumber
+  )
+  {
+    var user = _context.Users.GetByAuth0ID(auth0ID);
+    var episode = _context.Episodes.GetByAnimeSlugAndNumber(animeSlug, episodeNumber);
+    var fansub = _context.Fansubs.GetByAcronym(fansubAcronym);
+    var subtitle = _context.Subtitles.GetByFansubIDAndEpisodeID(fansub.ID, episode.ID);
+
+    _context.Memberships.ThrowIfUserDoesntHavePermissionInFansub(fansub, user, EPermission.PublishSubtitle);
+
+    if (subtitle == null) throw new AlmDbException(EValidationCode.DoesntExistInDB, nameof(subtitle), new()
+    {
+      { nameof(fansub.ID), fansub.ID },
+      { nameof(episode.ID), episode.ID },
+      { nameof(user.ID), user.ID },
+    });
+
+    subtitle.Status = ESubtitleStatus.Published;
+    subtitle.ModificationDate = DateTime.Now;
+
+    _context.SaveChanges();
+
+    return subtitle;
+  }
+
+  public Subtitle Unpublish(
+    string auth0ID,
+    string fansubAcronym,
+    string animeSlug,
+    int episodeNumber
+  )
+  {
+    var user = _context.Users.GetByAuth0ID(auth0ID);
+    var episode = _context.Episodes.GetByAnimeSlugAndNumber(animeSlug, episodeNumber);
+    var fansub = _context.Fansubs.GetByAcronym(fansubAcronym);
+    var subtitle = _context.Subtitles.GetByFansubIDAndEpisodeID(fansub.ID, episode.ID);
+
+    _context.Memberships.ThrowIfUserDoesntHavePermissionInFansub(fansub, user, EPermission.UnpublishSubtitle);
+
+    if (subtitle == null) throw new AlmDbException(EValidationCode.DoesntExistInDB, nameof(subtitle), new()
+    {
+      { nameof(fansub.ID), fansub.ID },
+      { nameof(episode.ID), episode.ID },
+      { nameof(user.ID), user.ID },
+    });
+
+    subtitle.Status = ESubtitleStatus.Draft;
+    subtitle.ModificationDate = DateTime.Now;
+
+    _context.SaveChanges();
+
+    return subtitle;
+  }
+
   public async Task<Subtitle> CreateOrUpdate(
     string auth0ID,
     string fansubAcronym,

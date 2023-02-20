@@ -67,12 +67,18 @@ public class FansubService : IFansubService
 
     var draftSubtitlePermission = _context.Permission.Single(p => p.Grant == EPermission.DraftSubtitle);
     var publishSubtitlePermission = _context.Permission.Single(p => p.Grant == EPermission.PublishSubtitle);
+    var unpublishSubtitlePermission = _context.Permission.Single(p => p.Grant == EPermission.UnpublishSubtitle);
     var editPermissionsPermission = _context.Permission.Single(p => p.Grant == EPermission.EditPermissions);
 
     var adminRole = _context.FansubRoles.Add(new FansubRole(
       name: "admin",
       fansubID: fansub.ID,
-      permissions: new[] { draftSubtitlePermission, publishSubtitlePermission, editPermissionsPermission }
+      permissions: new[] {
+        draftSubtitlePermission,
+        publishSubtitlePermission,
+        unpublishSubtitlePermission,
+        editPermissionsPermission,
+      }
     )).Entity;
 
     _context.Memberships.Add(new Membership

@@ -87,6 +87,7 @@ public class FansubController : ControllerBase
       subtitle.Format,
       subtitle.CreationDate,
       Anime = subtitle.Episode.Anime.Name,
+      AnimeSlug = subtitle.Episode.Anime.Slug,
       Episode = subtitle.Episode.Number,
       User = subtitle.Membership.User.Name,
     }));
@@ -106,6 +107,7 @@ public class FansubController : ControllerBase
       subtitle.Format,
       subtitle.CreationDate,
       Anime = subtitle.Episode.Anime.Name,
+      AnimeSlug = subtitle.Episode.Anime.Slug,
       Episode = subtitle.Episode.Number,
       User = subtitle.Membership.User.Name,
     }));

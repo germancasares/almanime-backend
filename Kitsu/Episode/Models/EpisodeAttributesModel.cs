@@ -2,7 +2,7 @@
 
 public record EpisodeAttributesModel
 {
-  public string? CanonicalTitle { get; init; }
+  public string? CanonicalTitle { get; set; }
   public int? SeasonNumber { get; init; }
   public int? Number { get; init; }
   public int? RelativeNumber { get; init; }

@@ -26,8 +26,7 @@ public static class KitsuEpisodes
 
     while (!string.IsNullOrWhiteSpace(url))
     {
-      var response = await Client.GetStringAsync(url);
-      var episodeCollection = JsonSerializer.Deserialize<EpisodeCollection>(response, new JsonSerializerOptions { PropertyNameCaseInsensitive = true, });
+      var episodeCollection = await Client.GetFromJsonAsync<EpisodeCollection>(url, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
       episodeDataModels.AddRange(episodeCollection?.Data ?? new List<EpisodeDataModel>());
       url = episodeCollection?.Links.Next;

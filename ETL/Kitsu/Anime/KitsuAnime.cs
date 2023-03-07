@@ -1,4 +1,4 @@
-﻿using Almanime.Kitsu.Anime.Models;
+﻿using Almanime.ETL.Kitsu.Anime.Models;
 using Almanime.Models;
 using Almanime.Models.DTO;
 using Almanime.Models.Enums;
@@ -6,9 +6,9 @@ using Almanime.Utils;
 using System.Globalization;
 using System.Text.Json;
 
-namespace Almanime.Kitsu.Anime;
+namespace Almanime.ETL.Kitsu.Anime;
 
-public class KitsuAnime
+public static class KitsuAnime
 {
   private const int MAX_PER_PAGE = 20;
   private const string KITSU_API = "https://kitsu.io/api/edge";

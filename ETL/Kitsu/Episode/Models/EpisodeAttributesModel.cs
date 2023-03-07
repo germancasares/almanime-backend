@@ -1,4 +1,4 @@
-﻿namespace Almanime.Kitsu.Episode.Models;
+﻿namespace Almanime.ETL.Kitsu.Episode.Models;
 
 public record EpisodeAttributesModel
 {

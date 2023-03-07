@@ -1,4 +1,5 @@
-﻿using Almanime.Kitsu.Episode;
+﻿using Almanime.ETL.Jikan.Episodes;
+using Almanime.ETL.Kitsu.Episode;
 using Almanime.Models;
 using Almanime.Models.DTO;
 using Almanime.Repositories;
@@ -49,12 +50,29 @@ public class EpisodeService : IEpisodeService
 
   public async Task Populate()
   {
-    var animes = _context.Animes.Where(anime => anime.Slug == "ijiranaide-nagatoro-san-2nd-attack").Select(anime => new { anime.KitsuID, anime.ID }).ToList();
+    var animes = _context.Animes.Select(anime => new { anime.KitsuID, anime.ID, anime.MyAnimeListID }).ToList();
 
-    var tasks = animes.Select(async anime => new {
-      anime.ID,
-      anime.KitsuID,
-      Episodes = await KitsuEpisodes.Fetch(anime.KitsuID),
+    var tasks = animes.Select(async anime =>
+    {
+      var episodes = await KitsuEpisodes.Fetch(anime.KitsuID);
+
+      if (episodes.Any(episode => episode.Name == null))
+      {
+        var jikanEpisodes = await JikanEpisodes.Fetch(anime.MyAnimeListID);
+
+        episodes = episodes.Select(episode =>
+        {
+          episode.Name ??= jikanEpisodes.SingleOrDefault(jikanEpisode => jikanEpisode.Number == episode.Number)?.Name;
+
+          return episode;
+        }).ToList();
+      }
+
+      return new {
+        anime.ID,
+        anime.KitsuID,
+        Episodes = episodes,
+      };
     });
 
     (await Task.WhenAll(tasks)).ToList().ForEach(anime =>

@@ -1,8 +1,8 @@
-﻿using Almanime.Kitsu.Episode.Models;
+﻿using Almanime.ETL.Kitsu.Episode.Models;
 using Almanime.Models.DTO;
 using System.Text.Json;
 
-namespace Almanime.Kitsu.Episode;
+namespace Almanime.ETL.Kitsu.Episode;
 
 public static class KitsuEpisodes
 {

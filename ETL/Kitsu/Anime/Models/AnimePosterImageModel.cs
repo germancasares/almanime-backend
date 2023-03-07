@@ -1,4 +1,4 @@
-﻿namespace Almanime.Kitsu.Anime;
+﻿namespace Almanime.ETL.Kitsu.Anime;
 
 public record AnimePosterImageModel
 {

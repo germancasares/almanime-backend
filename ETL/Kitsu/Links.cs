@@ -1,4 +1,4 @@
-﻿namespace Almanime.Kitsu;
+﻿namespace Almanime.ETL.Kitsu;
 
 public record Links
 {

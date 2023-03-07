@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace Almanime.Kitsu;
+namespace Almanime.ETL.Kitsu;
 
 public static class Utils
 {

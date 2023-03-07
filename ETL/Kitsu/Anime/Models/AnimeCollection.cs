@@ -1,4 +1,4 @@
-﻿namespace Almanime.Kitsu.Anime.Models;
+﻿namespace Almanime.ETL.Kitsu.Anime.Models;
 
 public record AnimeCollection
 {

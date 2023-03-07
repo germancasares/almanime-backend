@@ -1,6 +1,6 @@
 using FluentAssertions;
 using NUnit.Framework;
-using Helper = Almanime.Kitsu.Utils;
+using Helper = Almanime.ETL.Kitsu.Utils;
 
 namespace Almanime.Tests.Kitsu.Utils;
 

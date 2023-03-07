@@ -1,4 +1,4 @@
-﻿using Almanime.Kitsu.Anime;
+﻿using Almanime.ETL.Kitsu.Anime;
 using Almanime.Models;
 using Almanime.Models.Documents;
 using Almanime.Models.DTO;

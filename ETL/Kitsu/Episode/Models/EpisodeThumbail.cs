@@ -1,6 +1,6 @@
-﻿namespace Almanime.Kitsu.Anime.Models;
+﻿namespace Almanime.ETL.Kitsu.Episode.Models;
 
-public record AnimeCoverImageModel
+public record EpisodeThumbail
 {
   public string? Original { get; init; }
   public string? Tiny { get; init; }

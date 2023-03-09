@@ -21,6 +21,8 @@ public class SubtitleService : ISubtitleService
     _fileService = fileService;
   }
 
+  public IQueryable<Subtitle> GetByAnimeSlug(string animeSlug) => _context.Subtitles.GetByAnimeSlugAndByPublished(animeSlug);
+
   public Subtitle Publish(
     string auth0ID,
     string fansubAcronym,

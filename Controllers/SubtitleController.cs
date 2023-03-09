@@ -20,6 +20,24 @@ public class SubtitleController : ControllerBase
     _fileService = fileService;
   }
 
+  [HttpGet("anime/{animeSlug}")]
+  public IActionResult GetByAnime(string animeSlug)
+  {
+    var subtitles = _subtitleService.GetByAnimeSlug(animeSlug);
+
+    var subtitleGroups = subtitles
+    .GroupBy(subtitle => subtitle.Episode.Number)
+    .ToDictionary(
+      group => group.Key, 
+      group => group.Select(subtitle => new {
+        subtitle.Membership.FansubRole.Fansub.Acronym,
+        subtitle.Url
+      })
+    );
+
+    return Ok(subtitleGroups);
+  }
+
   [HttpGet("fansub/{fansubAcronym}/anime/{animeSlug}/episode/{episodeNumber}")]
   public async Task<IActionResult> GetAsync(string fansubAcronym, string animeSlug, int episodeNumber)
   {

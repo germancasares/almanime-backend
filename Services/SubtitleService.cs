@@ -86,6 +86,7 @@ public class SubtitleService : ISubtitleService
     string fansubAcronym,
     string animeSlug,
     int episodeNumber,
+    ESubtitleLanguage language,
     IFormFile file
   )
   {
@@ -104,6 +105,7 @@ public class SubtitleService : ISubtitleService
       subtitle = _context.Subtitles.Add(new(
         id: Guid.NewGuid(),
         status: ESubtitleStatus.Draft,
+        language: language,
         format: file.GetSubtitleFormat(),
         url: $"/subtitle/fansub/{fansubAcronym}/anime/{animeSlug}/episode/{episodeNumber}",
         episodeID: episode.ID,

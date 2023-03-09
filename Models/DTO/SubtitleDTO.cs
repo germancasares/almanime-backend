@@ -1,4 +1,6 @@
-﻿namespace Almanime.Models.DTO;
+﻿using Almanime.Models.Enums;
+
+namespace Almanime.Models.DTO;
 
 public record SubtitleDTO
 {
@@ -7,4 +9,5 @@ public record SubtitleDTO
   public string? FansubAcronym { get; init; }
   public string? AnimeSlug { get; init; }
   public int EpisodeNumber { get; init; }
+  public ESubtitleLanguage Language { get; init; }
 }

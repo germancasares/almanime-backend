@@ -99,6 +99,7 @@ public class SubtitleController : ControllerBase
       subtitleDTO.FansubAcronym,
       subtitleDTO.AnimeSlug,
       subtitleDTO.EpisodeNumber,
+      subtitleDTO.Language,
       subtitleDTO.File
     );
 
@@ -106,6 +107,7 @@ public class SubtitleController : ControllerBase
       subtitle.Url,
       subtitle.Format,
       subtitle.CreationDate,
+      subtitle.Language,
       User = subtitle.Membership.User.Name,
       Anime = subtitle.Episode.Anime.Name,
       Episode = subtitle.Episode.Number,

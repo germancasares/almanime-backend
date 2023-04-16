@@ -6,10 +6,14 @@ name: Publish Docker image
 # documentation.
 
 on:
+  # schedule:
+  #   - cron: '29 17 * * *'
   push:
-    branches: [ master ]
+    branches: [ "master" ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
+  # pull_request:
+  #   branches: [ "master" ]
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -19,7 +23,7 @@ env:
 
 
 jobs:
-  publish:
+  build:
 
     runs-on: ubuntu-latest
     permissions:
@@ -71,15 +75,12 @@ jobs:
         uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
         with:
           context: .
-          # Failing right now, so build the image locally and push to Github repository
-          platforms: linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          build-args: |
-            RELEASE=${{ github.ref_name }}
+
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker

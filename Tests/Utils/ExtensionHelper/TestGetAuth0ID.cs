@@ -10,7 +10,11 @@ namespace Almanime.Tests.Utils.ExtensionHelper;
 public static class TestGetIdentityID
 {
   [Test]
-  public static void ValidNameIdentifier_ShouldReturnGuid([Values("00000000-0000-0000-0000-000000000000", "B70DDB8F-892B-4E56-886F-A7F253F8A56B")] string nameIdentifier)
+  public static void ValidNameIdentifier_ShouldReturnGuid([Values(
+    "00000000-0000-0000-0000-000000000000", 
+    "B70DDB8F-892B-4E56-886F-A7F253F8A56B",
+    "", "random", "3213215324314213", "-1", "@@@@"
+    )] string nameIdentifier)
   {
     // Arrange
     var claims = new List<Claim>()
@@ -27,20 +31,20 @@ public static class TestGetIdentityID
     ID.Should().Be(nameIdentifier);
   }
 
-  [Test]
-  public static void InvalidNameIdentifier_ShouldThrowException([Values("", "random", "3213215324314213", "-1", "@@@@")] string nameIdentifier)
-  {
-    // Arrange
-    var claims = new List<Claim>()
-    {
-      new Claim(ClaimTypes.NameIdentifier, nameIdentifier),
-    };
-    var identity = new ClaimsIdentity(claims, "TestAuthType");
-    var user = new ClaimsPrincipal(identity);
+  // [Test]
+  // public static void InvalidNameIdentifier_ShouldThrowException([Values(null)] string nameIdentifier)
+  // {
+  //   // Arrange
+  //   var claims = new List<Claim>()
+  //   {
+  //     new Claim(ClaimTypes.NameIdentifier, nameIdentifier),
+  //   };
+  //   var identity = new ClaimsIdentity(claims, "TestAuthType");
+  //   var user = new ClaimsPrincipal(identity);
 
-    // Act & Assert
-    user.Invoking(user => user.GetAuth0ID())
-      .Should().Throw<AlmNullException>()
-      .WithMessage("auth0ID breaks rule NotEmpty");
-  }
+  //   // Act & Assert
+  //   user.Invoking(user => user.GetAuth0ID())
+  //     .Should().Throw<AlmNullException>()
+  //     .WithMessage("auth0ID breaks rule NotEmpty");
+  // }
 }

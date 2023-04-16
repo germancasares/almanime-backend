@@ -36,14 +36,18 @@
         "ms-mssql.mssql",
         // "richardwillis.vscode-entity-framework",
         "aliasadidev.nugetpackagemanagergui",
-        "formulahendry.dotnet-test-explorer"
+        "formulahendry.dotnet-test-explorer",
+        "vscode-icons-team.vscode-icons"
       ],
       "settings": {
-        "diffEditor.codeLens": true,
+        // --- Common settings ---
         "debug.terminal.clearBeforeReusing": true,
+        "diffEditor.codeLens": true,
         "editor.bracketPairColorization.enabled": true,
         "editor.formatOnSave": true,
-        "editor.guides.bracketPairs": "active",
+        "editor.hover.above": false,
+        "editor.guides.bracketPairs": true,
+        "editor.guides.highlightActiveBracketPair": true,
         "editor.tabSize": 2,
         "editor.detectIndentation": false,
         "explorer.confirmDragAndDrop": false,
@@ -60,12 +64,16 @@
         "git.enableSmartCommit": true,
         "git.pruneOnFetch": true,
         "window.autoDetectColorScheme": true,
+        "workbench.colorTheme": "Default Light+ Experimental",
         "[json]": {
           "editor.defaultFormatter": "vscode.json-language-features"
         },
+        // --- C# settings ---
         "[csharp]": {
           "editor.defaultFormatter": "ms-dotnettools.csharp",
-          "editor.codeActionsOnSave": ["source.organizeImports"]
+          "editor.codeActionsOnSave": [
+            "source.organizeImports"
+          ]
         },
         "omnisharp.organizeImportsOnFormat": true,
         "omnisharp.enableImportCompletion": true,

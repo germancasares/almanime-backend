@@ -5,17 +5,18 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0-preview-alpine AS build
 
+ARG TARGETARCH
 WORKDIR /src
 COPY ["Almanime.csproj", "."]
 RUN dotnet restore "./Almanime.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "Almanime.csproj" -c Release -o "/app/build"
+RUN dotnet build "Almanime.csproj" -a $TARGETARCH -c Release -o "/app/build"
 
 FROM build AS publish
-RUN dotnet publish "Almanime.csproj" -c Release -o "/app/publish"
+RUN dotnet publish "Almanime.csproj" -a $TARGETARCH -c Release -o "/app/publish"
 
 FROM base AS final
 ARG RELEASE

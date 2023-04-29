@@ -66,9 +66,7 @@ public class ErrorHandlerMiddleware
     {
       var response = context.Response;
       response.StatusCode = (int)HttpStatusCode.BadRequest;
-      await response.WriteAsJsonAsync(new {
-        Exception = exception,
-      });
+      await response.WriteAsync(exception.ToString());
     }
   }
 }

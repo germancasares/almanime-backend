@@ -47,6 +47,10 @@ try
   if (elasticSearchUri != null)
   {
     builder.Services.AddSingleton(new ElasticClient(new Uri(elasticSearchUri)));
+  } 
+  else
+  {
+    throw new Exception("ElasticSearch connection string not provided.");
   }
 
   builder.Services.AddCors();

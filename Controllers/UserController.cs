@@ -27,7 +27,8 @@ public class UserController : ControllerBase
     var users = _userService.Get();
 
     return Ok(users.Select(user => new {
-      user.Name
+      user.Name,
+      Fansubs = user.Memberships.Select(membership => new { membership.Fansub.Acronym, membership.Fansub.Name }),
     }));
   }
 

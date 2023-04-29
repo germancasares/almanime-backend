@@ -1,3 +1,4 @@
+using Almanime.Models;
 using Almanime.Models.Enums;
 using Almanime.Utils;
 using FluentAssertions;
@@ -41,7 +42,7 @@ public static class TestGetSubtitleFormat
     formFile
       .Invoking(file => file.GetSubtitleFormat())
       .Should()
-      .Throw<ArgumentException>()
-      .WithMessage("Value cannot be null. (Parameter 'file')");
+      .Throw<AlmValidationException>()
+      .WithMessage("file breaks rule FormatNotValid");
   }
 }

@@ -18,6 +18,11 @@ public abstract class AlmException : Exception
   }
 }
 
+public class AlmValidationException : AlmException
+{
+  public AlmValidationException(EValidationCode code, string field) : base(code, field) { }
+}
+
 public class AlmNullException : AlmException
 {
   public AlmNullException(string field) : base(EValidationCode.NotEmpty, field) { }

@@ -4,6 +4,8 @@ using Almanime.Repositories;
 using Almanime.Repositories.Queries;
 using Almanime.Services.Interfaces;
 using Almanime.Utils;
+using SubtitlesParser.Classes.Parsers;
+using System.Text;
 
 namespace Almanime.Services;
 
@@ -97,6 +99,30 @@ public class SubtitleService : ISubtitleService
     var subtitle = _context.Subtitles.GetByFansubIDAndEpisodeID(fansub.ID, episode.ID);
 
     _context.Memberships.ThrowIfUserDoesntHavePermissionInFansub(fansub, user, EPermission.DraftSubtitle);
+
+    var format = file.GetSubtitleFormat();
+
+    try
+    {
+      if (format == ESubtitleFormat.ASS)
+      {
+        new SsaParser().ParseStream(file.OpenReadStream(), Encoding.Default);
+      }
+      // TODO
+      // else if (file.GetSubtitleFormat() == ESubtitleFormat.SRT)
+      // {
+      //   new SrtParser().ParseStream(file.OpenReadStream(), Encoding.Default);
+      // }
+    }
+    catch (AlmDbException)
+    {
+      throw new AlmDbException(EValidationCode.FormatNotValid, nameof(file), new()
+      {
+        { nameof(fansub.ID), fansub.ID },
+        { nameof(episode.ID), episode.ID },
+        { nameof(user.ID), user.ID },
+      });
+    }
 
     await _fileService.UploadSubtitle(file, fansubAcronym, animeSlug, episodeNumber, episode.Anime.Name, file.GetSubtitleFormat());
 

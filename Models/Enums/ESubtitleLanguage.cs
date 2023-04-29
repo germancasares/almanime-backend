@@ -4,6 +4,6 @@ public enum ESubtitleLanguage
 {
   Japanese,
   English,
-  Spanish,
-  LatinSpanish,
+  SpanishCastilian,
+  SpanishLatin,
 }

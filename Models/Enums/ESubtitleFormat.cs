@@ -3,5 +3,6 @@
 public enum ESubtitleFormat
 {
   ASS,
-  SRT,
+  // TODO: Implement transformers for SRT or adapt FE Editor to understand SRT
+  // SRT, 
 }

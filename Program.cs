@@ -3,7 +3,6 @@ using Almanime.Services;
 using Almanime.Services.Interfaces;
 using Almanime.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -136,7 +135,7 @@ try
 
   app.UseHttpsRedirection();
 
-  app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+  app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("Content-Disposition"));
 
   app.UseAuthentication();
   app.UseAuthorization();

@@ -1,4 +1,5 @@
-﻿using Almanime.Models.Enums;
+﻿using Almanime.Models;
+using Almanime.Models.Enums;
 
 namespace Almanime.Utils;
 
@@ -26,7 +27,8 @@ public static class EnumHelper
   public static ESubtitleFormat GetSubtitleFormat(this IFormFile file) => file.GetExtension() switch
   {
     ".ass" => ESubtitleFormat.ASS,
-    ".srt" => ESubtitleFormat.SRT,
-    _ => throw new ArgumentNullException(nameof(file)),
+    // TODO
+    // ".srt" => ESubtitleFormat.SRT,
+    _ => throw new AlmValidationException(EValidationCode.FormatNotValid, nameof(file)),
   };
 }

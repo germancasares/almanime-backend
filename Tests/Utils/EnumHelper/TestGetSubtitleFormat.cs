@@ -18,7 +18,7 @@ public static class TestGetSubtitleFormat
   }
 
   [TestCase(".ass", ESubtitleFormat.ASS)]
-  [TestCase(".srt", ESubtitleFormat.SRT)]
+  // [TestCase(".srt", ESubtitleFormat.SRT)]
   public static void FileWithSubtitleExtension_ShouldReturnESubtitleFormat(string extension, ESubtitleFormat expectedFormat)
   {
     // Arrange

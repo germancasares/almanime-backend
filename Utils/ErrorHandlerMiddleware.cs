@@ -52,5 +52,14 @@ public class ErrorHandlerMiddleware
         almException.FansubName,
       });
     }
+    catch (AlmValidationException almException) {
+      var response = context.Response;
+      response.StatusCode = (int)HttpStatusCode.BadRequest;
+      await response.WriteAsJsonAsync(new {
+        almException.Field,
+        almException.Rule,
+        almException.Code,
+      });
+    }
   }
 }

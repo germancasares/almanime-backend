@@ -7,4 +7,5 @@ public enum EValidationCode
   DoesntExistInDB = 3,
   AlreadyInDB = 4,
   DoesntHavePermission = 5,
+  FormatNotValid = 6,
 }

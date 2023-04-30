@@ -28,7 +28,7 @@ public class UserController : ControllerBase
 
     return Ok(users.Select(user => new {
       user.Name,
-      Fansubs = user.Memberships.Select(membership => new { membership.Fansub.Acronym, membership.Fansub.Name }),
+      Fansubs = user.Memberships.Select(membership => new { membership.FansubRole.Fansub.Acronym, membership.FansubRole.Fansub.Name }),
     }));
   }
 

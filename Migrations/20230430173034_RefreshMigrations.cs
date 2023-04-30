@@ -5,7 +5,7 @@
 namespace Almanime.Migrations
 {
     /// <inheritdoc />
-    public partial class AddDataProtectionKeys : Migration
+    public partial class RefreshMigrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

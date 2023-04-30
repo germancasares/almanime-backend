@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Almanime.Migrations
 {
     [DbContext(typeof(AlmanimeContext))]
-    [Migration("20230430160013_UpdateAnimeImagesRelationship")]
-    partial class UpdateAnimeImagesRelationship
+    [Migration("20230430173034_RefreshMigrations")]
+    partial class RefreshMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -237,8 +237,6 @@ namespace Almanime.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("FansubID");
-
                     b.HasIndex("RoleID", "FansubID");
 
                     b.HasIndex("UserID", "FansubID")
@@ -386,6 +384,25 @@ namespace Almanime.Migrations
                     b.ToTable("FansubRolePermission");
                 });
 
+            modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FriendlyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Xml")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DataProtectionKeys");
+                });
+
             modelBuilder.Entity("Almanime.Models.Anime", b =>
                 {
                     b.OwnsOne("Almanime.Models.SizedImage", "CoverImages", b1 =>
@@ -482,12 +499,6 @@ namespace Almanime.Migrations
 
             modelBuilder.Entity("Almanime.Models.Membership", b =>
                 {
-                    b.HasOne("Almanime.Models.Fansub", "Fansub")
-                        .WithMany()
-                        .HasForeignKey("FansubID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Almanime.Models.User", "User")
                         .WithMany("Memberships")
                         .HasForeignKey("UserID")
@@ -499,8 +510,6 @@ namespace Almanime.Migrations
                         .HasForeignKey("RoleID", "FansubID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Fansub");
 
                     b.Navigation("FansubRole");
 

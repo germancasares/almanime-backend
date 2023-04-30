@@ -234,8 +234,6 @@ namespace Almanime.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("FansubID");
-
                     b.HasIndex("RoleID", "FansubID");
 
                     b.HasIndex("UserID", "FansubID")
@@ -498,12 +496,6 @@ namespace Almanime.Migrations
 
             modelBuilder.Entity("Almanime.Models.Membership", b =>
                 {
-                    b.HasOne("Almanime.Models.Fansub", "Fansub")
-                        .WithMany()
-                        .HasForeignKey("FansubID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Almanime.Models.User", "User")
                         .WithMany("Memberships")
                         .HasForeignKey("UserID")
@@ -515,8 +507,6 @@ namespace Almanime.Migrations
                         .HasForeignKey("RoleID", "FansubID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Fansub");
 
                     b.Navigation("FansubRole");
 

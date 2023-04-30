@@ -27,7 +27,12 @@ services:
     volumes:
       - alm-kibana:/usr/share/kibana/data
     environment:
-      - ELASTICSEARCH_HOSTS=http://alm-search:9200
+      - ELASTICSEARCH_HOSTS=["http://alm-search:9200"]
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 1024M
     depends_on:
       - alm-search
     ports:
@@ -39,18 +44,20 @@ services:
     container_name: alm-search
     volumes:
       - alm-search:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
     environment:
       - discovery.type=single-node
       - bootstrap.memory_lock=true
       - xpack.security.enabled=false
-    ports:
-      - 9200:9200
-      - 9300:9300
-    restart: unless-stopped
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
     deploy:
       resources:
         limits:
-          memory: 1G
+          cpus: '0.5'
+          memory: 2048M
+    restart: unless-stopped
 
   alm-blob:
     image: mcr.microsoft.com/azure-blob-storage:1.4.3-linux-amd64

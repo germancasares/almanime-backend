@@ -19,6 +19,8 @@ public class AnimeConfiguration : BaseModelConfiguration<Anime>
 
     builder.HasIndex(anime => anime.KitsuID).IsUnique();
     builder.OwnsOne(anime => anime.CoverImages);
+    builder.Navigation(p => p.CoverImages).IsRequired();
     builder.OwnsOne(anime => anime.PosterImages);
+    builder.Navigation(p => p.PosterImages).IsRequired();
   }
 }

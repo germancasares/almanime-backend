@@ -1,10 +1,11 @@
 ﻿using Almanime.Models;
 using Almanime.Repositories.Configurations;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Almanime.Repositories;
 
-public partial class AlmanimeContext : DbContext
+public partial class AlmanimeContext : DbContext, IDataProtectionKeyContext
 {
   public AlmanimeContext()
   {
@@ -27,6 +28,8 @@ public partial class AlmanimeContext : DbContext
     modelBuilder.ApplyConfiguration(new UserConfiguration());
     modelBuilder.ApplyConfiguration(new BookmarkConfiguration());
   }
+
+  public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
 
   public DbSet<Anime> Animes => Set<Anime>();
   public DbSet<Episode> Episodes => Set<Episode>();

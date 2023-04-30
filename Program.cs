@@ -3,6 +3,7 @@ using Almanime.Services;
 using Almanime.Services.Interfaces;
 using Almanime.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -35,6 +36,7 @@ try
   });
 
   // Add services to the container.
+  builder.Services.AddDataProtection().PersistKeysToDbContext<AlmanimeContext>();
   builder.Services.AddScoped<IAnimeService, AnimeService>();
   builder.Services.AddScoped<IEpisodeService, EpisodeService>();
   builder.Services.AddScoped<IUserService, UserService>();

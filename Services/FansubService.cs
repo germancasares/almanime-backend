@@ -25,9 +25,12 @@ public class FansubService : IFansubService
       .Any(membership => membership.FansubRole.Fansub.Acronym == acronym && membership.User.Auth0ID == auth0ID);
   public IQueryable<Fansub> Get() => _context.Fansubs.AsQueryable();
 
-  public IReadOnlyCollection<FansubDocument> Search(string fansubName) => _elasticClient.Search<FansubDocument>(s =>
-  s.Index("fansubs").From(0).Size(10)
-    .Query(q => q.QueryString(qs => qs.Query(fansubName).DefaultField(f => f.Name).DefaultOperator(Operator.And)))
+  public IReadOnlyCollection<FansubDocument> Search(string fansubName) => _elasticClient.Search<FansubDocument>(
+    s => s.Index("fansubs")
+    .From(0)
+    .Size(10)
+    .Query(q => q.Wildcard(c => c.Field("name").Value($"{fansubName.ToLower()}*")))
+    // .Query(q => q.QueryString(qs => qs.Query(fansubName).DefaultField(f => f.Name).DefaultOperator(Operator.And)))
   ).Documents;
 
   public Fansub GetByAcronym(string acronym) => _context.Fansubs.GetByAcronym(acronym);

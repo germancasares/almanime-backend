@@ -26,9 +26,12 @@ public class AnimeService : IAnimeService
   public Anime GetBySlug(string slug) => _context.Animes.GetBySlug(slug);
   public IQueryable<Anime> Get() => _context.Animes.AsQueryable().AsNoTracking();
 
-  public IReadOnlyCollection<AnimeDocument> Search(string animeName) => _elasticClient.Search<AnimeDocument>(s =>
-    s.Index("animes").From(0).Size(10)
-      .Query(q => q.QueryString(qs => qs.Query(animeName).DefaultField(f => f.Name).DefaultOperator(Operator.And)))
+  public IReadOnlyCollection<AnimeDocument> Search(string animeName) => _elasticClient.Search<AnimeDocument>(
+      s => s.Index("animes")
+      .From(0)
+      .Size(10)
+      .Query(q => q.Wildcard(c => c.Field("name").Value($"{animeName.ToLower()}*")))
+      // .Query(q => q.QueryString(qs => qs.Query(animeName).DefaultField(f => f.Name).DefaultOperator(Operator.And)))
     ).Documents;
 
   public IEnumerable<Anime> GetByBookmarks(string auth0ID) => _context

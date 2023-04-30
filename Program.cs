@@ -137,7 +137,7 @@ try
 
   app.UseMiddleware<ErrorHandlerMiddleware>();
 
-  // app.UseHttpsRedirection();
+  app.UseHttpsRedirection();
 
   app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("Content-Disposition"));
 

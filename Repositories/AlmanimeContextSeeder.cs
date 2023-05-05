@@ -48,6 +48,7 @@ public static class AlmanimeContextSeeder
     var netflixFansub = new Fansub("NFLX", "Netflix", "https://www.netflix.com")
     {
       ID = new Guid("69D1F290-80F4-48CB-8C19-90195EA7BF4A"),
+      CreationDate = new DateTime(1997, 8, 29),
     };
     builder.Entity<Fansub>().HasData(netflixFansub);
 

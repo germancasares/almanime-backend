@@ -108,11 +108,10 @@ public class SubtitleService : ISubtitleService
       {
         new SsaParser().ParseStream(file.OpenReadStream(), Encoding.Default);
       }
-      // TODO
-      // else if (file.GetSubtitleFormat() == ESubtitleFormat.SRT)
-      // {
-      //   new SrtParser().ParseStream(file.OpenReadStream(), Encoding.Default);
-      // }
+      else if (file.GetSubtitleFormat() == ESubtitleFormat.SRT)
+      {
+        new SrtParser().ParseStream(file.OpenReadStream(), Encoding.Default);
+      }
     }
     catch (AlmDbException)
     {

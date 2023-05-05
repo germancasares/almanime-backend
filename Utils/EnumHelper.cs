@@ -27,8 +27,7 @@ public static class EnumHelper
   public static ESubtitleFormat GetSubtitleFormat(this IFormFile file) => file.GetExtension() switch
   {
     ".ass" => ESubtitleFormat.ASS,
-    // TODO
-    // ".srt" => ESubtitleFormat.SRT,
+    ".srt" => ESubtitleFormat.SRT,
     _ => throw new AlmValidationException(EValidationCode.FormatNotValid, nameof(file)),
   };
 }

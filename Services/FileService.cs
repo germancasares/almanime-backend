@@ -14,11 +14,7 @@ public class FileService : IFileService
 
   public FileService(IConfiguration configuration)
   {
-    var connectionString = configuration.GetConnectionString("AzureWebJobsStorage");
-
-    if (connectionString == null)
-      throw new InvalidOperationException("AzureWebJobsStorage connection string not set"); // TODO
-
+    var connectionString = configuration.GetConnectionString("AzureWebJobsStorage") ?? throw new InvalidOperationException("AzureWebJobsStorage connection string not set");
     _blobServiceClient = new BlobServiceClient(connectionString);
   }
 

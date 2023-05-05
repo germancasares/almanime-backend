@@ -68,19 +68,14 @@ public class FansubService : IFansubService
     var user = _context.Users.GetByAuth0ID(auth0ID);
     var fansub = _context.Fansubs.Add(fansubDTO.MapToModel()).Entity;
 
-    var draftSubtitlePermission = _context.Permission.Single(p => p.Grant == EPermission.DraftSubtitle);
-    var publishSubtitlePermission = _context.Permission.Single(p => p.Grant == EPermission.PublishSubtitle);
-    var unpublishSubtitlePermission = _context.Permission.Single(p => p.Grant == EPermission.UnpublishSubtitle);
-    var editPermissionsPermission = _context.Permission.Single(p => p.Grant == EPermission.EditPermissions);
-
     var adminRole = _context.FansubRoles.Add(new FansubRole(
-      name: "admin",
+      name: "Admin",
       fansubID: fansub.ID,
       permissions: new[] {
-        draftSubtitlePermission,
-        publishSubtitlePermission,
-        unpublishSubtitlePermission,
-        editPermissionsPermission,
+        AlmanimeContextSeeder.DRAFT_SUBTITLE_PERMISSION,
+        AlmanimeContextSeeder.PUBLISH_SUBTITLE_PERMISSION,
+        AlmanimeContextSeeder.UNPUBLISH_SUBTITLE_PERMISSION,
+        AlmanimeContextSeeder.EDIT_PERMISSIONS_PERMISSION,
       }
     )).Entity;
 
@@ -107,7 +102,7 @@ public class FansubService : IFansubService
     if (isAlreadyMember)
     {
       throw new AlmDbException(
-        EValidationCode.AlreadyInDB, "member", new()
+        EValidationCode.AlreadyInDB, "Member", new()
         {
           { nameof(user), user.Name },
           { nameof(fansub), fansub.Name },
@@ -118,13 +113,13 @@ public class FansubService : IFansubService
     var memberRole = _context.FansubRoles.SingleOrDefault(role => role.FansubID == fansub.ID && role.Name == "Member");
     if (memberRole == null)
     {
-      var draftSubtitlePermission = _context.Permission.Single(p => p.Grant == EPermission.DraftSubtitle);
-      var publishSubtitlePermission = _context.Permission.Single(p => p.Grant == EPermission.DraftSubtitle);
-
       memberRole = _context.FansubRoles.Add(new FansubRole(
         name: "Member",
         fansubID: fansub.ID,
-        permissions: new[] { draftSubtitlePermission, publishSubtitlePermission }
+        permissions: new[] { 
+          AlmanimeContextSeeder.DRAFT_SUBTITLE_PERMISSION,
+          AlmanimeContextSeeder.PUBLISH_SUBTITLE_PERMISSION,
+        }
       )).Entity;
     }
 

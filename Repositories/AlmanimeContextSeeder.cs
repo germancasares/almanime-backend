@@ -45,7 +45,7 @@ public static class AlmanimeContextSeeder
     };
     builder.Entity<User>().HasData(serosacUser);
 
-    var netflixFansub = new Fansub("netflix", "Netflix", "https://www.netflix.com")
+    var netflixFansub = new Fansub("NFLX", "Netflix", "https://www.netflix.com")
     {
       ID = new Guid("69D1F290-80F4-48CB-8C19-90195EA7BF4A"),
     };

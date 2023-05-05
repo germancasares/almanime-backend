@@ -23,10 +23,12 @@ public partial class AlmanimeContext : DbContext, IDataProtectionKeyContext
 
     modelBuilder.ApplyConfiguration(new FansubConfiguration());
     modelBuilder.ApplyConfiguration(new FansubRoleConfiguration());
-    modelBuilder.ApplyConfiguration(new PermissionConfiguration());
+    modelBuilder.ApplyConfiguration(new BaseModelConfiguration<Permission>());
     modelBuilder.ApplyConfiguration(new MembershipConfiguration());
     modelBuilder.ApplyConfiguration(new UserConfiguration());
     modelBuilder.ApplyConfiguration(new BookmarkConfiguration());
+
+    AlmanimeContextSeeder.Seed(modelBuilder);
   }
 
   public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
@@ -34,7 +36,6 @@ public partial class AlmanimeContext : DbContext, IDataProtectionKeyContext
   public DbSet<Anime> Animes => Set<Anime>();
   public DbSet<Episode> Episodes => Set<Episode>();
   public DbSet<Subtitle> Subtitles => Set<Subtitle>();
-
   public DbSet<Fansub> Fansubs => Set<Fansub>();
   public DbSet<FansubRole> FansubRoles => Set<FansubRole>();
   public DbSet<Permission> Permission => Set<Permission>();

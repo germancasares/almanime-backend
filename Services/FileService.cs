@@ -35,6 +35,8 @@ public class FileService : IFileService
 
   private async Task<Response<BlobDownloadStreamingResult>> Download(string blob) => await _blobServiceClient.GetBlobContainerClient(BlobContainerName).GetBlobClient(blob).DownloadStreamingAsync();
 
+  private async Task Delete(string blob) => await _blobServiceClient.GetBlobContainerClient(BlobContainerName).DeleteBlobIfExistsAsync(blob);
+
   public async Task<Uri> UploadSubtitle(
     IFormFile subtitle,
     string fansubAcronym,
@@ -64,4 +66,6 @@ public class FileService : IFileService
 
     return (blob.Content, blob.Details.ContentType, $"[{fansubAcronym}]{animeName.Value} - Episode {episodeNumber}.{subtitleFormat.Value.ToLower()}");
   }
+
+  public async Task DeleteSubtitle(string fansubAcronym, string animeSlug, int episodeNumber) => await Delete($"fansub/{fansubAcronym}/{animeSlug}/{episodeNumber}");
 }

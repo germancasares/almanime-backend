@@ -24,6 +24,12 @@ public static class AlmanimeContextSeeder
     Grant = EPermission.UnpublishSubtitle,
   };
 
+  public static readonly Permission DELETE_SUBTITLE_PERMISSION = new()
+  {
+    ID = new Guid("D77DB126-4D92-41C0-B65F-7D76309596F1"),
+    Grant = EPermission.DeleteSubtitle,
+  };
+
   public static readonly Permission EDIT_PERMISSIONS_PERMISSION = new()
   {
     ID = new Guid("C7D17F4C-57CA-4B3A-8029-EF14CBB5AAF0"),
@@ -36,6 +42,7 @@ public static class AlmanimeContextSeeder
       DRAFT_SUBTITLE_PERMISSION,
       PUBLISH_SUBTITLE_PERMISSION,
       UNPUBLISH_SUBTITLE_PERMISSION,
+      DELETE_SUBTITLE_PERMISSION,
       EDIT_PERMISSIONS_PERMISSION
     );
 
@@ -74,6 +81,12 @@ public static class AlmanimeContextSeeder
       new
       {
         PermissionsID = UNPUBLISH_SUBTITLE_PERMISSION.ID,
+        FansubRolesID = adminRoleForNetflix.ID,
+        FansubRolesFansubID = adminRoleForNetflix.FansubID,
+      },
+      new
+      {
+        PermissionsID = DELETE_SUBTITLE_PERMISSION.ID,
         FansubRolesID = adminRoleForNetflix.ID,
         FansubRolesFansubID = adminRoleForNetflix.FansubID,
       },

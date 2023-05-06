@@ -87,6 +87,17 @@ public class SubtitleController : ControllerBase
     });
   }
 
+  [HttpDelete("fansub/{fansubAcronym}/anime/{animeSlug}/episode/{episodeNumber}")]
+  [Authorize]
+  public async Task<IActionResult> DeleteAsync(string fansubAcronym, string animeSlug, int episodeNumber)
+  {
+    var auth0ID = User.GetAuth0ID();
+
+    await _subtitleService.Delete(auth0ID, fansubAcronym, animeSlug, episodeNumber);
+
+    return NoContent();
+  }
+
   [HttpPost]
   [Authorize]
   public async Task<IActionResult> PostAsync([FromForm] SubtitleDTO subtitleDTO)

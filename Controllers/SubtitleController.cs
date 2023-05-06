@@ -31,7 +31,8 @@ public class SubtitleController : ControllerBase
       group => group.Key, 
       group => group.Select(subtitle => new {
         subtitle.Membership.FansubRole.Fansub.Acronym,
-        subtitle.Url
+        subtitle.Url,
+        subtitle.Language,
       })
     );
 

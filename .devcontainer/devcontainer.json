@@ -30,14 +30,14 @@
     "vscode": {
       "extensions": [
         "mhutchie.git-graph",
-        "GitHub.vscode-pull-request-github",
+        "vscode-icons-team.vscode-icons",
         "bierner.markdown-preview-github-styles",
-        "ms-dotnettools.csharp",
         "ms-mssql.mssql",
-        // "richardwillis.vscode-entity-framework",
+
+        "ms-dotnettools.csdevkit",
         "aliasadidev.nugetpackagemanagergui",
-        "formulahendry.dotnet-test-explorer",
-        "vscode-icons-team.vscode-icons"
+        // "formulahendry.dotnet-test-explorer",
+        // "richardwillis.vscode-entity-framework",
       ],
       "settings": {
         // --- Common settings ---

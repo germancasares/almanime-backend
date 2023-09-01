@@ -8,3 +8,8 @@ Remove-Migration
 Scaffold-DbContext  
 Script-Migration  
 Update-Database: dotnet-ef database update
+
+
+
+![Database](./DatabaseProject/Database.svg)
+<img src="./DatabaseProject/Database.svg">

@@ -81,14 +81,18 @@
         "omnisharp.enableEditorConfigSupport": true,
         "mssql.connections": [
           {
-            "server": "localhost,1433",
-            "database": "",
+            "server": "alm-db,1433",
+            "database": "Almanime",
             "authenticationType": "SqlLogin",
             "user": "sa",
-            "password": "P@ssw0rd",
+            "password": "",
             "emptyPasswordInput": false,
-            "savePassword": false,
-            "profileName": "mssql-container"
+            "savePassword": true,
+            "encrypt": "Mandatory",
+            "trustServerCertificate": true,
+            "connectTimeout": 15,
+            "commandTimeout": 30,
+            "applicationName": "Almanime"
           }
         ]
       }

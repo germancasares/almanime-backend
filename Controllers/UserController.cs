@@ -54,10 +54,16 @@ public class UserController : ControllerBase
 
     if (userDTO.Name == null) throw new AlmNullException(nameof(userDTO.Name));
 
-    _userService.Create(auth0ID, userDTO.Name);
-    Log.Information("User {Auth0ID} has been created with Name {Name}", auth0ID, userDTO.Name);
-
-    return Ok();
+    try
+    {
+      _userService.Create(auth0ID, userDTO.Name);
+      Log.Information("User {Auth0ID} has been created with Name {Name}", auth0ID, userDTO.Name);
+      return Ok(new { IsNew = true });
+    }
+    catch (AlmDbException)
+    {
+      return Ok(new { IsNew = false });
+    }
   }
 
   [HttpPut]

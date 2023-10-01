@@ -41,9 +41,10 @@ public class SubtitleService : ISubtitleService
 
     if (subtitle == null) throw new AlmDbException(EValidationCode.DoesntExistInDB, nameof(subtitle), new()
     {
-      { nameof(fansub.ID), fansub.ID },
-      { nameof(episode.ID), episode.ID },
-      { nameof(user.ID), user.ID },
+      { nameof(fansubAcronym), fansubAcronym},
+      { nameof(animeSlug), animeSlug},
+      { nameof(episodeNumber), episodeNumber },
+      { nameof(auth0ID), auth0ID },
     });
 
     subtitle.Status = ESubtitleStatus.Published;
@@ -94,9 +95,10 @@ public class SubtitleService : ISubtitleService
 
     if (subtitle == null) throw new AlmDbException(EValidationCode.DoesntExistInDB, nameof(subtitle), new()
     {
-      { nameof(fansub.ID), fansub.ID },
-      { nameof(episode.ID), episode.ID },
-      { nameof(user.ID), user.ID },
+      { nameof(fansubAcronym), fansubAcronym},
+      { nameof(animeSlug), animeSlug},
+      { nameof(episodeNumber), episodeNumber },
+      { nameof(auth0ID), auth0ID },
     });
 
     _context.Subtitles.Remove(subtitle);

@@ -3,6 +3,7 @@ using Almanime.Services.Interfaces;
 using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using static Azure.Storage.Blobs.BlobClientOptions;
 
 namespace Almanime.Services;
 
@@ -15,7 +16,7 @@ public class FileService : IFileService
   public FileService(IConfiguration configuration)
   {
     var connectionString = configuration.GetConnectionString("AzureWebJobsStorage") ?? throw new InvalidOperationException("AzureWebJobsStorage connection string not set");
-    _blobServiceClient = new BlobServiceClient(connectionString);
+    _blobServiceClient = new BlobServiceClient(connectionString, new BlobClientOptions(ServiceVersion.V2021_12_02));
   }
 
   private async Task<Uri> Upload(IFormFile file, string blob, IDictionary<string, string> metadata)
@@ -50,8 +51,8 @@ public class FileService : IFileService
 
     var metadata = new Dictionary<string, string>
     {
-      { "AnimeName", animeName },
-      { "ESubtitleFormat", format.ToString() },
+      { "AnimeName", Uri.EscapeDataString(animeName) },
+      { "ESubtitleFormat", Uri.EscapeDataString(format.ToString()) },
     };
 
     return await Upload(subtitle, blobName, metadata);

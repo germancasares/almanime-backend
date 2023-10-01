@@ -12,6 +12,7 @@
     "https": "dotnet dev-certs https --trust"
   },
   "postCreateCommand": {
+    "setup-db": "dotnet-ef database update"
     // "setup-db": "bash .devcontainer/mssql/postCreateCommand.sh 'P@ssw0rd' './bin/Debug/' './.devcontainer/mssql/'"
   },
   "postStartCommand": {

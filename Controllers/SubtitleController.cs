@@ -12,12 +12,10 @@ namespace Almanime.Controllers;
 public class SubtitleController : ControllerBase
 {
   private readonly ISubtitleService _subtitleService;
-  private readonly IFileService _fileService;
 
-  public SubtitleController(ISubtitleService subtitleService, IFileService fileService)
+  public SubtitleController(ISubtitleService subtitleService)
   {
     _subtitleService = subtitleService;
-    _fileService = fileService;
   }
 
   [HttpGet("anime/{animeSlug}")]
@@ -28,7 +26,7 @@ public class SubtitleController : ControllerBase
     var subtitleGroups = subtitles
     .GroupBy(subtitle => subtitle.Episode.Number)
     .ToDictionary(
-      group => group.Key, 
+      group => group.Key,
       group => group.Select(subtitle => new {
         subtitle.Membership.FansubRole.Fansub.Acronym,
         subtitle.Url,
@@ -42,7 +40,7 @@ public class SubtitleController : ControllerBase
   [HttpGet("fansub/{fansubAcronym}/anime/{animeSlug}/episode/{episodeNumber}")]
   public async Task<IActionResult> GetAsync(string fansubAcronym, string animeSlug, int episodeNumber)
   {
-    var (file, contentType, fileName) = await _fileService.DownloadSubtitle(fansubAcronym, animeSlug, episodeNumber);
+    var (file, contentType, fileName) = await _subtitleService.GetFile(fansubAcronym, animeSlug, episodeNumber);
 
     return File(file, contentType, fileName);
   }

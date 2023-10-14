@@ -6,6 +6,14 @@ namespace Almanime.Repositories.Queries;
 
 public static class SubtitleQueries
 {
+  public static Subtitle? Get(
+    this DbSet<Subtitle> subtitles, string fansubAcronym, string animeSlug, int episodeNumber
+  ) => subtitles.SingleOrDefault(subtitle =>
+    subtitle.Membership.FansubRole.Fansub.Acronym == fansubAcronym
+    && subtitle.Episode.Anime.Slug == animeSlug
+    && subtitle.Episode.Number == episodeNumber
+  );
+
   public static Subtitle? GetByFansubIDAndEpisodeID(
     this DbSet<Subtitle> subtitles,
     Guid fansubID,

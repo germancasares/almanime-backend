@@ -8,6 +8,7 @@ Remove-Migration
 Scaffold-DbContext  
 Script-Migration  
 Update-Database: dotnet-ef database update
+Revert-Migration: dtonet-ef database 'PreviousMigrationName'
 
 
 

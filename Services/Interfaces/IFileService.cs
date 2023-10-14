@@ -1,10 +1,9 @@
-﻿using Almanime.Models.Enums;
-
-namespace Almanime.Services.Interfaces;
+﻿namespace Almanime.Services.Interfaces;
 
 public interface IFileService
 {
-  Task<(Stream Content, string ContentType, string)> DownloadSubtitle(string fansubAcronym, string animeSlug, int episodeNumber);
-  Task<Uri> UploadSubtitle(IFormFile subtitle, string fansubAcronym, string animeSlug, int episodeNumber, string animeName, ESubtitleFormat format);
-  Task DeleteSubtitle(string fansubAcronym, string animeSlug, int episodeNumber);
+  Task<(Stream Content, string ContentType)> Download(string blobName);
+  Task<Uri> Upload(IFormFile file, string blobName);
+  Task<Uri> Upload(IFormFile file, string blobName, IDictionary<string, string> metadata);
+  Task Delete(string blobName);
 }

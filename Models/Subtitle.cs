@@ -10,9 +10,10 @@ public class Subtitle : Base
     ESubtitleFormat format,
     ESubtitleLanguage language,
     string url,
+    string blobName,
     Guid episodeID,
     Guid membershipID
-  ) : this(status, format, language, url, episodeID, membershipID)
+  ) : this(status, format, language, url, blobName, episodeID, membershipID)
   {
     ID = id;
   }
@@ -22,6 +23,7 @@ public class Subtitle : Base
     ESubtitleFormat format,
     ESubtitleLanguage language,
     string url,
+    string blobName,
     Guid episodeID,
     Guid membershipID
   )
@@ -30,6 +32,7 @@ public class Subtitle : Base
     Format = format;
     Language = language;
     Url = url ?? throw new ArgumentNullException(nameof(url));
+    BlobName = blobName ?? throw new ArgumentNullException(nameof(blobName));
     EpisodeID = episodeID;
     MembershipID = membershipID;
   }
@@ -38,6 +41,7 @@ public class Subtitle : Base
   public ESubtitleFormat Format { get; set; }
   public ESubtitleLanguage Language { get; set; }
   public string Url { get; set; }
+  public string BlobName { get; set; }
 
 
   public Guid EpisodeID { get; set; }

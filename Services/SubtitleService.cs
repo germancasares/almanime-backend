@@ -84,27 +84,23 @@ public class SubtitleService : ISubtitleService
     return subtitle;
   }
 
-  public async Task Delete(string auth0ID, string fansubAcronym, string animeSlug, int episodeNumber)
+  public async Task<(Stream Content, string ContentType, string)> GetFile(string fansubAcronym, string animeSlug, int episodeNumber)
   {
-    var user = _context.Users.GetByAuth0ID(auth0ID);
-    var episode = _context.Episodes.GetByAnimeSlugAndNumber(animeSlug, episodeNumber);
-    var fansub = _context.Fansubs.GetByAcronym(fansubAcronym);
-    var subtitle = _context.Subtitles.GetByFansubIDAndEpisodeID(fansub.ID, episode.ID);
+    var subtitle = _context.Subtitles.Get(fansubAcronym, animeSlug, episodeNumber);
 
-    _context.Memberships.ThrowIfUserDoesntHavePermissionInFansub(fansub, user, EPermission.DeleteSubtitle);
-
-    if (subtitle == null) throw new AlmDbException(EValidationCode.DoesntExistInDB, nameof(subtitle), new()
+    if (subtitle == null)
     {
-      { nameof(fansubAcronym), fansubAcronym},
-      { nameof(animeSlug), animeSlug},
-      { nameof(episodeNumber), episodeNumber },
-      { nameof(auth0ID), auth0ID },
-    });
+      throw new AlmDbException(EValidationCode.DoesntExistInDB, nameof(subtitle), new()
+      {
+        { nameof(fansubAcronym), fansubAcronym },
+        { nameof(animeSlug), animeSlug },
+        { nameof(episodeNumber), episodeNumber },
+      });
+    }
 
-    _context.Subtitles.Remove(subtitle);
-    _context.SaveChanges();
+    var (file, contentType) = await _fileService.Download(subtitle.BlobName);
 
-    await _fileService.DeleteSubtitle(fansub.Acronym, animeSlug, episodeNumber);
+    return (file, contentType, $"[{fansubAcronym}]{subtitle.Episode.Anime.Name} - Episode {episodeNumber}.{subtitle.Format.ToString().ToLower()}");
   }
 
   public async Task<Subtitle> CreateOrUpdate(
@@ -147,7 +143,8 @@ public class SubtitleService : ISubtitleService
       });
     }
 
-    await _fileService.UploadSubtitle(file, fansubAcronym, animeSlug, episodeNumber, episode.Anime.Name, file.GetSubtitleFormat());
+    var blobName = $"fansub/{fansubAcronym}/{animeSlug}/{episodeNumber}";
+    await _fileService.Upload(file, blobName);
 
     if (subtitle == null)
     {
@@ -157,6 +154,7 @@ public class SubtitleService : ISubtitleService
         language: language,
         format: file.GetSubtitleFormat(),
         url: $"/subtitle/fansub/{fansubAcronym}/anime/{animeSlug}/episode/{episodeNumber}",
+        blobName: blobName,
         episodeID: episode.ID,
         membershipID: membership.ID
       )).Entity;
@@ -165,6 +163,7 @@ public class SubtitleService : ISubtitleService
     {
       subtitle.Format = file.GetSubtitleFormat();
       subtitle.ModificationDate = DateTime.Now;
+      subtitle.BlobName = blobName;
 
       _context.Subtitles.Update(subtitle);
     }
@@ -174,4 +173,26 @@ public class SubtitleService : ISubtitleService
     return subtitle;
   }
 
+  public async Task Delete(string auth0ID, string fansubAcronym, string animeSlug, int episodeNumber)
+  {
+    var user = _context.Users.GetByAuth0ID(auth0ID);
+    var episode = _context.Episodes.GetByAnimeSlugAndNumber(animeSlug, episodeNumber);
+    var fansub = _context.Fansubs.GetByAcronym(fansubAcronym);
+    var subtitle = _context.Subtitles.GetByFansubIDAndEpisodeID(fansub.ID, episode.ID);
+
+    _context.Memberships.ThrowIfUserDoesntHavePermissionInFansub(fansub, user, EPermission.DeleteSubtitle);
+
+    if (subtitle == null) throw new AlmDbException(EValidationCode.DoesntExistInDB, nameof(subtitle), new()
+    {
+      { nameof(fansubAcronym), fansubAcronym},
+      { nameof(animeSlug), animeSlug},
+      { nameof(episodeNumber), episodeNumber },
+      { nameof(auth0ID), auth0ID },
+    });
+
+    _context.Subtitles.Remove(subtitle);
+    _context.SaveChanges();
+
+    await _fileService.Delete(subtitle.BlobName);
+  }
 }

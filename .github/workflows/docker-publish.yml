@@ -95,3 +95,13 @@ jobs:
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
         run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
+
+      - name: Tailscale
+        uses: tailscale/github-action@7a0b30ed3517c2244d1330e39467b95f067a33bd
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+
+      - name: Trigger Portainer webhook
+        uses: joelwmale/webhook-action@448a17bf857ead98546cfbdbe3b9d4cf979dda95
+        with:
+          url: ${{ secrets.WEBHOOK_URL }}

@@ -2,8 +2,7 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+EXPOSE 8080
 
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0-preview-alpine AS build
 
@@ -21,6 +20,7 @@ RUN dotnet publish "Almanime.csproj" -a $TARGETARCH -c Release -o "/app/publish"
 FROM base AS final
 ARG RELEASE
 ENV SENTRY_RELEASE=$RELEASE
+ENV ASPNETCORE_URLS=http://+:8080
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Almanime.dll"]

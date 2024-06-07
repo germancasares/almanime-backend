@@ -38,7 +38,7 @@ jobs:
         run: docker run --privileged --rm tonistiigi/binfmt --install arm64
       - name: Automated Version Bump
         id: bump_version
-        uses: jalexispoveda/gh-action-dotnet-bump@v1
+        uses: jalexispoveda/gh-action-dotnet-bump@1a7337d4b5143cad47bab24b5f4a5d02dafb937e # v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

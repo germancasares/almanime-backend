@@ -3,9 +3,9 @@ on:
   workflow_dispatch:
     inputs:
       nextRelease:
-        description: 'Next Release'
+        description: Next Release
         required: true
-        default: 'patch'
+        default: Patch
         type: choice
         options: 
         - Major
@@ -43,7 +43,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           path-to-file: ./Almanime.csproj
-          tag-prefix:  'v'
+          tag-prefix: v
           version-part: ${{ inputs.nextRelease }}
       - name: Extract Docker metadata
         id: meta
@@ -70,7 +70,7 @@ jobs:
       - name: Install cosign
         uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20 #v3.5.0
         with:
-          cosign-release: 'v2.2.4'
+          cosign-release: v2.2.4
       - name: Sign the published Docker image
         env:
           TAGS: ${{ steps.meta.outputs.tags }}

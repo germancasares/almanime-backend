@@ -17,6 +17,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 jobs:
   create-release:
+    name: On master push
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -38,7 +39,7 @@ jobs:
         run: docker run --privileged --rm tonistiigi/binfmt --install arm64
       - name: Automated Version Bump
         id: bump_version
-        uses: '@lagoni/gh-action-dotnet-bump@master'
+        uses: jonaslagoni/gh-action-dotnet-bump@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

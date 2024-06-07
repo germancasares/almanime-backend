@@ -11,7 +11,6 @@ on:
         - major
         - minor
         - patch
-        - prerelease
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
@@ -39,12 +38,12 @@ jobs:
         run: docker run --privileged --rm tonistiigi/binfmt --install arm64
       - name: Automated Version Bump
         id: bump_version
-        uses: jonaslagoni/gh-action-dotnet-bump@main
+        uses: '@joneja09/gh-action-dotnet-bump@main'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag-prefix:  'v'
-          default: ${{ inputs.nextRelease }}
+          version-part: ${{ inputs.nextRelease }}
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0

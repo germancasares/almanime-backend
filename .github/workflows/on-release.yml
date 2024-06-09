@@ -85,10 +85,10 @@ jobs:
       - name: Tailscale
         uses: tailscale/github-action@v2
         with:
-          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-client-id: ${{ vars.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:almanime
       - name: Trigger Portainer webhook
         uses: joelwmale/webhook-action@448a17bf857ead98546cfbdbe3b9d4cf979dda95
         with:
-          url: ${{ secrets.WEBHOOK_URL }}
+          url: ${{ vars.WEBHOOK_URL }}

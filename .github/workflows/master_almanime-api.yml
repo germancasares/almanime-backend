@@ -22,7 +22,7 @@ jobs:
     - name: Log in to registry
       uses: docker/login-action@v2
       with:
-        registry: https://ghcr.io//
+        registry: https://ghcr.io/
         username: ${{ secrets.AzureAppService_ContainerUsername_51d6a13b8540429cad41c2dd12b032dc }}
         password: ${{ secrets.AzureAppService_ContainerPassword_8a30e12c8fd543e3b11990547487bdca }}
 
@@ -30,7 +30,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: ghcr.io//${{ secrets.AzureAppService_ContainerUsername_51d6a13b8540429cad41c2dd12b032dc }}/germancasares/almanime-backend:${{ github.sha }}
+        tags: ghcr.io/${{ secrets.AzureAppService_ContainerUsername_51d6a13b8540429cad41c2dd12b032dc }}/germancasares/almanime-backend:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
@@ -48,4 +48,4 @@ jobs:
         app-name: 'almanime-api'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_b5a079db86c24d839fae1009ada632bd }}
-        images: 'ghcr.io//${{ secrets.AzureAppService_ContainerUsername_51d6a13b8540429cad41c2dd12b032dc }}/germancasares/almanime-backend:${{ github.sha }}'
+        images: 'ghcr.io/${{ secrets.AzureAppService_ContainerUsername_51d6a13b8540429cad41c2dd12b032dc }}/germancasares/almanime-backend:${{ github.sha }}'

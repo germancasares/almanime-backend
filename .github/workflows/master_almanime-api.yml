@@ -1,0 +1,51 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy container app to Azure Web App - almanime-api
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Log in to registry
+      uses: docker/login-action@v2
+      with:
+        registry: https://ghcr.io//
+        username: ${{ secrets.AzureAppService_ContainerUsername_51d6a13b8540429cad41c2dd12b032dc }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_8a30e12c8fd543e3b11990547487bdca }}
+
+    - name: Build and push container image to registry
+      uses: docker/build-push-action@v3
+      with:
+        push: true
+        tags: ghcr.io//${{ secrets.AzureAppService_ContainerUsername_51d6a13b8540429cad41c2dd12b032dc }}/germancasares/almanime-backend:${{ github.sha }}
+        file: ./Dockerfile
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+    - name: Deploy to Azure Web App
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'almanime-api'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_b5a079db86c24d839fae1009ada632bd }}
+        images: 'ghcr.io//${{ secrets.AzureAppService_ContainerUsername_51d6a13b8540429cad41c2dd12b032dc }}/germancasares/almanime-backend:${{ github.sha }}'

@@ -11,7 +11,8 @@ namespace Almanime.Migrations
         {
             migrationBuilder.CreateTable(
                 name: "Animes",
-                columns: table => new {
+                columns: table => new
+                {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     KitsuID = table.Column<int>(type: "int", nullable: false),
                     Slug = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -37,7 +38,8 @@ namespace Almanime.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Episode",
-                columns: table => new {
+                columns: table => new
+                {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Number = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -60,7 +62,8 @@ namespace Almanime.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Subtitle",
-                columns: table => new {
+                columns: table => new
+                {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     Format = table.Column<int>(type: "int", nullable: false),

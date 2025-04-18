@@ -11,73 +11,74 @@ namespace Almanime.Services;
 
 public class EpisodeService : IEpisodeService
 {
-  private readonly AlmanimeContext _context;
+    private readonly AlmanimeContext _context;
 
-  public EpisodeService(AlmanimeContext context)
-  {
-    _context = context;
-  }
-
-  public IQueryable<Episode> GetByAnimeSlug(string animeSlug) => _context.Episodes.GetByAnimeSlug(animeSlug);
-
-  private Episode Create(EpisodeDTO episodeDTO, Guid animeId)
-  {
-    var episode = _context.Episodes.Add(episodeDTO.MapToModel(animeId));
-
-    _context.SaveChanges();
-
-    return episode.Entity;
-  }
-
-  private void Update(EpisodeDTO episodeDTO, int kitsuId)
-  {
-    var episode = _context.Episodes.GetByKitsuIdAndNumber(kitsuId, episodeDTO.Number);
-    if (episode == null) return;
-
-    _context.Episodes.Update(episode.UpdateFromDTO(episodeDTO));
-    _context.SaveChanges();
-  }
-
-  public async Task Populate()
-  {
-    var animes = _context.Animes.Select(anime => new { anime.KitsuID, anime.ID, anime.MyAnimeListID }).ToList();
-
-    var tasks = animes.Select(async anime =>
+    public EpisodeService(AlmanimeContext context)
     {
-      var episodes = await KitsuEpisodes.Fetch(anime.KitsuID);
+        _context = context;
+    }
 
-      if (episodes.Any(episode => episode.Name == null))
-      {
-        var jikanEpisodes = await JikanEpisodes.Fetch(anime.MyAnimeListID);
+    public IQueryable<Episode> GetByAnimeSlug(string animeSlug) => _context.Episodes.GetByAnimeSlug(animeSlug);
 
-        episodes = episodes.Select(episode =>
-        {
-          episode.Name ??= jikanEpisodes.SingleOrDefault(jikanEpisode => jikanEpisode.Number == episode.Number)?.Name;
-
-          return episode;
-        }).ToList();
-      }
-
-      return new {
-        anime.ID,
-        anime.KitsuID,
-        Episodes = episodes,
-      };
-    });
-
-    (await Task.WhenAll(tasks)).ToList().ForEach(anime =>
+    private Episode Create(EpisodeDTO episodeDTO, Guid animeId)
     {
-      anime.Episodes.ForEach(episode =>
+        var episode = _context.Episodes.Add(episodeDTO.MapToModel(animeId));
+
+        _context.SaveChanges();
+
+        return episode.Entity;
+    }
+
+    private void Update(EpisodeDTO episodeDTO, int kitsuId)
+    {
+        var episode = _context.Episodes.GetByKitsuIdAndNumber(kitsuId, episodeDTO.Number);
+        if (episode == null) return;
+
+        _context.Episodes.Update(episode.UpdateFromDTO(episodeDTO));
+        _context.SaveChanges();
+    }
+
+    public async Task Populate()
+    {
+        var animes = _context.Animes.Select(anime => new { anime.KitsuID, anime.ID, anime.MyAnimeListID }).ToList();
+
+        var tasks = animes.Select(async anime =>
         {
-          if (_context.Episodes.GetByKitsuIdAndNumber(anime.KitsuID, episode.Number) == null)
-          {
-            Create(episode, anime.ID);
-          }
-          else
-          {
-            Update(episode, anime.KitsuID);
-          }
+            var episodes = await KitsuEpisodes.Fetch(anime.KitsuID);
+
+            if (episodes.Any(episode => episode.Name == null))
+            {
+                var jikanEpisodes = await JikanEpisodes.Fetch(anime.MyAnimeListID);
+
+                episodes = episodes.Select(episode =>
+            {
+                episode.Name ??= jikanEpisodes.SingleOrDefault(jikanEpisode => jikanEpisode.Number == episode.Number)?.Name;
+
+                return episode;
+            }).ToList();
+            }
+
+            return new
+            {
+                anime.ID,
+                anime.KitsuID,
+                Episodes = episodes,
+            };
         });
-    });
-  }
+
+        (await Task.WhenAll(tasks)).ToList().ForEach(anime =>
+        {
+            anime.Episodes.ForEach(episode =>
+          {
+                if (_context.Episodes.GetByKitsuIdAndNumber(anime.KitsuID, episode.Number) == null)
+                {
+                    Create(episode, anime.ID);
+                }
+                else
+                {
+                    Update(episode, anime.KitsuID);
+                }
+            });
+        });
+    }
 }

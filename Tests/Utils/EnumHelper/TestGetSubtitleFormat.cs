@@ -10,39 +10,39 @@ namespace Almanime.Tests.Utils.EnumHelper;
 [TestFixture]
 public static class TestGetSubtitleFormat
 {
-  private static IFormFile GetMockFileWithExtension(string extension)
-  {
-    var file = new Mock<IFormFile>();
-    file.Setup(x => x.FileName).Returns($"filename{extension}");
+    private static IFormFile GetMockFileWithExtension(string extension)
+    {
+        var file = new Mock<IFormFile>();
+        file.Setup(x => x.FileName).Returns($"filename{extension}");
 
-    return file.Object;
-  }
+        return file.Object;
+    }
 
-  [TestCase(".ass", ESubtitleFormat.ASS)]
-  [TestCase(".srt", ESubtitleFormat.SRT)]
-  public static void FileWithSubtitleExtension_ShouldReturnESubtitleFormat(string extension, ESubtitleFormat expectedFormat)
-  {
-    // Arrange
-    var formFile = GetMockFileWithExtension(extension);
+    [TestCase(".ass", ESubtitleFormat.ASS)]
+    [TestCase(".srt", ESubtitleFormat.SRT)]
+    public static void FileWithSubtitleExtension_ShouldReturnESubtitleFormat(string extension, ESubtitleFormat expectedFormat)
+    {
+        // Arrange
+        var formFile = GetMockFileWithExtension(extension);
 
-    // Act
-    var format = formFile.GetSubtitleFormat();
+        // Act
+        var format = formFile.GetSubtitleFormat();
 
-    // Assert
-    format.Should().Be(expectedFormat);
-  }
+        // Assert
+        format.Should().Be(expectedFormat);
+    }
 
-  [Test]
-  public static void FileWithOtherExtension_ShouldThrowException([Values(".txt", ".png", ".jpg")] string extension)
-  {
-    // Arrange
-    var formFile = GetMockFileWithExtension(extension);
+    [Test]
+    public static void FileWithOtherExtension_ShouldThrowException([Values(".txt", ".png", ".jpg")] string extension)
+    {
+        // Arrange
+        var formFile = GetMockFileWithExtension(extension);
 
-    // Act & Assert
-    formFile
-      .Invoking(file => file.GetSubtitleFormat())
-      .Should()
-      .Throw<AlmValidationException>()
-      .WithMessage("file breaks rule FormatNotValid");
-  }
+        // Act & Assert
+        formFile
+          .Invoking(file => file.GetSubtitleFormat())
+          .Should()
+          .Throw<AlmValidationException>()
+          .WithMessage("file breaks rule FormatNotValid");
+    }
 }

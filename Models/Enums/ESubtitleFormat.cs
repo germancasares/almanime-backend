@@ -2,6 +2,6 @@
 
 public enum ESubtitleFormat
 {
-  ASS,
-  SRT, 
+    ASS,
+    SRT,
 }

@@ -2,9 +2,9 @@
 
 public enum EPermission
 {
-  DraftSubtitle = 10,
-  PublishSubtitle = 11,
-  UnpublishSubtitle = 12,
-  DeleteSubtitle = 13,
-  EditPermissions = 20,
+    DraftSubtitle = 10,
+    PublishSubtitle = 11,
+    UnpublishSubtitle = 12,
+    DeleteSubtitle = 13,
+    EditPermissions = 20,
 }

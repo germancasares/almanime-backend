@@ -2,5 +2,5 @@
 
 public record Meta
 {
-  public int Count { get; init; }
+    public int Count { get; init; }
 }

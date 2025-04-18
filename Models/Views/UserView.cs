@@ -2,5 +2,5 @@
 
 public record UserView
 {
-  public string? Auth0ID { get; init; }
+    public string? Auth0ID { get; init; }
 }

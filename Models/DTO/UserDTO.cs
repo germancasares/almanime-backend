@@ -2,5 +2,5 @@
 
 public record UserDTO
 {
-  public string? Name { get; init; }
+    public string? Name { get; init; }
 }

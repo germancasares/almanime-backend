@@ -19,7 +19,7 @@ Log.Logger = new LoggerConfiguration()
   .WriteTo.Console()
   .WriteTo.Sentry(options =>
     {
-      builder.Configuration.GetSection("Sentry").Bind(options);
+        builder.Configuration.GetSection("Sentry").Bind(options);
     })
   .CreateBootstrapLogger();
 
@@ -27,136 +27,136 @@ Log.Information("Starting up");
 
 try
 {
-  builder.Host.UseSerilog();
-  builder.WebHost.UseSentry();
+    builder.Host.UseSerilog();
+    builder.WebHost.UseSentry();
 
-  builder.Services.AddDbContext<AlmanimeContext>(options =>
-  {
-    options.UseLazyLoadingProxies().UseSqlServer(builder.Configuration.GetConnectionString("Almanime"));
-  });
-
-  // Add services to the container.
-  builder.Services.AddDataProtection().PersistKeysToDbContext<AlmanimeContext>();
-  builder.Services.AddScoped<IAnimeService, AnimeService>();
-  builder.Services.AddScoped<IEpisodeService, EpisodeService>();
-  builder.Services.AddScoped<IUserService, UserService>();
-  builder.Services.AddScoped<IFansubService, FansubService>();
-  builder.Services.AddScoped<ISubtitleService, SubtitleService>();
-  builder.Services.AddScoped<IFileService, FileService>();
-  builder.Services.AddScoped<IBookmarkService, BookmarkService>();
-  builder.Services.AddScoped<IRoleService, RoleService>();
-  var elasticSearchUri = builder.Configuration.GetConnectionString("ElasticSearch");
-  if (elasticSearchUri != null)
-  {
-    builder.Services.AddSingleton(new ElasticClient(new Uri(elasticSearchUri)));
-  } 
-  else
-  {
-    throw new Exception("ElasticSearch connection string not provided.");
-  }
-
-  builder.Services.AddCors();
-
-  builder.Services.AddControllers().AddJsonOptions(opts =>
-  {
-    opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-  });
-
-  // Learn more about configuring Swagger/OpenAlmanime at https://aka.ms/aspnetcore/swashbuckle
-  builder.Services.AddEndpointsApiExplorer();
-  builder.Services.AddSwaggerGen(setup =>
-  {
-    // https://stackoverflow.com/a/61365691/10291066
-    // https://github.com/domaindrivendev/Swashbuckle.AspNetCore#add-security-definitions-and-requirements
-    setup.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    builder.Services.AddDbContext<AlmanimeContext>(options =>
     {
-      Name = "Authorization",
-      Description = "Please Enter Authentication Token",
-      In = ParameterLocation.Header,
-      Type = SecuritySchemeType.Http,
-      Scheme = "bearer",
-      BearerFormat = "JWT"
+        options.UseLazyLoadingProxies().UseSqlServer(builder.Configuration.GetConnectionString("Almanime"));
     });
 
-    setup.OperationFilter<AddAuthHeaderOperationFilter>();
-  });
-
-  builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
+    // Add services to the container.
+    builder.Services.AddDataProtection().PersistKeysToDbContext<AlmanimeContext>();
+    builder.Services.AddScoped<IAnimeService, AnimeService>();
+    builder.Services.AddScoped<IEpisodeService, EpisodeService>();
+    builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped<IFansubService, FansubService>();
+    builder.Services.AddScoped<ISubtitleService, SubtitleService>();
+    builder.Services.AddScoped<IFileService, FileService>();
+    builder.Services.AddScoped<IBookmarkService, BookmarkService>();
+    builder.Services.AddScoped<IRoleService, RoleService>();
+    var elasticSearchUri = builder.Configuration.GetConnectionString("ElasticSearch");
+    if (elasticSearchUri != null)
     {
-      c.Authority = $"https://{builder.Configuration["Auth0:Domain"]}";
-      c.TokenValidationParameters = new TokenValidationParameters
+        builder.Services.AddSingleton(new ElasticClient(new Uri(elasticSearchUri)));
+    }
+    else
+    {
+        throw new Exception("ElasticSearch connection string not provided.");
+    }
+
+    builder.Services.AddCors();
+
+    builder.Services.AddControllers().AddJsonOptions(opts =>
+    {
+        opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
+    // Learn more about configuring Swagger/OpenAlmanime at https://aka.ms/aspnetcore/swashbuckle
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen(setup =>
+    {
+        // https://stackoverflow.com/a/61365691/10291066
+        // https://github.com/domaindrivendev/Swashbuckle.AspNetCore#add-security-definitions-and-requirements
+        setup.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Description = "Please Enter Authentication Token",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT"
+        });
+
+        setup.OperationFilter<AddAuthHeaderOperationFilter>();
+    });
+
+    builder.Services
+      .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+      .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
       {
-        ValidAudience = builder.Configuration["Auth0:Audience"],
-        ValidIssuer = builder.Configuration["Auth0:Domain"],
-      };
-    });
+          c.Authority = $"https://{builder.Configuration["Auth0:Domain"]}";
+          c.TokenValidationParameters = new TokenValidationParameters
+          {
+              ValidAudience = builder.Configuration["Auth0:Audience"],
+              ValidIssuer = builder.Configuration["Auth0:Domain"],
+          };
+      });
 
-  builder.Services
-    .AddAuthorization(options =>
+    builder.Services
+      .AddAuthorization(options =>
+      {
+          options.AddPolicy("write:animes", policy =>
+          policy.RequireAssertion(context =>
+            context.User.HasClaim(claim =>
+              claim.Type == "permissions" &&
+              claim.Value == "write:animes" &&
+              claim.Issuer == $"https://{builder.Configuration["Auth0:Domain"]}/"
+            )
+          )
+        );
+          options.AddPolicy("write:episodes", policy =>
+          policy.RequireAssertion(context =>
+            context.User.HasClaim(claim =>
+              claim.Type == "permissions" &&
+              claim.Value == "write:episodes" &&
+              claim.Issuer == $"https://{builder.Configuration["Auth0:Domain"]}/"
+            )
+          )
+        );
+      });
+
+
+    var app = builder.Build();
+
+    app.UseSentryTracing();
+
+    app.UseSerilogRequestLogging();
+
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
     {
-      options.AddPolicy("write:animes", policy => 
-        policy.RequireAssertion(context =>
-          context.User.HasClaim(claim =>
-            claim.Type == "permissions" &&
-            claim.Value == "write:animes" &&
-            claim.Issuer == $"https://{builder.Configuration["Auth0:Domain"]}/"
-          )
-        )
-      );
-      options.AddPolicy("write:episodes", policy => 
-        policy.RequireAssertion(context =>
-          context.User.HasClaim(claim =>
-            claim.Type == "permissions" &&
-            claim.Value == "write:episodes" &&
-            claim.Issuer == $"https://{builder.Configuration["Auth0:Domain"]}/"
-          )
-        )
-      );
-    });
+        app.UseDeveloperExceptionPage();
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+    else
+    {
+        using var scope = app.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AlmanimeContext>();
+        db.Database.Migrate();
+    }
 
+    app.UseMiddleware<ErrorHandlerMiddleware>();
 
-  var app = builder.Build();
+    app.UseHttpsRedirection();
 
-  app.UseSentryTracing();
+    app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("Content-Disposition"));
 
-  app.UseSerilogRequestLogging();
+    app.UseAuthentication();
+    app.UseAuthorization();
 
-  // Configure the HTTP request pipeline.
-  if (app.Environment.IsDevelopment())
-  {
-    app.UseDeveloperExceptionPage();
-    app.UseSwagger();
-    app.UseSwaggerUI();
-  }
-  else
-  {
-    using var scope = app.Services.CreateScope();
-    var db = scope.ServiceProvider.GetRequiredService<AlmanimeContext>();
-    db.Database.Migrate();
-  }
+    app.MapControllers();
 
-  app.UseMiddleware<ErrorHandlerMiddleware>();
-
-  app.UseHttpsRedirection();
-
-  app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("Content-Disposition"));
-
-  app.UseAuthentication();
-  app.UseAuthorization();
-
-  app.MapControllers();
-
-  app.Run();
+    app.Run();
 }
 catch (HostAbortedException) { }
 catch (Exception ex)
 {
-  Log.Fatal(ex, "Unhandled exception");
+    Log.Fatal(ex, "Unhandled exception");
 }
 finally
 {
-  Log.Information("Shut down complete");
-  Log.CloseAndFlush();
+    Log.Information("Shut down complete");
+    Log.CloseAndFlush();
 }

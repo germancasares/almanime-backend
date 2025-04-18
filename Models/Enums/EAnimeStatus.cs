@@ -2,9 +2,9 @@
 
 public enum EAnimeStatus
 {
-  Tba,
-  Unreleased,
-  Upcoming,
-  Current,
-  Finished,
+    Tba,
+    Unreleased,
+    Upcoming,
+    Current,
+    Finished,
 }

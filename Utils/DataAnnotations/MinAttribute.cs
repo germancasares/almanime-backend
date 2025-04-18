@@ -6,29 +6,29 @@ namespace Almanime.Utils.DataAnnotations;
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter, AllowMultiple = false)]
 public sealed class MinAttribute : DataTypeAttribute
 {
-  public double Min { get; private set; }
+    public double Min { get; private set; }
 
-  public MinAttribute(double min) : base("min")
-  {
-    Min = min;
-  }
-
-  public override string FormatErrorMessage(string name)
-  {
-    if (ErrorMessage == null && ErrorMessageResourceName == null)
+    public MinAttribute(double min) : base("min")
     {
-      ErrorMessage = "The field {0} must be more than or equal to {1}";
+        Min = min;
     }
 
-    return string.Format(CultureInfo.CurrentCulture, ErrorMessageString, name, Min);
-  }
+    public override string FormatErrorMessage(string name)
+    {
+        if (ErrorMessage == null && ErrorMessageResourceName == null)
+        {
+            ErrorMessage = "The field {0} must be more than or equal to {1}";
+        }
 
-  public override bool IsValid(object? value)
-  {
-    if (value == null) return true;
+        return string.Format(CultureInfo.CurrentCulture, ErrorMessageString, name, Min);
+    }
 
-    var isDouble = double.TryParse(Convert.ToString(value), out var valueAsDouble);
+    public override bool IsValid(object? value)
+    {
+        if (value == null) return true;
 
-    return isDouble && valueAsDouble >= Min;
-  }
+        var isDouble = double.TryParse(Convert.ToString(value), out var valueAsDouble);
+
+        return isDouble && valueAsDouble >= Min;
+    }
 }

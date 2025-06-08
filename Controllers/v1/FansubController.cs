@@ -9,14 +9,9 @@ namespace Almanime.Controllers.v1;
 
 [Route("v1/[controller]")]
 [ApiController]
-public class FansubController : ControllerBase
+public class FansubController(IFansubService fansubService) : ControllerBase
 {
-    private readonly IFansubService _fansubService;
-
-    public FansubController(IFansubService fansubService)
-    {
-        _fansubService = fansubService;
-    }
+    private readonly IFansubService _fansubService = fansubService;
 
     [HttpGet]
     public IActionResult Get()

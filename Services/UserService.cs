@@ -7,14 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Almanime.Services;
 
-public class UserService : IUserService
+public class UserService(AlmanimeContext context) : IUserService
 {
-    private readonly AlmanimeContext _context;
-
-    public UserService(AlmanimeContext context)
-    {
-        _context = context;
-    }
+    private readonly AlmanimeContext _context = context;
 
     public User GetByAuth0ID(string auth0ID) => _context.Users.GetByAuth0ID(auth0ID);
     public IQueryable<User> Get() => _context.Users.AsQueryable();

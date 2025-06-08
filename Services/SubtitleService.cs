@@ -9,19 +9,13 @@ using System.Text;
 
 namespace Almanime.Services;
 
-public class SubtitleService : ISubtitleService
+public class SubtitleService(
+  AlmanimeContext context,
+  IFileService fileService
+    ) : ISubtitleService
 {
-    private readonly AlmanimeContext _context;
-    private readonly IFileService _fileService;
-
-    public SubtitleService(
-      AlmanimeContext context,
-      IFileService fileService
-    )
-    {
-        _context = context;
-        _fileService = fileService;
-    }
+    private readonly AlmanimeContext _context = context;
+    private readonly IFileService _fileService = fileService;
 
     public IQueryable<Subtitle> GetByAnimeSlug(string animeSlug) => _context.Subtitles.GetByAnimeSlugAndByPublished(animeSlug);
 

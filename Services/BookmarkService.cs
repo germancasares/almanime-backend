@@ -5,14 +5,9 @@ using Almanime.Services.Interfaces;
 
 namespace Almanime.Services;
 
-public class BookmarkService : IBookmarkService
+public class BookmarkService(AlmanimeContext context) : IBookmarkService
 {
-    private readonly AlmanimeContext _context;
-
-    public BookmarkService(AlmanimeContext context)
-    {
-        _context = context;
-    }
+    private readonly AlmanimeContext _context = context;
 
     public IQueryable<Bookmark> GetByAuth0ID(string auth0ID) => _context.Bookmarks.Where(bookmark => bookmark.User.Auth0ID == auth0ID);
 

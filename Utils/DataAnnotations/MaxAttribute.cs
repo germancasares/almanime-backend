@@ -4,14 +4,9 @@ using System.Globalization;
 namespace Almanime.Utils.DataAnnotations;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter, AllowMultiple = false)]
-public sealed class MaxAttribute : DataTypeAttribute
+public sealed class MaxAttribute(double max) : DataTypeAttribute("max")
 {
-    public double Max { get; private set; }
-
-    public MaxAttribute(double max) : base("max")
-    {
-        Max = max;
-    }
+    public double Max { get; private set; } = max;
 
     public override string FormatErrorMessage(string name)
     {

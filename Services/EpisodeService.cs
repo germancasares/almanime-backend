@@ -9,14 +9,9 @@ using Almanime.Utils.Mappers;
 
 namespace Almanime.Services;
 
-public class EpisodeService : IEpisodeService
+public class EpisodeService(AlmanimeContext context) : IEpisodeService
 {
-    private readonly AlmanimeContext _context;
-
-    public EpisodeService(AlmanimeContext context)
-    {
-        _context = context;
-    }
+    private readonly AlmanimeContext _context = context;
 
     public IQueryable<Episode> GetByAnimeSlug(string animeSlug) => _context.Episodes.GetByAnimeSlug(animeSlug);
 

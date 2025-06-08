@@ -5,16 +5,11 @@ using Almanime.Services.Interfaces;
 
 namespace Almanime.Services;
 
-public class RoleService : IRoleService
+public class RoleService(
+  AlmanimeContext context
+    ) : IRoleService
 {
-    private readonly AlmanimeContext _context;
-
-    public RoleService(
-      AlmanimeContext context
-    )
-    {
-        _context = context;
-    }
+    private readonly AlmanimeContext _context = context;
 
     public Dictionary<string, IEnumerable<EPermission>> GetByUser(User user)
     {

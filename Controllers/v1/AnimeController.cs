@@ -12,11 +12,9 @@ namespace Almanime.Controllers.v1;
 
 [Route("v1/[controller]")]
 [ApiController]
-public class AnimeController : ControllerBase
+public class AnimeController(IAnimeService animeService) : ControllerBase
 {
-    private readonly IAnimeService _animeService;
-
-    public AnimeController(IAnimeService animeService) => _animeService = animeService;
+    private readonly IAnimeService _animeService = animeService;
 
     [HttpGet]
     public IActionResult Get()

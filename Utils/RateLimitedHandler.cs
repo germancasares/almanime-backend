@@ -4,14 +4,9 @@ using System.Threading.RateLimiting;
 
 namespace Almanime.Utils;
 
-internal class RateLimitedHandler : DelegatingHandler
+internal class RateLimitedHandler(RateLimiter limiter) : DelegatingHandler(new HttpClientHandler())
 {
-    private readonly RateLimiter _rateLimiter;
-
-    public RateLimitedHandler(RateLimiter limiter) : base(new HttpClientHandler())
-    {
-        _rateLimiter = limiter;
-    }
+    private readonly RateLimiter _rateLimiter = limiter;
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {

@@ -7,14 +7,9 @@ namespace Almanime.Controllers.v1;
 
 [Route("v1/[controller]")]
 [ApiController]
-public class EpisodeController : ControllerBase
+public class EpisodeController(IEpisodeService episodeService) : ControllerBase
 {
-    private readonly IEpisodeService _episodeService;
-
-    public EpisodeController(IEpisodeService episodeService)
-    {
-        _episodeService = episodeService;
-    }
+    private readonly IEpisodeService _episodeService = episodeService;
 
     [HttpGet("anime/{animeSlug}")]
     public IActionResult GetByAnimeSlug(string animeSlug)

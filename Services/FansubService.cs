@@ -10,16 +10,10 @@ using Nest;
 
 namespace Almanime.Services;
 
-public class FansubService : IFansubService
+public class FansubService(AlmanimeContext context, ElasticClient elasticClient) : IFansubService
 {
-    private readonly AlmanimeContext _context;
-    private readonly ElasticClient _elasticClient;
-
-    public FansubService(AlmanimeContext context, ElasticClient elasticClient)
-    {
-        _context = context;
-        _elasticClient = elasticClient;
-    }
+    private readonly AlmanimeContext _context = context;
+    private readonly ElasticClient _elasticClient = elasticClient;
 
     public bool IsMember(string acronym, string auth0ID) => _context.Memberships
         .Any(membership => membership.FansubRole.Fansub.Acronym == acronym && membership.User.Auth0ID == auth0ID);

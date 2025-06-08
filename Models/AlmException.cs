@@ -2,48 +2,32 @@
 
 namespace Almanime.Models;
 
-public abstract class AlmException : Exception
+public abstract class AlmException(
+    EValidationCode code,
+    string field
+    ) : Exception($"{field} breaks rule {code}")
 {
-    public EValidationCode Code { get; set; }
+    public EValidationCode Code { get; set; } = code;
     public string Rule => Code.ToString();
-    public string Field { get; set; }
-
-    protected AlmException(
-        EValidationCode code,
-        string field
-    ) : base($"{field} breaks rule {code}")
-    {
-        Code = code;
-        Field = field;
-    }
+    public string Field { get; set; } = field;
 }
 
-public class AlmValidationException : AlmException
+public class AlmValidationException(EValidationCode code, string field) : AlmException(code, field)
 {
-    public AlmValidationException(EValidationCode code, string field) : base(code, field) { }
 }
 
-public class AlmNullException : AlmException
+public class AlmNullException(string field) : AlmException(EValidationCode.NotEmpty, field)
 {
-    public AlmNullException(string field) : base(EValidationCode.NotEmpty, field) { }
 }
 
-public class AlmDbException : AlmException
+public class AlmDbException(EValidationCode code, string field, Dictionary<string, object> queryParams) : AlmException(code, field)
 {
-    public Dictionary<string, object> QueryParams { get; set; }
-    public AlmDbException(EValidationCode code, string field, Dictionary<string, object> queryParams) : base(code, field) => QueryParams = queryParams;
+    public Dictionary<string, object> QueryParams { get; set; } = queryParams;
 }
 
-public class AlmPermissionException : AlmException
+public class AlmPermissionException(EPermission permission, string userName, string fansubName) : AlmException(EValidationCode.DoesntHavePermission, "permission")
 {
-    public string Permission { get; set; }
-    public string UserName { get; set; }
-    public string FansubName { get; set; }
-
-    public AlmPermissionException(EPermission permission, string userName, string fansubName) : base(EValidationCode.DoesntHavePermission, "permission")
-    {
-        Permission = permission.ToString();
-        UserName = userName;
-        FansubName = fansubName;
-    }
+    public string Permission { get; set; } = permission.ToString();
+    public string UserName { get; set; } = userName;
+    public string FansubName { get; set; } = fansubName;
 }

@@ -9,14 +9,9 @@ namespace Almanime.Controllers.v1;
 
 [Route("v1/[controller]")]
 [ApiController]
-public class SubtitleController : ControllerBase
+public class SubtitleController(ISubtitleService subtitleService) : ControllerBase
 {
-    private readonly ISubtitleService _subtitleService;
-
-    public SubtitleController(ISubtitleService subtitleService)
-    {
-        _subtitleService = subtitleService;
-    }
+    private readonly ISubtitleService _subtitleService = subtitleService;
 
     [HttpGet("anime/{animeSlug}")]
     public IActionResult GetByAnime(string animeSlug)

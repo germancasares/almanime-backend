@@ -12,16 +12,10 @@ using Nest;
 
 namespace Almanime.Services;
 
-public class AnimeService : IAnimeService
+public class AnimeService(AlmanimeContext context, ElasticClient elasticClient) : IAnimeService
 {
-    private readonly AlmanimeContext _context;
-    private readonly ElasticClient _elasticClient;
-
-    public AnimeService(AlmanimeContext context, ElasticClient elasticClient)
-    {
-        _context = context;
-        _elasticClient = elasticClient;
-    }
+    private readonly AlmanimeContext _context = context;
+    private readonly ElasticClient _elasticClient = elasticClient;
 
     public Anime GetBySlug(string slug) => _context.Animes.GetBySlug(slug);
     public IQueryable<Anime> Get() => _context.Animes.AsQueryable().AsNoTracking();

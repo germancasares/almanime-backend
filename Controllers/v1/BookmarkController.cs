@@ -7,11 +7,9 @@ namespace Almanime.Controllers.v1;
 
 [Route("v1/[controller]")]
 [ApiController]
-public class BookmarkController : ControllerBase
+public class BookmarkController(IBookmarkService bookmarkService) : ControllerBase
 {
-    private readonly IBookmarkService _bookmarkService;
-
-    public BookmarkController(IBookmarkService bookmarkService) => _bookmarkService = bookmarkService;
+    private readonly IBookmarkService _bookmarkService = bookmarkService;
 
     [HttpGet]
     [Authorize]

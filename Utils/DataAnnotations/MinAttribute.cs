@@ -4,14 +4,9 @@ using System.Globalization;
 namespace Almanime.Utils.DataAnnotations;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter, AllowMultiple = false)]
-public sealed class MinAttribute : DataTypeAttribute
+public sealed class MinAttribute(double min) : DataTypeAttribute("min")
 {
-    public double Min { get; private set; }
-
-    public MinAttribute(double min) : base("min")
-    {
-        Min = min;
-    }
+    public double Min { get; private set; } = min;
 
     public override string FormatErrorMessage(string name)
     {

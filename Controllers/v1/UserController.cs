@@ -10,16 +10,10 @@ namespace Almanime.Controllers.v1;
 
 [Route("v1/[controller]")]
 [ApiController]
-public class UserController : ControllerBase
+public class UserController(IUserService userService, IRoleService roleService) : ControllerBase
 {
-    private readonly IUserService _userService;
-    private readonly IRoleService _roleService;
-
-    public UserController(IUserService userService, IRoleService roleService)
-    {
-        _userService = userService;
-        _roleService = roleService;
-    }
+    private readonly IUserService _userService = userService;
+    private readonly IRoleService _roleService = roleService;
 
     [HttpGet]
     public IActionResult Get()

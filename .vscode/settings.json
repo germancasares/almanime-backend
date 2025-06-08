@@ -1,5 +1,14 @@
 {
-  "dataworkspace.excludedProjects": [
-    "Almanime/Almanime.sqlproj"
-  ]
+  "dataworkspace.excludedProjects": ["Almanime/Almanime.sqlproj"],
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "Almanime.sln": ".dockerignore, .editorconfig, .gitattributes, .gitignore, omnisharp.json, Almanime.csproj, appsettings.Development.json, appsettings.json, appsettings.Production.json"
+  },
+  "files.exclude": {
+    ".github": true,
+    "bin": true,
+    "obj": true,
+    "DatabaseProject": true,
+    "Properties": true
+  }
 }
